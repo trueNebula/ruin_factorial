@@ -4,8 +4,9 @@ import u "game_utils"
 import rl "vendor:raylib"
 
 main :: proc() {
-	rl.InitWindow(640, 480, "ruin!Factorial")
 	rl.SetWindowState({.WINDOW_RESIZABLE})
+	rl.InitWindow(u.WindowDefaults.width, u.WindowDefaults.height, u.WindowDefaults.title)
+	rl.SetWindowMinSize(u.WindowDefaults.minWidth, u.WindowDefaults.minHeight)
 	defer rl.CloseWindow()
 
 	camera := rl.Camera2D {
@@ -16,6 +17,7 @@ main :: proc() {
 	}
 
 	for !rl.WindowShouldClose() {
+		u.fullscreenManager()
 		rl.BeginDrawing()
 		rl.BeginMode2D(camera)
 		{
