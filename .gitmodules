@@ -1,0 +1,9 @@
+[submodule "src/neb_structures"]
+	path = src/neb_structures
+	url = git@github.com:trueNebula/neb_structures.git
+[submodule "src/ecs"]
+	path = src/ecs
+	url = git@github.com:trueNebula/ecs.git
+[submodule "src/neb_utils"]
+	path = src/neb_utils
+	url = git@github.com:trueNebula/neb_utils.git

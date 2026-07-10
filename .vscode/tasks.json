@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "odin build ./src/main.odin -file -collection:src=src -debug -out:build/debug.bin",
+      "group": "build"
+    },
+    {
+      "label": "perms",
+      "type": "shell",
+      "command": "chmod +x ./build/debug.bin"
+    },
+    {
+      "label": "Build",
+      "dependsOn": ["build"]
+    },
+    {
+      "label": "Run Main (Windows)",
+      "type": "shell",
+      "command": "odin.exe",
+      "args": ["run", "${cwd}/src/main.odin", "-file", "-collection:src=src"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "detail": "Run project"
+    }
+  ]
+}
