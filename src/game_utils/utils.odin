@@ -3,6 +3,7 @@ package utils
 import rl "vendor:raylib"
 
 vec2 :: rl.Vector2
+path :: string
 
 WindowProps :: struct {
 	width:     i32,

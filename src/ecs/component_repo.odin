@@ -16,4 +16,5 @@ Transform :: struct {
 
 Sprite :: struct {
 	texture: manager.Texture,
+	rect:    rl.Rectangle,
 }
