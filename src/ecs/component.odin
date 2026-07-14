@@ -3,7 +3,11 @@ package ecs
 import "base:runtime"
 import "core:reflect"
 
-Component :: union {}
+Component :: union {
+	EntityRef,
+	Transform,
+	Sprite,
+}
 
 ComponentMask :: [4]u64
 

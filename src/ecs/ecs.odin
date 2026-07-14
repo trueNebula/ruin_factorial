@@ -210,7 +210,7 @@ deleteComponentInternal :: proc(world: ^World, entityId: u32, tid: typeid) {
 
 @(private)
 getNextId :: proc(world: ^World) -> u32 {
-	if len(world.idQueue == 0) {
+	if len(world.idQueue) == 0 {
 		assert(world.nextId != MAX_ENTITIES + 1, "Tried to create more entities than allowed!")
 		id := world.nextId
 		world.nextId += 1
