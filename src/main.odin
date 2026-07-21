@@ -1,6 +1,7 @@
 package main
 
 import u "game_utils"
+import m "src:managers"
 import rl "vendor:raylib"
 
 main :: proc() {
@@ -16,15 +17,13 @@ main :: proc() {
 		rotation = 0.0,
 	}
 
+	sceneManager := m.MakeSceneManger()
+
 	for !rl.WindowShouldClose() {
 		u.fullscreenManager()
-		rl.BeginDrawing()
-		rl.BeginMode2D(camera)
-		{
-			rl.DrawTriangle(u.vec2{32, 32}, u.vec2{0, -64}, u.vec2{-32, 32}, rl.GREEN)
-		}
-		rl.EndMode2D()
-		rl.EndDrawing()
 
+		m.InputScene(&sceneManager)
+		m.UpdateScene(&sceneManager)
+		m.DrawScene(&sceneManager)
 	}
 }
