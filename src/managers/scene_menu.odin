@@ -30,6 +30,11 @@ updateMenuScene :: proc(manager: ^SceneManager) {
 }
 
 @(private)
+unloadMenuScene :: proc(manager: ^SceneManager) {
+
+}
+
+@(private)
 drawMenuScene :: proc(manager: ^SceneManager) {
 	{
 		rl.DrawRectanglePro(

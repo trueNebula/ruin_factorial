@@ -15,6 +15,11 @@ updateGameScene :: proc(manager: ^SceneManager) {
 }
 
 @(private)
+unloadGameScene :: proc(manager: ^SceneManager) {
+
+}
+
+@(private)
 drawGameScene :: proc(manager: ^SceneManager) {
 	{
 		rl.DrawRectanglePro(

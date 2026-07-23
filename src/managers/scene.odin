@@ -76,6 +76,16 @@ initNextScene :: proc(manager: ^SceneManager) {
 	}
 }
 
+@(private)
+unloadScene :: proc(manager: ^SceneManager) {
+	switch manager.current {
+	case .MENU:
+		unloadMenuScene(manager)
+	case .GAME:
+		unloadGameScene(manager)
+	}
+}
+
 InputScene :: proc(manager: ^SceneManager) {
 	if manager.transition.state != .NONE {
 		return
@@ -108,7 +118,7 @@ UpdateScene :: proc(manager: ^SceneManager) {
 	case .FADE_OUT:
 		transition.timer += dt
 		if transition.timer >= transition.duration {
-			// unload
+			unloadScene(manager)
 			manager.current = transition.nextScene
 			initNextScene(manager)
 			transition.state = .FADE_IN
