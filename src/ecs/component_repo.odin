@@ -18,3 +18,21 @@ Sprite :: struct {
 	texture: manager.Texture,
 	rect:    rl.Rectangle,
 }
+
+AnimationFrame :: struct {
+	rect:     rl.Rectangle,
+	duration: f32,
+}
+
+Animation :: struct {
+	frames: []AnimationFrame,
+	index:  int,
+	timer:  f32,
+}
+
+Tint :: struct {
+	start:    rl.Color,
+	dest:     rl.Color,
+	timer:    f32,
+	duration: f32,
+}

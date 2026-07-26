@@ -1,6 +1,7 @@
 package managers
 
 import "core:fmt"
+import "core:strings"
 import u "src:game_utils"
 import rl "vendor:raylib"
 
@@ -22,14 +23,16 @@ TextureManager :: struct {
 	data: map[Texture]TextureData,
 }
 
-CreateTextureManager :: proc() -> TextureManager {
+MakeTextureManager :: proc() -> TextureManager {
 	manager := TextureManager {
 		data = make(map[Texture]TextureData),
 	}
 	return manager
 }
 
-LoadTexture :: proc(manager: ^TextureManager, id: Texture, path: u.path) -> (err: bool) {
+LoadTexture :: proc(manager: ^TextureManager, id: Texture, partialPath: u.path) -> (err: bool) {
+	path := strings.concatenate({"assets/image/", partialPath})
+
 	if texData, ok := manager.data[id]; ok {
 		fmt.println(
 			"Texture with id %s is already loaded! Loaded path: %s, provided path: %s. Overwriting!",
@@ -65,4 +68,15 @@ UnloadTexture :: proc(manager: ^TextureManager, id: Texture) -> (err: bool) {
 	rl.UnloadTexture(manager.data[id].resource)
 	delete_key(&manager.data, id)
 	return false
+}
+
+GetTexture :: proc(manager: ^TextureManager, id: Texture) -> (tex: rl.Texture2D, err: bool) {
+	texData, ok := manager.data[id]
+
+	if !ok {
+		fmt.println("Tried getting texture with id %s that was not loaded!", id)
+		return {}, true
+	}
+
+	return texData.resource, false
 }

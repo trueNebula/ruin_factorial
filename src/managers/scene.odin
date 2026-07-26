@@ -32,12 +32,13 @@ Transition :: struct {
 }
 
 SceneManager :: struct {
-	current:    SceneId,
-	transition: Transition,
-	data:       Scene,
+	current:        SceneId,
+	transition:     Transition,
+	data:           Scene,
+	textureManager: ^TextureManager,
 }
 
-MakeSceneManger :: proc() -> SceneManager {
+MakeSceneManger :: proc(texMan: ^TextureManager) -> SceneManager {
 	manager := SceneManager {
 		current = .MENU,
 		transition = Transition {
@@ -46,6 +47,7 @@ MakeSceneManger :: proc() -> SceneManager {
 			duration = FAST_DURATION,
 			nextScene = .MENU,
 		},
+		textureManager = texMan,
 	}
 
 	loadMenuScene(&manager)
@@ -72,7 +74,7 @@ initNextScene :: proc(manager: ^SceneManager) {
 	case .MENU:
 		manager.data = initMenuScene()
 	case .GAME:
-		manager.data = GameScene{}
+		manager.data = initGameScene(manager)
 	}
 }
 
@@ -109,7 +111,7 @@ UpdateScene :: proc(manager: ^SceneManager) {
 	case .MENU:
 		updateMenuScene(manager)
 	case .GAME:
-
+		updateGameScene(manager)
 	}
 
 	transition := &manager.transition

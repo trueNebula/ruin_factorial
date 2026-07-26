@@ -17,7 +17,8 @@ main :: proc() {
 		rotation = 0.0,
 	}
 
-	sceneManager := m.MakeSceneManger()
+	textureManager := m.MakeTextureManager()
+	sceneManager := m.MakeSceneManger(&textureManager)
 
 	for !rl.WindowShouldClose() {
 		u.fullscreenManager()

@@ -2,7 +2,17 @@ package managers
 
 import rl "vendor:raylib"
 
-GameScene :: struct {}
+GameScene :: struct {
+	// Game state goes here
+}
+
+@(private)
+initGameScene :: proc(manager: ^SceneManager) -> GameScene {
+	texMan := manager.textureManager
+
+	LoadTexture(texMan, .PLAYER, "player.png")
+	return {}
+}
 
 @(private)
 loadGameScene :: proc(manager: ^SceneManager) {
@@ -16,7 +26,10 @@ updateGameScene :: proc(manager: ^SceneManager) {
 
 @(private)
 unloadGameScene :: proc(manager: ^SceneManager) {
-
+	texMan := manager.textureManager
+	for id, _ in texMan.data {
+		UnloadTexture(texMan, id)
+	}
 }
 
 @(private)
@@ -27,6 +40,21 @@ drawGameScene :: proc(manager: ^SceneManager) {
 			{0, 0},
 			0.0,
 			rl.RED,
+		)
+		tex, err := GetTexture(manager.textureManager, .PLAYER)
+		if err do return
+		rl.DrawTexturePro(
+			tex,
+			{x = 0, y = 0, width = 16, height = 16},
+			{
+				x = f32(rl.GetScreenWidth()) / 2 - 8,
+				y = f32(rl.GetScreenHeight()) / 2 - 8,
+				width = 16,
+				height = 16,
+			},
+			{0, 0},
+			0,
+			rl.WHITE,
 		)
 	}
 }

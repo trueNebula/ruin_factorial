@@ -8,7 +8,7 @@ testLoadTexture :: proc(t: ^testing.T) {
 	rl.SetConfigFlags({.WINDOW_HIDDEN})
 	rl.InitWindow(1, 1, "Test Window")
 	{
-		texManager := CreateTextureManager()
+		texManager := MakeTextureManager()
 
 		id := Texture.TEST
 		path := "assets/image/test.png"

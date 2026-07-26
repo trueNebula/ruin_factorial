@@ -7,6 +7,7 @@ Component :: union {
 	EntityRef,
 	Transform,
 	Sprite,
+	Animation,
 }
 
 ComponentMask :: [4]u64
