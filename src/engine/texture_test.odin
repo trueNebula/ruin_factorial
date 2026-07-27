@@ -1,6 +1,7 @@
-package managers
+package engine
 
 import "core:testing"
+import "src:ecs"
 import rl "vendor:raylib"
 
 @(test)
@@ -8,15 +9,16 @@ testLoadTexture :: proc(t: ^testing.T) {
 	rl.SetConfigFlags({.WINDOW_HIDDEN})
 	rl.InitWindow(1, 1, "Test Window")
 	{
-		texManager := MakeTextureManager()
+		engine := MakeEngine()
+		texManager := &engine.textureManager
 
-		id := Texture.TEST
+		id := ecs.Texture.TEST
 		path := "assets/image/test.png"
 
-		LoadTexture(&texManager, id, path)
+		LoadTexture(&engine, id, path)
 		testing.expect(t, texManager.data[id].path == path)
 		testing.expect(t, texManager.data[id].resource != {})
-		UnloadTexture(&texManager, id)
+		UnloadTexture(&engine, id)
 	}
 	rl.CloseWindow()
 }

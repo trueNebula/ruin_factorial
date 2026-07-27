@@ -1,18 +1,10 @@
-package managers
+package engine
 
 import "core:fmt"
 import "core:strings"
+import "src:ecs"
 import u "src:game_utils"
 import rl "vendor:raylib"
-
-Texture :: enum {
-	UNKNOWN,
-	TEST,
-	PLAYER,
-	TILE,
-	ITEM,
-	BLOCK,
-}
 
 TextureData :: struct {
 	path:     u.path,
@@ -20,20 +12,21 @@ TextureData :: struct {
 }
 
 TextureManager :: struct {
-	data: map[Texture]TextureData,
+	data: map[ecs.Texture]TextureData,
 }
 
 MakeTextureManager :: proc() -> TextureManager {
 	manager := TextureManager {
-		data = make(map[Texture]TextureData),
+		data = make(map[ecs.Texture]TextureData),
 	}
 	return manager
 }
 
-LoadTexture :: proc(manager: ^TextureManager, id: Texture, partialPath: u.path) -> (err: bool) {
+LoadTexture :: proc(engine: ^Engine, id: ecs.Texture, partialPath: u.path) -> (err: bool) {
+	texMan := engine.textureManager
 	path := strings.concatenate({"assets/image/", partialPath})
 
-	if texData, ok := manager.data[id]; ok {
+	if texData, ok := texMan.data[id]; ok {
 		fmt.println(
 			"Texture with id %s is already loaded! Loaded path: %s, provided path: %s. Overwriting!",
 			id,
@@ -49,7 +42,7 @@ LoadTexture :: proc(manager: ^TextureManager, id: Texture, partialPath: u.path) 
 		return true
 	}
 
-	manager.data[id] = TextureData {
+	texMan.data[id] = TextureData {
 		path     = path,
 		resource = rlTex,
 	}
@@ -57,21 +50,23 @@ LoadTexture :: proc(manager: ^TextureManager, id: Texture, partialPath: u.path) 
 	return false
 }
 
-UnloadTexture :: proc(manager: ^TextureManager, id: Texture) -> (err: bool) {
-	texData, ok := manager.data[id]
+UnloadTexture :: proc(engine: ^Engine, id: ecs.Texture) -> (err: bool) {
+	texMan := engine.textureManager
+	texData, ok := texMan.data[id]
 
 	if !ok {
 		fmt.print("Tried unloading texture with id %s that was not loaded!", id)
 		return true
 	}
 
-	rl.UnloadTexture(manager.data[id].resource)
-	delete_key(&manager.data, id)
+	rl.UnloadTexture(texMan.data[id].resource)
+	delete_key(&texMan.data, id)
 	return false
 }
 
-GetTexture :: proc(manager: ^TextureManager, id: Texture) -> (tex: rl.Texture2D, err: bool) {
-	texData, ok := manager.data[id]
+GetTexture :: proc(engine: ^Engine, id: ecs.Texture) -> (tex: rl.Texture2D, err: bool) {
+	texMan := engine.textureManager
+	texData, ok := texMan.data[id]
 
 	if !ok {
 		fmt.println("Tried getting texture with id %s that was not loaded!", id)

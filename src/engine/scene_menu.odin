@@ -1,4 +1,4 @@
-package managers
+package engine
 
 import rl "vendor:raylib"
 
@@ -19,23 +19,23 @@ initMenuScene :: proc() -> MenuScene {
 }
 
 @(private)
-loadMenuScene :: proc(manager: ^SceneManager) {
-	triggerSceneTransition(manager, .MENU)
+loadMenuScene :: proc(engine: ^Engine) {
+	triggerSceneTransition(engine, .MENU)
 }
 
 @(private)
-updateMenuScene :: proc(manager: ^SceneManager) {
+updateMenuScene :: proc(engine: ^Engine) {
 	// set data for current frame
 
 }
 
 @(private)
-unloadMenuScene :: proc(manager: ^SceneManager) {
+unloadMenuScene :: proc(engine: ^Engine) {
 
 }
 
 @(private)
-drawMenuScene :: proc(manager: ^SceneManager) {
+drawMenuScene :: proc(engine: ^Engine) {
 	{
 		rl.DrawRectanglePro(
 			rl.Rectangle{x = 0, y = 0, width = 64, height = 64},

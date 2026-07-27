@@ -1,6 +1,5 @@
 package ecs
 
-import manager "src:managers"
 import rl "vendor:raylib"
 
 EntityRef :: struct {
@@ -15,7 +14,7 @@ Transform :: struct {
 }
 
 Sprite :: struct {
-	texture: manager.Texture,
+	texture: Texture,
 	rect:    rl.Rectangle,
 }
 

@@ -1,7 +1,7 @@
 package main
 
 import u "game_utils"
-import m "src:managers"
+import "src:engine"
 import rl "vendor:raylib"
 
 main :: proc() {
@@ -17,14 +17,13 @@ main :: proc() {
 		rotation = 0.0,
 	}
 
-	textureManager := m.MakeTextureManager()
-	sceneManager := m.MakeSceneManger(&textureManager)
+	Engine := engine.MakeEngine()
 
 	for !rl.WindowShouldClose() {
 		u.fullscreenManager()
 
-		m.InputScene(&sceneManager)
-		m.UpdateScene(&sceneManager)
-		m.DrawScene(&sceneManager)
+		engine.InputScene(&Engine)
+		engine.UpdateScene(&Engine)
+		engine.DrawScene(&Engine)
 	}
 }

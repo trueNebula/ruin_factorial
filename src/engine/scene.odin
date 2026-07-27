@@ -1,4 +1,4 @@
-package managers
+package engine
 
 import "core:math/linalg"
 import "src:game_utils"
@@ -32,14 +32,13 @@ Transition :: struct {
 }
 
 SceneManager :: struct {
-	current:        SceneId,
-	transition:     Transition,
-	data:           Scene,
-	textureManager: ^TextureManager,
+	current:    SceneId,
+	transition: Transition,
+	data:       Scene,
 }
 
-MakeSceneManger :: proc(texMan: ^TextureManager) -> SceneManager {
-	manager := SceneManager {
+MakeSceneManger :: proc() -> SceneManager {
+	sceneMan := SceneManager {
 		current = .MENU,
 		transition = Transition {
 			state = .FADE_IN,
@@ -47,20 +46,19 @@ MakeSceneManger :: proc(texMan: ^TextureManager) -> SceneManager {
 			duration = FAST_DURATION,
 			nextScene = .MENU,
 		},
-		textureManager = texMan,
 	}
 
-	loadMenuScene(&manager)
-	return manager
+	return sceneMan
 }
 
 @(private)
-triggerSceneTransition :: proc(manager: ^SceneManager, target: SceneId) {
-	if manager.transition.state != .NONE {
+triggerSceneTransition :: proc(engine: ^Engine, target: SceneId) {
+	sceneMan := engine.sceneManager
+	if sceneMan.transition.state != .NONE {
 		return
 	}
 
-	manager.transition = Transition {
+	sceneMan.transition = Transition {
 		state     = .FADE_OUT,
 		timer     = 0.0,
 		duration  = BASE_DURATION,
@@ -69,60 +67,64 @@ triggerSceneTransition :: proc(manager: ^SceneManager, target: SceneId) {
 }
 
 @(private)
-initNextScene :: proc(manager: ^SceneManager) {
-	switch manager.transition.nextScene {
+initNextScene :: proc(engine: ^Engine) {
+	sceneMan := engine.sceneManager
+	switch sceneMan.transition.nextScene {
 	case .MENU:
-		manager.data = initMenuScene()
+		sceneMan.data = initMenuScene()
 	case .GAME:
-		manager.data = initGameScene(manager)
+		sceneMan.data = initGameScene(engine)
 	}
 }
 
 @(private)
-unloadScene :: proc(manager: ^SceneManager) {
-	switch manager.current {
+unloadScene :: proc(engine: ^Engine) {
+	sceneMan := engine.sceneManager
+	switch sceneMan.current {
 	case .MENU:
-		unloadMenuScene(manager)
+		unloadMenuScene(engine)
 	case .GAME:
-		unloadGameScene(manager)
+		unloadGameScene(engine)
 	}
 }
 
-InputScene :: proc(manager: ^SceneManager) {
-	if manager.transition.state != .NONE {
+InputScene :: proc(engine: ^Engine) {
+	sceneMan := engine.sceneManager
+	if sceneMan.transition.state != .NONE {
 		return
 	}
-	switch manager.current {
+	switch sceneMan.current {
 	case .MENU:
 		if rl.IsMouseButtonPressed(.LEFT) {
-			loadGameScene(manager)
+			loadGameScene(engine)
 		}
 	case .GAME:
 		if rl.IsKeyPressed(.ENTER) {
-			loadMenuScene(manager)
+			loadMenuScene(engine)
 		}
 	}
 }
 
-UpdateScene :: proc(manager: ^SceneManager) {
+UpdateScene :: proc(engine: ^Engine) {
+	sceneMan := engine.sceneManager
 	dt := rl.GetFrameTime()
 
-	switch manager.current {
+	switch sceneMan.current {
 	case .MENU:
-		updateMenuScene(manager)
+		updateMenuScene(engine)
 	case .GAME:
-		updateGameScene(manager)
+		updateGameScene(engine)
 	}
 
-	transition := &manager.transition
+	transition := &sceneMan.transition
 	switch transition.state {
 	case .NONE:
 	case .FADE_OUT:
 		transition.timer += dt
 		if transition.timer >= transition.duration {
-			unloadScene(manager)
-			manager.current = transition.nextScene
-			initNextScene(manager)
+			unloadScene(engine)
+			sceneMan.current = transition.nextScene
+			initNextScene(engine)
 			transition.state = .FADE_IN
 			transition.duration = FAST_DURATION
 			transition.timer = 0.0
@@ -136,18 +138,19 @@ UpdateScene :: proc(manager: ^SceneManager) {
 	}
 }
 
-DrawScene :: proc(manager: ^SceneManager) {
+DrawScene :: proc(engine: ^Engine) {
+	sceneMan := engine.sceneManager
 	dt := rl.GetFrameTime()
 
 	rl.BeginDrawing()
-	switch manager.current {
+	switch sceneMan.current {
 	case .MENU:
-		drawMenuScene(manager)
+		drawMenuScene(engine)
 	case .GAME:
-		drawGameScene(manager)
+		drawGameScene(engine)
 	}
 
-	transition := &manager.transition
+	transition := &sceneMan.transition
 	switch transition.state {
 	case .NONE:
 	case .FADE_OUT:
