@@ -52,8 +52,11 @@ MakeSceneManger :: proc(texMan: ^texture.TextureManager, world: ^ecs.World) -> S
 		textureManager = texMan,
 		world = world,
 	}
-	loadMenuScene(&sceneMan)
 	return sceneMan
+}
+
+LoadFirstScene :: proc(sceneMan: ^SceneManager) {
+	loadMenuScene(sceneMan)
 }
 
 @(private)

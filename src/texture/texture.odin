@@ -31,7 +31,8 @@ LoadTexture :: proc(
 ) {
 	path := strings.concatenate({"assets/image/", partialPath})
 
-	if texData, ok := texMan.data[id]; ok {
+	if id in texMan.data {
+		texData := texMan.data[id]
 		fmt.println(
 			"Texture with id %s is already loaded! Loaded path: %s, provided path: %s. Overwriting!",
 			id,
@@ -42,7 +43,7 @@ LoadTexture :: proc(
 
 	rlTex := rl.LoadTexture(rl.TextFormat("%s", path))
 
-	if rlTex == {} {
+	if rlTex.id == 0 {
 		fmt.println("Tried loading texture at path %s, not found!", path)
 		return true
 	}

@@ -5,7 +5,7 @@ import "src:engine"
 import rl "vendor:raylib"
 
 main :: proc() {
-	rl.SetWindowState({.WINDOW_RESIZABLE})
+	rl.SetConfigFlags({.WINDOW_RESIZABLE})
 	rl.InitWindow(u.WindowDefaults.width, u.WindowDefaults.height, u.WindowDefaults.title)
 	rl.SetWindowMinSize(u.WindowDefaults.minWidth, u.WindowDefaults.minHeight)
 	defer rl.CloseWindow()
