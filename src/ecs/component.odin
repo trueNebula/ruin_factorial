@@ -2,12 +2,13 @@ package ecs
 
 import "base:runtime"
 import "core:reflect"
+import "src:core"
 
 Component :: union {
-	EntityRef,
-	Transform,
-	Sprite,
-	Animation,
+	core.EntityRef,
+	core.Transform,
+	core.Sprite,
+	core.Animation,
 }
 
 ComponentMask :: [4]u64

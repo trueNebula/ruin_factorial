@@ -1,5 +1,6 @@
-package engine
+package scene
 
+import t "src:texture"
 import rl "vendor:raylib"
 
 GameScene :: struct {
@@ -7,34 +8,33 @@ GameScene :: struct {
 }
 
 @(private)
-initGameScene :: proc(engine: ^Engine) -> GameScene {
-	sceneMan := engine.sceneManager
-	texMan := engine.textureManager
-
-	LoadTexture(engine, .PLAYER, "player.png")
+initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
+	texMan := sceneMan.textureManager
+	t.LoadTexture(texMan, .PLAYER, "player.png")
 	return {}
 }
 
 @(private)
-loadGameScene :: proc(engine: ^Engine) {
-	triggerSceneTransition(engine, .GAME)
+loadGameScene :: proc(sceneMan: ^SceneManager) {
+	triggerSceneTransition(sceneMan, .GAME)
 }
 
 @(private)
-updateGameScene :: proc(engine: ^Engine) {
+updateGameScene :: proc(sceneMan: ^SceneManager) {
 	// set data for current frame
 }
 
 @(private)
-unloadGameScene :: proc(engine: ^Engine) {
-	texMan := engine.textureManager
+unloadGameScene :: proc(sceneMan: ^SceneManager) {
+	texMan := sceneMan.textureManager
 	for id, _ in texMan.data {
-		UnloadTexture(engine, id)
+		t.UnloadTexture(texMan, id)
 	}
 }
 
 @(private)
-drawGameScene :: proc(engine: ^Engine) {
+drawGameScene :: proc(sceneMan: ^SceneManager) {
+	texMan := sceneMan.textureManager
 	{
 		rl.DrawRectanglePro(
 			rl.Rectangle{x = 0, y = 0, width = 64, height = 64},
@@ -42,7 +42,7 @@ drawGameScene :: proc(engine: ^Engine) {
 			0.0,
 			rl.RED,
 		)
-		tex, err := GetTexture(engine, .PLAYER)
+		tex, err := t.GetTexture(texMan, .PLAYER)
 		if err do return
 		rl.DrawTexturePro(
 			tex,

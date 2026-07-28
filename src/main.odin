@@ -18,12 +18,5 @@ main :: proc() {
 	}
 
 	Engine := engine.MakeEngine()
-
-	for !rl.WindowShouldClose() {
-		u.fullscreenManager()
-
-		engine.InputScene(&Engine)
-		engine.UpdateScene(&Engine)
-		engine.DrawScene(&Engine)
-	}
+	engine.Run(&Engine)
 }

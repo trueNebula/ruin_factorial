@@ -1,8 +1,8 @@
-package engine
+package texture
 
 import "core:fmt"
 import "core:strings"
-import "src:ecs"
+import "src:core"
 import u "src:game_utils"
 import rl "vendor:raylib"
 
@@ -12,18 +12,23 @@ TextureData :: struct {
 }
 
 TextureManager :: struct {
-	data: map[ecs.Texture]TextureData,
+	data: map[core.Texture]TextureData,
 }
 
 MakeTextureManager :: proc() -> TextureManager {
 	manager := TextureManager {
-		data = make(map[ecs.Texture]TextureData),
+		data = make(map[core.Texture]TextureData),
 	}
 	return manager
 }
 
-LoadTexture :: proc(engine: ^Engine, id: ecs.Texture, partialPath: u.path) -> (err: bool) {
-	texMan := engine.textureManager
+LoadTexture :: proc(
+	texMan: ^TextureManager,
+	id: core.Texture,
+	partialPath: u.path,
+) -> (
+	err: bool,
+) {
 	path := strings.concatenate({"assets/image/", partialPath})
 
 	if texData, ok := texMan.data[id]; ok {
@@ -50,8 +55,7 @@ LoadTexture :: proc(engine: ^Engine, id: ecs.Texture, partialPath: u.path) -> (e
 	return false
 }
 
-UnloadTexture :: proc(engine: ^Engine, id: ecs.Texture) -> (err: bool) {
-	texMan := engine.textureManager
+UnloadTexture :: proc(texMan: ^TextureManager, id: core.Texture) -> (err: bool) {
 	texData, ok := texMan.data[id]
 
 	if !ok {
@@ -64,8 +68,7 @@ UnloadTexture :: proc(engine: ^Engine, id: ecs.Texture) -> (err: bool) {
 	return false
 }
 
-GetTexture :: proc(engine: ^Engine, id: ecs.Texture) -> (tex: rl.Texture2D, err: bool) {
-	texMan := engine.textureManager
+GetTexture :: proc(texMan: ^TextureManager, id: core.Texture) -> (tex: rl.Texture2D, err: bool) {
 	texData, ok := texMan.data[id]
 
 	if !ok {

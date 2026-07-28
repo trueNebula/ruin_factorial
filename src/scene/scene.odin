@@ -1,8 +1,8 @@
-package engine
+package scene
 
-import "core:math/linalg"
-import "src:game_utils"
+import "src:ecs"
 import "src:neb_utils"
+import "src:texture"
 import rl "vendor:raylib"
 
 SceneId :: enum {
@@ -32,12 +32,15 @@ Transition :: struct {
 }
 
 SceneManager :: struct {
-	current:    SceneId,
-	transition: Transition,
-	data:       Scene,
+	current:        SceneId,
+	transition:     Transition,
+	data:           Scene,
+	// Context pointers
+	textureManager: ^texture.TextureManager,
+	world:          ^ecs.World,
 }
 
-MakeSceneManger :: proc() -> SceneManager {
+MakeSceneManger :: proc(texMan: ^texture.TextureManager, world: ^ecs.World) -> SceneManager {
 	sceneMan := SceneManager {
 		current = .MENU,
 		transition = Transition {
@@ -46,14 +49,15 @@ MakeSceneManger :: proc() -> SceneManager {
 			duration = FAST_DURATION,
 			nextScene = .MENU,
 		},
+		textureManager = texMan,
+		world = world,
 	}
-
+	loadMenuScene(&sceneMan)
 	return sceneMan
 }
 
 @(private)
-triggerSceneTransition :: proc(engine: ^Engine, target: SceneId) {
-	sceneMan := engine.sceneManager
+triggerSceneTransition :: proc(sceneMan: ^SceneManager, target: SceneId) {
 	if sceneMan.transition.state != .NONE {
 		return
 	}
@@ -67,53 +71,50 @@ triggerSceneTransition :: proc(engine: ^Engine, target: SceneId) {
 }
 
 @(private)
-initNextScene :: proc(engine: ^Engine) {
-	sceneMan := engine.sceneManager
+initNextScene :: proc(sceneMan: ^SceneManager) {
 	switch sceneMan.transition.nextScene {
 	case .MENU:
 		sceneMan.data = initMenuScene()
 	case .GAME:
-		sceneMan.data = initGameScene(engine)
+		sceneMan.data = initGameScene(sceneMan)
 	}
 }
 
 @(private)
-unloadScene :: proc(engine: ^Engine) {
-	sceneMan := engine.sceneManager
+unloadScene :: proc(sceneMan: ^SceneManager) {
 	switch sceneMan.current {
 	case .MENU:
-		unloadMenuScene(engine)
+		unloadMenuScene(sceneMan)
 	case .GAME:
-		unloadGameScene(engine)
+		unloadGameScene(sceneMan)
 	}
 }
 
-InputScene :: proc(engine: ^Engine) {
-	sceneMan := engine.sceneManager
+Input :: proc(sceneMan: ^SceneManager) {
 	if sceneMan.transition.state != .NONE {
 		return
 	}
 	switch sceneMan.current {
 	case .MENU:
 		if rl.IsMouseButtonPressed(.LEFT) {
-			loadGameScene(engine)
+			loadGameScene(sceneMan)
 		}
 	case .GAME:
 		if rl.IsKeyPressed(.ENTER) {
-			loadMenuScene(engine)
+			loadMenuScene(sceneMan)
 		}
 	}
 }
 
-UpdateScene :: proc(engine: ^Engine) {
-	sceneMan := engine.sceneManager
+Update :: proc(sceneMan: ^SceneManager) {
 	dt := rl.GetFrameTime()
 
+	// TODO: maybe remove these? they may not be necessary
 	switch sceneMan.current {
 	case .MENU:
-		updateMenuScene(engine)
+		updateMenuScene(sceneMan)
 	case .GAME:
-		updateGameScene(engine)
+		updateGameScene(sceneMan)
 	}
 
 	transition := &sceneMan.transition
@@ -122,9 +123,9 @@ UpdateScene :: proc(engine: ^Engine) {
 	case .FADE_OUT:
 		transition.timer += dt
 		if transition.timer >= transition.duration {
-			unloadScene(engine)
+			unloadScene(sceneMan)
 			sceneMan.current = transition.nextScene
-			initNextScene(engine)
+			initNextScene(sceneMan)
 			transition.state = .FADE_IN
 			transition.duration = FAST_DURATION
 			transition.timer = 0.0
@@ -138,19 +139,10 @@ UpdateScene :: proc(engine: ^Engine) {
 	}
 }
 
-DrawScene :: proc(engine: ^Engine) {
-	sceneMan := engine.sceneManager
+DrawTransition :: proc(sceneMan: ^SceneManager) {
 	dt := rl.GetFrameTime()
-
-	rl.BeginDrawing()
-	switch sceneMan.current {
-	case .MENU:
-		drawMenuScene(engine)
-	case .GAME:
-		drawGameScene(engine)
-	}
-
 	transition := &sceneMan.transition
+
 	switch transition.state {
 	case .NONE:
 	case .FADE_OUT:
@@ -160,6 +152,4 @@ DrawScene :: proc(engine: ^Engine) {
 		alpha := neb_utils.OpacityLerp(255, 0, transition.timer / transition.duration)
 		rl.DrawRectangle(0, 0, rl.GetScreenWidth(), rl.GetScreenHeight(), {0, 0, 0, alpha})
 	}
-
-	rl.EndDrawing()
 }
