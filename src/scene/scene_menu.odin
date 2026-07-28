@@ -26,22 +26,9 @@ loadMenuScene :: proc(sceneMan: ^SceneManager) {
 @(private)
 updateMenuScene :: proc(sceneMan: ^SceneManager) {
 	// set data for current frame
-
 }
 
 @(private)
 unloadMenuScene :: proc(sceneMan: ^SceneManager) {
 
-}
-
-@(private)
-drawMenuScene :: proc(sceneMan: ^SceneManager) {
-	{
-		rl.DrawRectanglePro(
-			rl.Rectangle{x = 0, y = 0, width = 64, height = 64},
-			{0, 0},
-			0.0,
-			rl.GREEN,
-		)
-	}
 }
