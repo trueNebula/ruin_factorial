@@ -14,13 +14,37 @@
     },
     {
       "label": "Build",
-      "dependsOn": ["build"]
+      "dependsOn": [
+        "build"
+      ]
     },
     {
       "label": "Run Main (Windows)",
       "type": "shell",
       "command": "odin.exe",
-      "args": ["run", "${cwd}/src/main.odin", "-file", "-collection:src=src"],
+      "args": [
+        "run",
+        "${cwd}/src/main.odin",
+        "-file",
+        "-collection:src=src"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "detail": "Run project"
+    },
+    {
+      "label": "Run Main (Linux)",
+      "type": "shell",
+      "command": "odin",
+      "args": [
+        "run",
+        "${cwd}/src/main.odin",
+        "-file",
+        "-collection:src=src"
+      ],
       "group": {
         "kind": "test",
         "isDefault": true
