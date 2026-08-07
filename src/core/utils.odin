@@ -20,6 +20,10 @@ RectAdd :: proc(r1: rl.Rectangle, r2: rl.Rectangle) -> rl.Rectangle {
 	return rect
 }
 
+MoveRect :: proc(r: rl.Rectangle, offset: rl.Vector2) -> rl.Rectangle {
+	return {x = r.x + offset.x, y = r.y + offset.y, width = r.width, height = r.height}
+}
+
 GetDestRect :: proc(t: Transform, s: Sprite) -> rl.Rectangle {
 	rect := rl.Rectangle {
 		x      = t.x,
@@ -29,4 +33,16 @@ GetDestRect :: proc(t: Transform, s: Sprite) -> rl.Rectangle {
 	}
 
 	return rect
+}
+
+Rect2Vec :: proc(r: rl.Rectangle) -> rl.Vector2 {
+	return {r.x, r.y}
+}
+
+Rect2Size :: proc(r: rl.Rectangle) -> rl.Vector2 {
+	return {r.width, r.height}
+}
+
+GetScreenCenter :: proc() -> rl.Vector2 {
+	return {f32(rl.GetScreenWidth() / 2), f32(rl.GetScreenHeight() / 2)}
 }

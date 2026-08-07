@@ -7,6 +7,10 @@ EntityRef :: struct {
 	gen: u32,
 }
 
+PlayerRef :: struct {
+	id: u32,
+}
+
 Transform :: struct {
 	x, y:         f32,
 	rotation:     f32,
@@ -16,6 +20,7 @@ Transform :: struct {
 Sprite :: struct {
 	texture: Texture,
 	rect:    rl.Rectangle,
+	anchor:  Anchor,
 }
 
 AnimationFrame :: struct {
@@ -34,4 +39,14 @@ Tint :: struct {
 	dest:     rl.Color,
 	timer:    f32,
 	duration: f32,
+}
+
+Keybinds :: struct {
+	Up, Down, Left, Right: rl.KeyboardKey,
+	Inventory, Menu:       rl.KeyboardKey,
+	Action, Interact:      rl.MouseButton,
+}
+
+Camera :: struct {
+	camera: rl.Camera2D,
 }

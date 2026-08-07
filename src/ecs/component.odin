@@ -9,6 +9,8 @@ Component :: union {
 	core.Transform,
 	core.Sprite,
 	core.Animation,
+	core.PlayerRef,
+	core.Camera,
 }
 
 ComponentMask :: [4]u64

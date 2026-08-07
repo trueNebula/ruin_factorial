@@ -1,8 +1,8 @@
 package engine
 
+import "src:core"
 import "src:ecs"
 import u "src:game_utils"
-import "src:render"
 import "src:scene"
 import "src:texture"
 import rl "vendor:raylib"
@@ -50,7 +50,15 @@ Run :: proc(engine: ^Engine) {
 		case .MENU:
 		// TODO: add menu scene rendering
 		case .GAME:
+			view := ecs.View2(engine.world, core.PlayerRef, core.Camera)
+			if len(view) == 0 {
+				// No camera set up yet, skip rendering
+				break
+			}
+			camera := view[0].c2
+			rl.BeginMode2D(camera.camera)
 			ecs.ProcessRender(engine.world, engine.textureManager)
+			rl.EndMode2D()
 		}
 
 		scene.DrawTransition(engine.sceneManager)

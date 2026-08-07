@@ -14,6 +14,14 @@ RenderSprites :: proc(world: ^ecs.World, texMan: ^texture.TextureManager) {
 			texMan := cast(^texture.TextureManager)userData
 			tex, err := texture.GetTexture(texMan, sprite.texture)
 			dest := core.GetDestRect(transform^, sprite^)
+			spriteSize := core.Rect2Size(dest)
+
+			switch sprite.anchor {
+			case .CENTER:
+				dest = core.MoveRect(dest, -spriteSize / 2)
+			case .BOTTOM_LEFT:
+				dest = core.MoveRect(dest, -spriteSize)
+			}
 
 			if (err) {
 				log.Err(

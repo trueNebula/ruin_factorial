@@ -8,3 +8,8 @@ Texture :: enum {
 	ITEM,
 	BLOCK,
 }
+
+Anchor :: enum {
+	BOTTOM_LEFT,
+	CENTER,
+}
