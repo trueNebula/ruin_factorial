@@ -43,7 +43,8 @@
         "run",
         "${cwd}/src/main.odin",
         "-file",
-        "-collection:src=src"
+        "-collection:src=src",
+        "-debug"
       ],
       "group": {
         "kind": "test",

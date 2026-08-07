@@ -2,6 +2,7 @@ package main
 
 import u "game_utils"
 import "src:engine"
+import "src:log"
 import rl "vendor:raylib"
 
 main :: proc() {
@@ -17,6 +18,10 @@ main :: proc() {
 		rotation = 0.0,
 	}
 
+	log.Init()
+	log.Err("test")
+
 	Engine := engine.MakeEngine()
 	engine.Run(&Engine)
+	log.Shutdown()
 }
