@@ -19,8 +19,6 @@ main :: proc() {
 	}
 
 	log.Init()
-	log.Err("test")
-
 	Engine := engine.MakeEngine()
 	engine.Run(&Engine)
 	log.Shutdown()
