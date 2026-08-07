@@ -1,6 +1,0 @@
-[ERR]: test
-	#0 main::main at /home/dov36/Projects/ruin_factorial/src/main.odin(22)
-	#1 main at /home/dov36/Projects/Odin/base/runtime/entry_unix.odin(60)
-	#2 +0x27d0e at /usr/lib/libc.so.6
-	#3 __libc_start_main at /usr/lib/libc.so.6
-	#4 _start at /home/dov36/Projects/ruin_factorial/main.bin

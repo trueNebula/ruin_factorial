@@ -3,12 +3,10 @@ package neb_utils
 import "base:runtime"
 import "core:math/rand"
 
-@(private)
-generatorState: rand.Default_Random_State
-
 InitSeededGenerator :: proc(seed: u64) -> runtime.Random_Generator {
-	generatorState = rand.create_u64(seed)
-	return runtime.default_random_generator(&generatorState)
+	generatorState := new(rand.Default_Random_State)
+	generatorState^ = rand.create_u64(seed)
+	return runtime.default_random_generator(generatorState)
 }
 
 RandomRange :: proc(

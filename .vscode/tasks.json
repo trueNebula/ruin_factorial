@@ -52,6 +52,23 @@
       },
       "problemMatcher": [],
       "detail": "Run project"
+    },
+    {
+      "label": "Run Tests",
+      "type": "shell",
+      "command": "odin",
+      "args": [
+        "test",
+        "${cwd}/src",
+        "-collection:src=src",
+        "-all-packages"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "detail": "Run project"
     }
   ]
 }
