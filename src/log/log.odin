@@ -131,7 +131,7 @@ baseLog :: proc(
 	os.write(FILE_HANDLE, stringData)
 	fmt.print(BOLD, col, ansi.SGR, mark, " " + MID + ansi.SGR, baseString, END, sep = "")
 
-	traceCnt := level == .ERROR ? -1 : 1
+	traceCnt := level == .ERROR ? -1 : 2
 	printTrace(traceCnt)
 
 	if (panic) {

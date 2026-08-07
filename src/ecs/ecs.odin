@@ -23,7 +23,7 @@ World :: struct {
 	batch:      BatchManager,
 	setup:      [dynamic]System,
 	tick:       [dynamic]System,
-	render:     [dynamic]System,
+	render:     [dynamic]RenderSystem,
 }
 
 CreateWorld :: proc() -> World {

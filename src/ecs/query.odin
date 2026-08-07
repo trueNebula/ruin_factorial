@@ -4,7 +4,7 @@ package ecs
  * Queries
  * Runs a proc over every entity that has the given components
  */
-Query1 :: proc(world: ^World, system: proc(c1: ^$T1)) {
+Query1 :: proc(world: ^World, userdata: rawptr, system: proc(c1: ^$T1, userdata: rawptr)) {
 	tids := []typeid{typeid_of(T1)}
 	mask := computeMask(world, tids)
 
@@ -17,13 +17,16 @@ Query1 :: proc(world: ^World, system: proc(c1: ^$T1)) {
 
 		for _, entIdx in arch.entities {
 			p1 := (^T1)(&col1[entIdx * s1])
-
-			system(p1)
+			system(p1, userdata)
 		}
 	}
 }
 
-Query2 :: proc(world: ^World, system: proc(c1: ^$T1, c2: ^$T2)) {
+Query2 :: proc(
+	world: ^World,
+	userdata: rawptr,
+	system: proc(c1: ^$T1, c2: ^$T2, userdata: rawptr),
+) {
 	tids := []typeid{typeid_of(T1), typeid_of(T2)}
 	mask := computeMask(world, tids)
 
@@ -39,13 +42,16 @@ Query2 :: proc(world: ^World, system: proc(c1: ^$T1, c2: ^$T2)) {
 		for _, entIdx in arch.entities {
 			p1 := (^T1)(&col1[entIdx * s1])
 			p2 := (^T2)(&col2[entIdx * s2])
-
-			system(p1, p2)
+			system(p1, p2, userdata)
 		}
 	}
 }
 
-Query3 :: proc(world: ^World, system: proc(c1: ^$T1, c2: ^$T2, c3: ^$T3)) {
+Query3 :: proc(
+	world: ^World,
+	userdata: rawptr,
+	system: proc(c1: ^$T1, c2: ^$T2, c3: ^$T3, userdata: rawptr),
+) {
 	tids := []typeid{typeid_of(T1), typeid_of(T2), typeid_of(T3)}
 	mask := computeMask(world, tids)
 
@@ -64,13 +70,16 @@ Query3 :: proc(world: ^World, system: proc(c1: ^$T1, c2: ^$T2, c3: ^$T3)) {
 			p1 := (^T1)(&col1[entIdx * s1])
 			p2 := (^T2)(&col2[entIdx * s2])
 			p3 := (^T3)(&col3[entIdx * s3])
-
-			system(p1, p2, p3)
+			system(p1, p2, p3, userdata)
 		}
 	}
 }
 
-Query4 :: proc(world: ^World, system: proc(c1: ^$T1, c2: ^$T2, c3: ^$T3, c4: ^$T4)) {
+Query4 :: proc(
+	world: ^World,
+	userdata: rawptr,
+	system: proc(c1: ^$T1, c2: ^$T2, c3: ^$T3, c4: ^$T4, userdata: rawptr),
+) {
 	tids := []typeid{typeid_of(T1), typeid_of(T2), typeid_of(T3), typeid_of(T4)}
 	mask := computeMask(world, tids)
 
@@ -92,13 +101,16 @@ Query4 :: proc(world: ^World, system: proc(c1: ^$T1, c2: ^$T2, c3: ^$T3, c4: ^$T
 			p2 := (^T2)(&col2[entIdx * s2])
 			p3 := (^T3)(&col3[entIdx * s3])
 			p4 := (^T4)(&col4[entIdx * s4])
-
-			system(p1, p2, p3, p4)
+			system(p1, p2, p3, p4, userdata)
 		}
 	}
 }
 
-Query5 :: proc(world: ^World, system: proc(c1: ^$T1, c2: ^$T2, c3: ^$T3, c4: ^$T4, c5: ^$T5)) {
+Query5 :: proc(
+	world: ^World,
+	userdata: rawptr,
+	system: proc(c1: ^$T1, c2: ^$T2, c3: ^$T3, c4: ^$T4, c5: ^$T5, userdata: rawptr),
+) {
 	tids := []typeid{typeid_of(T1), typeid_of(T2), typeid_of(T3), typeid_of(T4), typeid_of(T5)}
 	mask := computeMask(world, tids)
 
@@ -123,8 +135,7 @@ Query5 :: proc(world: ^World, system: proc(c1: ^$T1, c2: ^$T2, c3: ^$T3, c4: ^$T
 			p3 := (^T3)(&col3[entIdx * s3])
 			p4 := (^T4)(&col4[entIdx * s4])
 			p5 := (^T5)(&col5[entIdx * s5])
-
-			system(p1, p2, p3, p4, p5)
+			system(p1, p2, p3, p4, p5, userdata)
 		}
 	}
 }

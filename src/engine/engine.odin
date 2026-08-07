@@ -1,7 +1,8 @@
 package engine
 
-import ecs "src:ecs"
+import "src:ecs"
 import u "src:game_utils"
+import "src:render"
 import "src:scene"
 import "src:texture"
 import rl "vendor:raylib"
@@ -44,8 +45,18 @@ Run :: proc(engine: ^Engine) {
 		update(engine)
 
 		rl.BeginDrawing()
+
+		switch engine.sceneManager.current {
+		case .MENU:
+		// TODO: add menu scene rendering
+		case .GAME:
+			ecs.ProcessRender(engine.world, engine.textureManager)
+		}
+
 		scene.DrawTransition(engine.sceneManager)
 		rl.EndDrawing()
+
+		ecs.FrameEnd(engine.world)
 	}
 }
 
