@@ -17,6 +17,8 @@ Transform :: struct {
 	sizeX, sizeY: f32,
 }
 
+Velocity :: rl.Vector2
+
 Sprite :: struct {
 	texture: Texture,
 	rect:    rl.Rectangle,

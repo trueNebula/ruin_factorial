@@ -1,5 +1,7 @@
 package core
 
+import rl "vendor:raylib"
+
 Texture :: enum {
 	UNKNOWN,
 	TEST,
@@ -12,4 +14,18 @@ Texture :: enum {
 Anchor :: enum {
 	BOTTOM_LEFT,
 	CENTER,
+}
+
+InputAction :: enum {
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT,
+	INVENTORY,
+	MENU,
+}
+
+MouseButton :: enum {
+	LEFT,
+	RIGHT,
 }

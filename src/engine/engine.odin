@@ -3,6 +3,8 @@ package engine
 import "src:core"
 import "src:ecs"
 import u "src:game_utils"
+import "src:input"
+import "src:player"
 import "src:scene"
 import "src:texture"
 import rl "vendor:raylib"
@@ -11,6 +13,7 @@ Engine :: struct {
 	sceneManager:   ^scene.SceneManager,
 	textureManager: ^texture.TextureManager,
 	world:          ^ecs.World,
+	frameInput:     input.State,
 }
 
 MakeEngine :: proc() -> Engine {
@@ -40,11 +43,13 @@ Run :: proc(engine: ^Engine) {
 	for !rl.WindowShouldClose() {
 		u.fullscreenManager()
 
+		engine.frameInput = input.Poll()
 		scene.Input(engine.sceneManager)
 
 		update(engine)
 
 		rl.BeginDrawing()
+		rl.ClearBackground(rl.BLACK)
 
 		switch engine.sceneManager.current {
 		case .MENU:
@@ -71,4 +76,6 @@ Run :: proc(engine: ^Engine) {
 @(private)
 update :: proc(engine: ^Engine) {
 	scene.Update(engine.sceneManager)
+	player.PlayerInputSystem(engine.world, &engine.frameInput)
+	ecs.ProcessTick(engine.world)
 }

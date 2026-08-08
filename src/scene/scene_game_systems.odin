@@ -25,6 +25,8 @@ SetupPlayer :: proc(world: ^ecs.World) {
 		id = 1,
 	}
 
+	velocity := core.Velocity{0, 0}
+
 	camera := core.Camera {
 		camera = rl.Camera2D {
 			target = rl.Vector2{transform.x, transform.y},
@@ -34,7 +36,7 @@ SetupPlayer :: proc(world: ^ecs.World) {
 		},
 	}
 
-	ecs.Add(world, transform, sprite, camera, player)
+	ecs.Add(world, transform, velocity, sprite, camera, player)
 
 	log.Debug("Added player with transform %+v and sprite %+v", transform, sprite)
 }

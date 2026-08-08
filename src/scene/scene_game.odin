@@ -1,6 +1,7 @@
 package scene
 
 import "src:ecs"
+import "src:physics"
 import "src:render"
 import t "src:texture"
 
@@ -15,6 +16,7 @@ initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
 	t.LoadTexture(texMan, .PLAYER, "player.png")
 
 	ecs.RegisterSetupSystem(world, SetupPlayer)
+	ecs.RegisterTickSystem(world, physics.MovementSystem)
 	ecs.RegisterRenderSystem(world, render.RenderSprites)
 	ecs.ProcessSetup(world)
 
