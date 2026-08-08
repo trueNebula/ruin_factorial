@@ -52,6 +52,10 @@ LogLevel :: enum {
 Init :: proc() {
 	trace.tracking_allocator_init(&tracker, context.allocator)
 
+	when ODIN_DEBUG {
+		return
+	}
+
 	/* Dir check */
 	if dir, err := os.open(LOG_FOLDER_PATH); err != nil {
 		os.make_directory(LOG_FOLDER_PATH)
@@ -128,7 +132,10 @@ baseLog :: proc(
 	defer delete(string)
 	stringData := transmute([]byte)(string)
 
-	os.write(FILE_HANDLE, stringData)
+	if FILE_HANDLE != nil {
+		os.write(FILE_HANDLE, stringData)
+	}
+
 	fmt.print(BOLD, col, ansi.SGR, mark, " " + MID + ansi.SGR, baseString, END, sep = "")
 
 	traceCnt := level == .ERROR ? -1 : 2
