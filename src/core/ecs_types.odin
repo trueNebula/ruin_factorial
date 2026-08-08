@@ -43,12 +43,6 @@ Tint :: struct {
 	duration: f32,
 }
 
-Keybinds :: struct {
-	Up, Down, Left, Right: rl.KeyboardKey,
-	Inventory, Menu:       rl.KeyboardKey,
-	Action, Interact:      rl.MouseButton,
-}
-
 Camera :: struct {
 	camera: rl.Camera2D,
 }

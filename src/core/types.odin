@@ -16,6 +16,12 @@ Anchor :: enum {
 	CENTER,
 }
 
+Keybinds :: struct {
+	Up, Down, Left, Right: rl.KeyboardKey,
+	Inventory, Menu:       rl.KeyboardKey,
+	Action, Interact:      rl.MouseButton,
+}
+
 InputAction :: enum {
 	UP,
 	DOWN,

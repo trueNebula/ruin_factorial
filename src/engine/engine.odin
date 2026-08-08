@@ -43,7 +43,7 @@ Run :: proc(engine: ^Engine) {
 	for !rl.WindowShouldClose() {
 		u.fullscreenManager()
 
-		engine.frameInput = input.Poll()
+		engine.frameInput = input.Poll(core.DefaultKeybinds)
 		scene.Input(engine.sceneManager)
 
 		update(engine)
@@ -55,12 +55,12 @@ Run :: proc(engine: ^Engine) {
 		case .MENU:
 		// TODO: add menu scene rendering
 		case .GAME:
-			view := ecs.View2(engine.world, core.PlayerRef, core.Camera)
-			if len(view) == 0 {
+			playerView := ecs.View2(engine.world, core.PlayerRef, core.Camera)
+			if len(playerView) == 0 {
 				// No camera set up yet, skip rendering
 				break
 			}
-			camera := view[0].c2
+			camera := playerView[0].c2
 			rl.BeginMode2D(camera.camera)
 			ecs.ProcessRender(engine.world, engine.textureManager)
 			rl.EndMode2D()

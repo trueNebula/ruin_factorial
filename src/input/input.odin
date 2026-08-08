@@ -1,7 +1,6 @@
 package input
 
 import "src:core"
-import "src:ecs"
 import rl "vendor:raylib"
 
 State :: struct {
@@ -13,30 +12,30 @@ State :: struct {
 	mouseConsumed: bit_set[core.MouseButton],
 }
 
-Poll :: proc() -> State {
+Poll :: proc(binds: core.Keybinds) -> State {
 	state: State
 
 	// TODO: use keybinds
-	if rl.IsKeyPressed(.W) do state.actionPressed += {.UP}
-	if rl.IsKeyPressed(.S) do state.actionPressed += {.DOWN}
-	if rl.IsKeyPressed(.A) do state.actionPressed += {.LEFT}
-	if rl.IsKeyPressed(.D) do state.actionPressed += {.RIGHT}
-	if rl.IsKeyPressed(.E) do state.actionPressed += {.INVENTORY}
-	if rl.IsKeyPressed(.ESCAPE) do state.actionPressed += {.MENU}
+	if rl.IsKeyPressed(binds.Up) do state.actionPressed += {.UP}
+	if rl.IsKeyPressed(binds.Down) do state.actionPressed += {.DOWN}
+	if rl.IsKeyPressed(binds.Left) do state.actionPressed += {.LEFT}
+	if rl.IsKeyPressed(binds.Right) do state.actionPressed += {.RIGHT}
+	if rl.IsKeyPressed(binds.Inventory) do state.actionPressed += {.INVENTORY}
+	if rl.IsKeyPressed(binds.Menu) do state.actionPressed += {.MENU}
 
-	if rl.IsKeyDown(.W) do state.actionHeld += {.UP}
-	if rl.IsKeyDown(.S) do state.actionHeld += {.DOWN}
-	if rl.IsKeyDown(.A) do state.actionHeld += {.LEFT}
-	if rl.IsKeyDown(.D) do state.actionHeld += {.RIGHT}
-	if rl.IsKeyDown(.E) do state.actionHeld += {.INVENTORY}
-	if rl.IsKeyDown(.ESCAPE) do state.actionHeld += {.MENU}
+	if rl.IsKeyDown(binds.Up) do state.actionHeld += {.UP}
+	if rl.IsKeyDown(binds.Down) do state.actionHeld += {.DOWN}
+	if rl.IsKeyDown(binds.Left) do state.actionHeld += {.LEFT}
+	if rl.IsKeyDown(binds.Right) do state.actionHeld += {.RIGHT}
+	if rl.IsKeyDown(binds.Inventory) do state.actionHeld += {.INVENTORY}
+	if rl.IsKeyDown(binds.Menu) do state.actionHeld += {.MENU}
 
 	state.mousePos = rl.GetMousePosition()
 
-	if rl.IsMouseButtonDown(.LEFT) do state.mouseHeld += {.LEFT}
-	if rl.IsMouseButtonDown(.RIGHT) do state.mouseHeld += {.RIGHT}
-	if rl.IsMouseButtonPressed(.LEFT) do state.mousePressed += {.LEFT}
-	if rl.IsMouseButtonPressed(.RIGHT) do state.mousePressed += {.RIGHT}
+	if rl.IsMouseButtonDown(binds.Action) do state.mouseHeld += {.LEFT}
+	if rl.IsMouseButtonDown(binds.Interact) do state.mouseHeld += {.RIGHT}
+	if rl.IsMouseButtonPressed(binds.Action) do state.mousePressed += {.LEFT}
+	if rl.IsMouseButtonPressed(binds.Interact) do state.mousePressed += {.RIGHT}
 
 	return state
 }
