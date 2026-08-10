@@ -17,3 +17,7 @@ DefaultKeybinds :: Keybinds {
 	Interact  = .RIGHT,
 	Inventory = .ESCAPE,
 }
+
+TileSize :: 16
+ChunkLenght :: 64
+ChunkSize :: ChunkLenght * ChunkLenght

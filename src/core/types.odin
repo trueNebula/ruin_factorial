@@ -16,6 +16,7 @@ Texture :: enum {
 Anchor :: enum {
 	BOTTOM_LEFT,
 	CENTER,
+	TOP_LEFT,
 }
 
 Keybinds :: struct {
@@ -44,4 +45,12 @@ WindowProps :: struct {
 	title:     cstring,
 	minWidth:  i32,
 	minHeight: i32,
+}
+
+TileId :: enum {
+	NONE,
+	WATER,
+	SAND,
+	DIRT,
+	GRASS,
 }
