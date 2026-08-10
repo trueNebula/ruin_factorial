@@ -72,6 +72,11 @@ Run :: proc(engine: ^Engine) {
 	}
 }
 
+Shutdown :: proc(engine: ^Engine) {
+	ecs.EndWorld(engine.world)
+	texture.Shutdown(engine.textureManager)
+}
+
 @(private)
 update :: proc(engine: ^Engine) {
 	scene.Update(engine.sceneManager)

@@ -121,6 +121,26 @@ Initial :: proc(world: ^World) {
 	clear(&batch.addQueue)
 }
 
+EndWorld :: proc(world: ^World) {
+	for arch in world.archetypes {
+		delete(arch.entities)
+
+		for column in arch.columns {
+			delete(arch.columns[column])
+		}
+
+		delete(arch.columns)
+	}
+
+	delete(world.archetypes)
+	delete(world.entities)
+	delete(world.meta)
+	delete(world.idQueue)
+	delete(world.setup)
+	delete(world.tick)
+	delete(world.render)
+}
+
 @(private)
 addInternal :: proc(world: ^World, entityId: u32, components: []Component) -> u32 {
 	mask := computeMask(world, components)

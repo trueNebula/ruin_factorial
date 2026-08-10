@@ -78,3 +78,10 @@ GetTexture :: proc(texMan: ^TextureManager, id: core.Texture) -> (tex: rl.Textur
 
 	return texData.resource, false
 }
+
+Shutdown :: proc(texMan: ^TextureManager) {
+	for id in texMan.data {
+		UnloadTexture(texMan, id)
+	}
+	delete(texMan.data)
+}
