@@ -24,8 +24,8 @@ Chunk :: struct {
 ChunkMap :: map[string]Chunk
 
 TileManager :: struct {
-	repo:     TileRepo,
-	chunkMap: ChunkMap,
+	repo:   TileRepo,
+	chunks: ChunkMap,
 }
 
 CreateRepo :: proc() -> TileRepo {
@@ -44,12 +44,12 @@ MakeTileManager :: proc() -> TileManager {
 	chunk := makeTestChunk()
 	chunkMap[Coords2Hash(chunk.x, chunk.y)] = chunk
 
-	return {repo = CreateRepo(), chunkMap = chunkMap}
+	return {repo = CreateRepo(), chunks = chunkMap}
 
 }
 
 DrawTilemap :: proc(tileMan: ^TileManager, camera: rl.Camera2D, renMan: ^render.RenderManager) {
-	for _, &chunk in tileMan.chunkMap {
+	for _, &chunk in tileMan.chunks {
 		drawChunk(tileMan, &chunk, camera, renMan)
 	}
 }
