@@ -3,16 +3,19 @@ package engine
 import "src:core"
 import "src:ecs"
 import "src:input"
+import "src:log"
 import "src:player"
 import "src:render"
 import "src:scene"
 import "src:texture"
+import "src:tilemap"
 import rl "vendor:raylib"
 
 Engine :: struct {
 	sceneManager:   ^scene.SceneManager,
 	renderManager:  ^render.RenderManager,
 	textureManager: ^texture.TextureManager,
+	tileManager:    ^tilemap.TileManager,
 	world:          ^ecs.World,
 	frameInput:     input.State,
 }
@@ -30,10 +33,14 @@ MakeEngine :: proc() -> Engine {
 	sceneMan := new(scene.SceneManager)
 	sceneMan^ = scene.MakeSceneManger(renMan, texMan, world)
 
+	tileMan := new(tilemap.TileManager)
+	tileMan^ = tilemap.MakeTileManager()
+
 	engine := Engine {
 		sceneManager   = sceneMan,
 		renderManager  = renMan,
 		textureManager = texMan,
+		tileManager    = tileMan,
 		world          = world,
 	}
 
@@ -88,5 +95,15 @@ update :: proc(engine: ^Engine) {
 	scene.Update(engine.sceneManager)
 	player.PlayerInputSystem(engine.world, &engine.frameInput)
 	ecs.ProcessTick(engine.world)
+
+	playerView := ecs.View2(engine.world, core.PlayerRef, core.Camera)
+
+	if len(playerView) == 0 {
+		// No camera set up yet, skip rendering
+		return
+	}
+
+	camera := playerView[0].c2
+	tilemap.DrawTilemap(engine.tileManager, camera.camera, engine.renderManager)
 	render.RenderSprites(engine.world, engine.renderManager, engine.textureManager)
 }

@@ -16,9 +16,11 @@ initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
 	texMan := sceneMan.textureManager
 	world := sceneMan.world
 	t.LoadTexture(texMan, .PLAYER, "player.png")
+	t.LoadTexture(texMan, .TILE, "tile_atlas.png")
 
 	ecs.RegisterSetupSystem(world, player.SetupPlayer)
 	ecs.RegisterTickSystem(world, physics.MovementSystem)
+	ecs.RegisterTickSystem(world, player.PlayerCameraSystem)
 	ecs.ProcessSetup(world)
 
 	return {}

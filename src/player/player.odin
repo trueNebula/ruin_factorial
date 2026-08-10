@@ -54,3 +54,19 @@ PlayerInputSystem :: proc(world: ^ecs.World, frameInput: ^input.State) {
 		velocity^ = linalg.normalize0(velocity^) * BASE_MOVEMENT_SPEED
 	})
 }
+
+PlayerCameraSystem :: proc(world: ^ecs.World) {
+	ecs.Query3(
+		world,
+		nil,
+		proc(
+			_: ^core.PlayerRef,
+			transform: ^core.Transform,
+			camera: ^core.Camera,
+			userData: rawptr,
+		) {
+			camera.camera.target.x = transform.x
+			camera.camera.target.y = transform.y
+		},
+	)
+}

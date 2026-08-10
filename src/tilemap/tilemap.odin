@@ -1,6 +1,8 @@
 package tilemap
 
 import "src:core"
+import "src:log"
+import "src:render"
 import rl "vendor:raylib"
 
 Tile :: struct {
@@ -20,6 +22,11 @@ Chunk :: struct {
 	objects: Layer,
 }
 
+TileManager :: struct {
+	repo:   TileRepo,
+	chunks: Chunk,
+}
+
 CreateRepo :: proc() -> TileRepo {
 	tileRepo := make(TileRepo)
 	tileRepo[.DIRT] = Tile {
@@ -31,17 +38,32 @@ CreateRepo :: proc() -> TileRepo {
 	return tileRepo
 }
 
-MakeTestChunk :: proc() -> Chunk {
+MakeTileManager :: proc() -> TileManager {
+	return {repo = CreateRepo(), chunks = makeTestChunk()}
+}
+
+DrawTilemap :: proc(tileMan: ^TileManager, camera: rl.Camera2D, renMan: ^render.RenderManager) {
+	drawChunk(tileMan, &tileMan.chunks, camera, renMan)
+}
+
+@(private)
+makeTestChunk :: proc() -> Chunk {
 	baseLayer: Layer = [core.ChunkSize]core.TileId{}
 
-	for &tile in baseLayer {
-		tile = .DIRT
+	for idx in 0 ..< core.ChunkSize {
+		baseLayer[idx] = .DIRT
 	}
 
 	return {x = 0, y = 0, base = baseLayer}
 }
 
-RenderChunk :: proc(chunk: ^Chunk, camera: rl.Camera2D) {
+@(private)
+drawChunk :: proc(
+	tileMan: ^TileManager,
+	chunk: ^Chunk,
+	camera: rl.Camera2D,
+	renMan: ^render.RenderManager,
+) {
 	if chunk == nil {
 		return
 	}
@@ -60,11 +82,28 @@ RenderChunk :: proc(chunk: ^Chunk, camera: rl.Camera2D) {
 		return
 	}
 
-	for tile in chunk.base {
-		DrawTile(tile)
+	for tile, idx in chunk.base {
+		drawTile(tileMan, tile, idx, chunk, renMan)
 	}
 }
 
-DrawTile :: proc(tile: core.TileId) {
+@(private)
+drawTile :: proc(
+	tileMan: ^TileManager,
+	tile: core.TileId,
+	idx: int,
+	chunk: ^Chunk,
+	renMan: ^render.RenderManager,
+) {
+	tileData := tileMan.repo[tile]
+	tex := tileData.texture
+	rect := tileData.rect
+	dest := rl.Vector2 {
+		f32(chunk.x * core.ChunkLenght + idx % core.ChunkLenght) * core.TileSize,
+		f32(chunk.y * core.ChunkLenght + idx / core.ChunkLenght) * core.TileSize,
+	}
 
+	// log.Debug(idx, dest)
+
+	render.DrawTile(renMan, tex, rect, dest)
 }
