@@ -54,3 +54,9 @@ TileId :: enum {
 	DIRT,
 	GRASS,
 }
+
+// For debug rendering and colliders
+Shape :: enum {
+	RECTANGLE,
+	CIRCLE,
+}

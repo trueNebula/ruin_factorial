@@ -6,12 +6,18 @@ import "src:log"
 import "src:texture"
 import rl "vendor:raylib"
 
-RenderSprites :: proc(world: ^ecs.World, texMan: ^texture.TextureManager) {
+RenderSprites :: proc(world: ^ecs.World, renMan: ^RenderManager, texMan: ^texture.TextureManager) {
+	RenderSpritesContext :: struct {
+		renderManager:  ^RenderManager,
+		textureManager: ^texture.TextureManager,
+	}
 	ecs.Query2(
 		world,
-		texMan,
+		rawptr(&RenderSpritesContext{renderManager = renMan, textureManager = texMan}),
 		proc(transform: ^core.Transform, sprite: ^core.Sprite, userData: rawptr) {
-			texMan := cast(^texture.TextureManager)userData
+			ctx := cast(^RenderSpritesContext)userData
+			renMan := ctx.renderManager
+			texMan := ctx.textureManager
 			tex, err := texture.GetTexture(texMan, sprite.texture)
 			dest := core.GetDestRect(transform^, sprite^)
 			spriteSize := core.Rect2Size(dest)
@@ -21,6 +27,7 @@ RenderSprites :: proc(world: ^ecs.World, texMan: ^texture.TextureManager) {
 				dest = core.MoveRect(dest, -spriteSize / 2)
 			case .BOTTOM_LEFT:
 				dest = core.MoveRect(dest, -spriteSize)
+			case .TOP_LEFT:
 			}
 
 			if (err) {
@@ -31,7 +38,7 @@ RenderSprites :: proc(world: ^ecs.World, texMan: ^texture.TextureManager) {
 				)
 			}
 
-			rl.DrawTexturePro(tex, sprite.rect, dest, {0, 0}, transform.rotation, rl.WHITE)
+			DrawSprite(renMan, sprite.texture, sprite.rect, core.GetPos(dest), true)
 		},
 	)
 }

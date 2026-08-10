@@ -2,6 +2,7 @@ package scene
 
 import "src:ecs"
 import "src:neb_utils"
+import "src:render"
 import "src:texture"
 import rl "vendor:raylib"
 
@@ -36,11 +37,16 @@ SceneManager :: struct {
 	transition:     Transition,
 	data:           Scene,
 	// Context pointers
+	renderManager:  ^render.RenderManager,
 	textureManager: ^texture.TextureManager,
 	world:          ^ecs.World,
 }
 
-MakeSceneManger :: proc(texMan: ^texture.TextureManager, world: ^ecs.World) -> SceneManager {
+MakeSceneManger :: proc(
+	renMan: ^render.RenderManager,
+	texMan: ^texture.TextureManager,
+	world: ^ecs.World,
+) -> SceneManager {
 	sceneMan := SceneManager {
 		current = .MENU,
 		transition = Transition {
@@ -49,6 +55,7 @@ MakeSceneManger :: proc(texMan: ^texture.TextureManager, world: ^ecs.World) -> S
 			duration = FAST_DURATION,
 			nextScene = .MENU,
 		},
+		renderManager = renMan,
 		textureManager = texMan,
 		world = world,
 	}

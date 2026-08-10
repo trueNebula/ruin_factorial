@@ -23,7 +23,6 @@ World :: struct {
 	batch:      BatchManager,
 	setup:      [dynamic]System,
 	tick:       [dynamic]System,
-	render:     [dynamic]RenderSystem,
 }
 
 CreateWorld :: proc() -> World {
@@ -138,7 +137,6 @@ EndWorld :: proc(world: ^World) {
 	delete(world.idQueue)
 	delete(world.setup)
 	delete(world.tick)
-	delete(world.render)
 }
 
 @(private)

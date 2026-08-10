@@ -12,13 +12,13 @@ GameScene :: struct {
 
 @(private)
 initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
+	renMan := sceneMan.renderManager
 	texMan := sceneMan.textureManager
 	world := sceneMan.world
 	t.LoadTexture(texMan, .PLAYER, "player.png")
 
 	ecs.RegisterSetupSystem(world, player.SetupPlayer)
 	ecs.RegisterTickSystem(world, physics.MovementSystem)
-	ecs.RegisterRenderSystem(world, render.RenderSprites)
 	ecs.ProcessSetup(world)
 
 	return {}

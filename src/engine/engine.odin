@@ -4,12 +4,14 @@ import "src:core"
 import "src:ecs"
 import "src:input"
 import "src:player"
+import "src:render"
 import "src:scene"
 import "src:texture"
 import rl "vendor:raylib"
 
 Engine :: struct {
 	sceneManager:   ^scene.SceneManager,
+	renderManager:  ^render.RenderManager,
 	textureManager: ^texture.TextureManager,
 	world:          ^ecs.World,
 	frameInput:     input.State,
@@ -22,11 +24,15 @@ MakeEngine :: proc() -> Engine {
 	world := new(ecs.World)
 	world^ = ecs.CreateWorld()
 
+	renMan := new(render.RenderManager)
+	renMan^ = render.MakeRenderManager()
+
 	sceneMan := new(scene.SceneManager)
-	sceneMan^ = scene.MakeSceneManger(texMan, world)
+	sceneMan^ = scene.MakeSceneManger(renMan, texMan, world)
 
 	engine := Engine {
 		sceneManager   = sceneMan,
+		renderManager  = renMan,
 		textureManager = texMan,
 		world          = world,
 	}
@@ -61,7 +67,7 @@ Run :: proc(engine: ^Engine) {
 			}
 			camera := playerView[0].c2
 			rl.BeginMode2D(camera.camera)
-			ecs.ProcessRender(engine.world, engine.textureManager)
+			render.Flush(engine.renderManager, engine.textureManager)
 			rl.EndMode2D()
 		}
 
@@ -82,4 +88,5 @@ update :: proc(engine: ^Engine) {
 	scene.Update(engine.sceneManager)
 	player.PlayerInputSystem(engine.world, &engine.frameInput)
 	ecs.ProcessTick(engine.world)
+	render.RenderSprites(engine.world, engine.renderManager, engine.textureManager)
 }

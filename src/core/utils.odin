@@ -49,6 +49,18 @@ Rect2Size :: proc(r: rl.Rectangle) -> rl.Vector2 {
 	return {r.width, r.height}
 }
 
+MakeRect :: proc(pos: rl.Vector2, size: rl.Vector2) -> rl.Rectangle {
+	return {x = pos.x, y = pos.y, width = size.x, height = size.y}
+}
+
+GetPos :: proc(rect: rl.Rectangle) -> rl.Vector2 {
+	return {rect.x, rect.y}
+}
+
+GetSize :: proc(rect: rl.Rectangle) -> rl.Vector2 {
+	return {rect.width, rect.height}
+}
+
 GetScreenCenter :: proc() -> rl.Vector2 {
 	return {f32(rl.GetScreenWidth() / 2), f32(rl.GetScreenHeight() / 2)}
 }
