@@ -2,6 +2,8 @@ package core
 
 import rl "vendor:raylib"
 
+Path :: string
+
 Texture :: enum {
 	UNKNOWN,
 	TEST,
@@ -34,4 +36,12 @@ InputAction :: enum {
 MouseButton :: enum {
 	LEFT,
 	RIGHT,
+}
+
+WindowProps :: struct {
+	width:     i32,
+	height:    i32,
+	title:     cstring,
+	minWidth:  i32,
+	minHeight: i32,
 }

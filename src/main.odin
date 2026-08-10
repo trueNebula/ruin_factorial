@@ -1,14 +1,14 @@
 package main
 
-import u "game_utils"
+import "src:core"
 import "src:engine"
 import "src:log"
 import rl "vendor:raylib"
 
 main :: proc() {
 	rl.SetConfigFlags({.WINDOW_RESIZABLE})
-	rl.InitWindow(u.WindowDefaults.width, u.WindowDefaults.height, u.WindowDefaults.title)
-	rl.SetWindowMinSize(u.WindowDefaults.minWidth, u.WindowDefaults.minHeight)
+	rl.InitWindow(core.WindowDefaults.width, core.WindowDefaults.height, core.WindowDefaults.title)
+	rl.SetWindowMinSize(core.WindowDefaults.minWidth, core.WindowDefaults.minHeight)
 	defer rl.CloseWindow()
 
 	camera := rl.Camera2D {

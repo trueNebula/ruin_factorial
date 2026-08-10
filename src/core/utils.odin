@@ -3,6 +3,12 @@ package core
 import "src:log"
 import rl "vendor:raylib"
 
+FullscreenManager :: proc() {
+	if (rl.IsKeyPressed(rl.KeyboardKey.F11)) {
+		rl.ToggleBorderlessWindowed()
+	}
+}
+
 RectAdd :: proc(r1: rl.Rectangle, r2: rl.Rectangle) -> rl.Rectangle {
 	if r1.width != r2.width || r1.height != r2.height {
 		log.Warn(

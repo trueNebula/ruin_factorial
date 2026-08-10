@@ -3,11 +3,10 @@ package texture
 import "core:fmt"
 import "core:strings"
 import "src:core"
-import u "src:game_utils"
 import rl "vendor:raylib"
 
 TextureData :: struct {
-	path:     u.path,
+	path:     core.Path,
 	resource: rl.Texture2D,
 }
 
@@ -25,7 +24,7 @@ MakeTextureManager :: proc() -> TextureManager {
 LoadTexture :: proc(
 	texMan: ^TextureManager,
 	id: core.Texture,
-	partialPath: u.path,
+	partialPath: core.Path,
 ) -> (
 	err: bool,
 ) {

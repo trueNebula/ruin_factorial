@@ -2,7 +2,6 @@ package engine
 
 import "src:core"
 import "src:ecs"
-import u "src:game_utils"
 import "src:input"
 import "src:player"
 import "src:scene"
@@ -41,7 +40,7 @@ Init :: proc(engine: ^Engine) {
 
 Run :: proc(engine: ^Engine) {
 	for !rl.WindowShouldClose() {
-		u.fullscreenManager()
+		core.FullscreenManager()
 
 		engine.frameInput = input.Poll(core.DefaultKeybinds)
 		scene.Input(engine.sceneManager)
