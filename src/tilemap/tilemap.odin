@@ -36,6 +36,24 @@ CreateRepo :: proc() -> TileRepo {
 		anchor = .TOP_LEFT,
 	}
 
+	tileRepo[.SAND] = Tile {
+		texture = .TILE,
+		rect = rl.Rectangle{x = 32, y = 0, width = 16, height = 16},
+		anchor = .TOP_LEFT,
+	}
+
+	tileRepo[.GRASS] = Tile {
+		texture = .TILE,
+		rect = rl.Rectangle{x = 48, y = 0, width = 16, height = 16},
+		anchor = .TOP_LEFT,
+	}
+
+	tileRepo[.WATER] = Tile {
+		texture = .TILE,
+		rect = rl.Rectangle{x = 0, y = 16, width = 16, height = 16},
+		anchor = .TOP_LEFT,
+	}
+
 	return tileRepo
 }
 
