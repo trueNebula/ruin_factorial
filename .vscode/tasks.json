@@ -61,7 +61,9 @@
         "test",
         "${cwd}/src",
         "-collection:src=src",
-        "-all-packages"
+        "-all-packages",
+        "-thread-count:1",
+        "-debug"
       ],
       "group": {
         "kind": "test",

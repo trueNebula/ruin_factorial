@@ -12,7 +12,6 @@ Tile :: struct {
 }
 
 TileRepo :: map[core.TileId]Tile
-
 Layer :: [core.ChunkSize]core.TileId
 
 Chunk :: struct {
@@ -22,9 +21,11 @@ Chunk :: struct {
 	objects: Layer,
 }
 
+ChunkMap :: map[string]Chunk
+
 TileManager :: struct {
-	repo:   TileRepo,
-	chunks: Chunk,
+	repo:     TileRepo,
+	chunkMap: ChunkMap,
 }
 
 CreateRepo :: proc() -> TileRepo {
@@ -39,11 +40,18 @@ CreateRepo :: proc() -> TileRepo {
 }
 
 MakeTileManager :: proc() -> TileManager {
-	return {repo = CreateRepo(), chunks = makeTestChunk()}
+	chunkMap := make(ChunkMap)
+	chunk := makeTestChunk()
+	chunkMap[Coords2Hash(chunk.x, chunk.y)] = chunk
+
+	return {repo = CreateRepo(), chunkMap = chunkMap}
+
 }
 
 DrawTilemap :: proc(tileMan: ^TileManager, camera: rl.Camera2D, renMan: ^render.RenderManager) {
-	drawChunk(tileMan, &tileMan.chunks, camera, renMan)
+	for _, &chunk in tileMan.chunkMap {
+		drawChunk(tileMan, &chunk, camera, renMan)
+	}
 }
 
 @(private)
@@ -95,7 +103,12 @@ drawTile :: proc(
 	chunk: ^Chunk,
 	renMan: ^render.RenderManager,
 ) {
-	tileData := tileMan.repo[tile]
+	tileData, ok := tileMan.repo[tile]
+	if (!ok) {
+		log.Warn("Tried to access tile with id %v in tile repo, tile id doesnt exist!", tile)
+		return
+	}
+
 	tex := tileData.texture
 	rect := tileData.rect
 	dest := rl.Vector2 {
