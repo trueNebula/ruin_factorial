@@ -4,6 +4,7 @@ import "core:strconv"
 import "core:strings"
 import "src:core"
 import "src:log"
+import "src:tilemap"
 import rl "vendor:raylib"
 
 Chunk2World :: proc(chunk: ^Chunk) -> rl.Vector2 {
@@ -76,6 +77,107 @@ Hash2Coords :: proc(hash: string) -> (xCoord, yCoord: int) {
 	return x, y
 }
 
-GetChunkAtPos :: proc(tileMan: ^TileManager, pos: rl.Vector2) -> (chunk: ^Chunk, idx: int) {
-	return nil, -1
+Screen2World :: proc {
+	Screen2WorldVec,
+	Screen2WorldFloat,
+}
+
+Screen2WorldFloat :: #force_inline proc(pos: f32) -> f32 {
+	return f32(int(pos / core.TileSize))
+}
+
+Screen2WorldVec :: #force_inline proc(pos: rl.Vector2) -> rl.Vector2 {
+	return {f32(int(pos.x / core.TileSize)), f32(int(pos.y / core.TileSize))}
+}
+
+World2Chunk :: #force_inline proc(pos: rl.Vector2) -> rl.Vector2 {
+	chunkX := int(pos.x) / core.ChunkLenght
+	chunkY := int(pos.y) / core.ChunkLenght
+
+	return {f32(chunkX), f32(chunkY)}
+}
+
+World2Tile :: #force_inline proc(pos: rl.Vector2) -> rl.Vector2 {
+	chunkX := int(pos.x) % core.ChunkLenght
+	chunkY := int(pos.y) % core.ChunkLenght
+
+	if chunkX < 0 do chunkX += core.ChunkLenght
+	if chunkY < 0 do chunkY += core.ChunkLenght
+
+	return {f32(chunkX), f32(chunkY)}
+}
+
+Screen2Chunk :: #force_inline proc(pos: rl.Vector2) -> rl.Vector2 {
+	return World2Chunk(Screen2World(pos))
+}
+
+Screen2Tile :: #force_inline proc(pos: rl.Vector2) -> rl.Vector2 {
+	return World2Tile(Screen2World(pos))
+}
+
+Screen2TileIdx :: #force_inline proc(pos: rl.Vector2) -> int {
+	return Tile2Idx(World2Tile(Screen2World(pos)))
+}
+
+Tile2Idx :: #force_inline proc(pos: rl.Vector2) -> int {
+	return int(pos.x) + int(pos.y) * core.ChunkLenght
+}
+
+GetChunkAtScreenPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2) -> ^Chunk {
+	worldPos := Screen2World(pos)
+	hash := Coords2Hash(int(worldPos.x), int(worldPos.y))
+	if chunk, ok := &tileMan.chunks[hash]; ok {
+		return chunk
+	}
+
+	log.Warn("Tried getting unloaded chunk at screen pos %v!", pos)
+
+	return nil
+}
+
+GetChunkAtWorldPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2) -> ^Chunk {
+	hash := Coords2Hash(int(pos.x), int(pos.y))
+	if chunk, ok := &tileMan.chunks[hash]; ok {
+		return chunk
+	}
+
+	log.Warn("Tried getting unloaded chunk at world pos %v!", pos)
+
+	return nil
+}
+
+GetChunkAtPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2) -> ^Chunk {
+	hash := Coords2Hash(int(pos.x), int(pos.y))
+	if chunk, ok := &tileMan.chunks[hash]; ok {
+		return chunk
+	}
+
+	log.Warn("Tried getting chunk at invalid world pos %v!", pos)
+
+	return nil
+}
+
+// TODO: make this also take in a layer or return tiles from all layers
+GetTileAtWorldPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2) -> core.TileId {
+	chunk := GetChunkAtPos(tileMan, pos)
+	idx := Tile2Idx(World2Tile(pos))
+
+	if chunk == nil {
+		return .NONE
+	}
+
+	return chunk.base[idx]
+}
+
+// TODO: make this also take in a layer or return tiles from all layers
+GetTileAtScreenPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2) -> core.TileId {
+	worldPos := Screen2World(pos)
+	chunk := GetChunkAtPos(tileMan, worldPos)
+
+	if chunk == nil {
+		return .NONE
+	}
+
+	idx := Tile2Idx(World2Tile(worldPos))
+	return chunk.base[idx]
 }

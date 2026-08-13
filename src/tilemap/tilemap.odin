@@ -134,7 +134,5 @@ drawTile :: proc(
 		f32(chunk.y * core.ChunkLenght + idx / core.ChunkLenght) * core.TileSize,
 	}
 
-	// log.Debug(idx, dest)
-
 	render.DrawTile(renMan, tex, rect, dest)
 }
