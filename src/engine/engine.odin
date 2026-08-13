@@ -99,7 +99,7 @@ update :: proc(engine: ^Engine) {
 	playerView := ecs.View2(engine.world, core.PlayerRef, core.Camera)
 
 	if len(playerView) == 0 {
-		// No camera set up yet, skip rendering
+		// No camera set up yet, skip rendering setup
 		return
 	}
 

@@ -59,10 +59,14 @@ CreateRepo :: proc() -> TileRepo {
 
 MakeTileManager :: proc() -> TileManager {
 	chunkMap := make(ChunkMap)
-	chunk := makeTestChunk()
-	chunkMap[Coords2Hash(chunk.x, chunk.y)] = chunk
+	tileMan := TileManager {
+		repo   = CreateRepo(),
+		chunks = chunkMap,
+	}
 
-	return {repo = CreateRepo(), chunks = chunkMap}
+	GenerateWorld(&tileMan)
+
+	return tileMan
 
 }
 
@@ -129,6 +133,11 @@ drawTile :: proc(
 
 	tex := tileData.texture
 	rect := tileData.rect
+	inset :: f32(0.01)
+	rect.x += inset
+	rect.y += inset
+	rect.width -= inset * 2
+	rect.height -= inset * 2
 	dest := rl.Vector2 {
 		f32(chunk.x * core.ChunkLenght + idx % core.ChunkLenght) * core.TileSize,
 		f32(chunk.y * core.ChunkLenght + idx / core.ChunkLenght) * core.TileSize,

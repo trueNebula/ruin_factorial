@@ -43,7 +43,7 @@ Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
 			continue
 		}
 
-		destRect := core.MakeRect(cmd.dest, core.GetSize(cmd.src))
+		destRect := core.MakeRect(cmd.dest, {core.TileSize, core.TileSize})
 		rl.DrawTexturePro(
 			texData,
 			cmd.src,
