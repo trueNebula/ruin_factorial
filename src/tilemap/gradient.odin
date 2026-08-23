@@ -35,20 +35,29 @@ getTileFromGradient :: proc(value: f32, gradient: ^Gradient) -> core.TileId {
 @(private)
 GrasslandsGradient: Gradient : {
 	{start = 0, end = 0.05, tile = .WATER},
-	{start = 0.05, end = 0.15, tile = .SAND},
-	{start = 0.15, end = 0.50, tile = .DIRT},
-	{start = 0.50, end = 1, tile = .GRASS},
+	{start = 0.05, end = 0.1, tile = .GRAVEL},
+	{start = 0.1, end = 0.50, tile = .DIRT},
+	{start = 0.50, end = 0.90, tile = .GRASS},
+	{start = 0.90, end = 0.995, tile = .STONE},
+	{start = 0.995, end = 1, tile = .SNOW},
 }
 
 @(private)
 WaterGradient: Gradient : {
-	{start = 0, end = 0.98, tile = .WATER},
-	{start = 0.98, end = 1, tile = .SAND},
+	{start = 0, end = 1, tile = .WATER},
+	// {start = 0.995, end = 1, tile = .SAND},
 }
 
 @(private)
 DesertGradient: Gradient : {
 	{start = 0, end = 0.1, tile = .WATER},
-	{start = 0.1, end = 0.95, tile = .SAND},
-	{start = 0.95, end = 1, tile = .DIRT},
+	{start = 0.1, end = 0.9, tile = .SAND},
+	{start = 0.90, end = 1, tile = .STONE},
+}
+
+@(private)
+StonelandsGradient: Gradient : {
+	{start = 0, end = 0.25, tile = .SAND},
+	{start = 0.25, end = 1, tile = .STONE},
+	// {start = 0.95, end = 1, tile = .SNOW},
 }

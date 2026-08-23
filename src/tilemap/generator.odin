@@ -21,7 +21,7 @@ NoiseMapSettings :: struct {
 
 HEIGHT_MAP_SETTINGS: NoiseMapSettings : {
 	octaves = 3,
-	frequency = 12 * 1.0 / 1000,
+	frequency = 6 * 1.0 / 1000,
 	amplitude = 1.0,
 	lacunarity = 2.0,
 	gain = 0.55,
@@ -29,7 +29,7 @@ HEIGHT_MAP_SETTINGS: NoiseMapSettings : {
 
 BIOME_MAP_SETTINGS: NoiseMapSettings : {
 	octaves = 2,
-	frequency = 1 * 1.0 / 1000,
+	frequency = 0.5 * 1.0 / 1000,
 	amplitude = 1.0,
 	lacunarity = 4.0,
 	gain = 0.70,
@@ -37,16 +37,16 @@ BIOME_MAP_SETTINGS: NoiseMapSettings : {
 
 BIOME_WARP_SETTINGS: NoiseMapSettings : {
 	octaves = 2,
-	frequency = 15 * 1.0 / 1000,
+	frequency = 12 * 1.0 / 1000,
 	amplitude = 1.0,
 	lacunarity = 2.25,
-	gain = 0.33,
+	gain = 0.66,
 }
 
-WARP_STRENGTH :: 0.25
+WARP_STRENGTH :: 0.1
 
 GenerateWorld :: proc(tileMan: ^TileManager) {
-	worldLength: int : 8
+	worldLength: int : 16
 
 	HEIGHT_MAP = rl.LoadRenderTexture(
 		i32(core.ChunkLenght * worldLength),
@@ -128,7 +128,7 @@ generateTile :: proc(tileMan: ^TileManager, x, y: int, cX, cY: int) -> core.Tile
 
 	warpedBiomeValue := biomeValue + (warp - 0.5) * WARP_STRENGTH
 	biome := getBiomeFromValue(warpedBiomeValue, &tileMan.biomes)
-	tile := getTileFromGradient(heightValue * biomeValue, &biome.gradient)
+	tile := getTileFromGradient(heightValue, &biome.gradient)
 
 	return tile
 }

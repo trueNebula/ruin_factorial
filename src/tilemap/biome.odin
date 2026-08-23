@@ -15,10 +15,10 @@ BiomeList :: [dynamic]Biome
 CreateBiomes :: proc() -> BiomeList {
 	list: BiomeList = make(BiomeList)
 
-	append(&list, Biome{id = .WATER, start = 0, end = 0.05, gradient = slice.clone(WaterGradient)})
+	append(&list, Biome{id = .WATER, start = 0, end = 0.15, gradient = slice.clone(WaterGradient)})
 	append(
 		&list,
-		Biome{id = .DESERT, start = 0.05, end = 0.55, gradient = slice.clone(DesertGradient)},
+		Biome{id = .DESERT, start = 0.15, end = 0.55, gradient = slice.clone(DesertGradient)},
 	)
 	append(
 		&list,

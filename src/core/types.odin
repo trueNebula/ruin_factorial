@@ -53,6 +53,9 @@ TileId :: enum {
 	SAND,
 	DIRT,
 	GRASS,
+	GRAVEL,
+	STONE,
+	SNOW,
 }
 
 // For debug rendering and colliders
