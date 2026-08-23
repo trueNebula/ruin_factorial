@@ -119,6 +119,7 @@ MaybeGenerateNewChunks :: proc(
 		for x in 0 ..< chunksCoveredHorizontal {
 			currChunkCoords := chunkCoords + rl.Vector2{x, y}
 			currChunkHash := Coords2Hash(int(currChunkCoords.x), int(currChunkCoords.y))
+			defer delete(currChunkHash)
 			if _, ok := tileMan.chunks[currChunkHash]; ok {
 				// chunk exists, skip
 				continue

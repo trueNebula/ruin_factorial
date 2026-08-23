@@ -127,6 +127,7 @@ Tile2Idx :: #force_inline proc(pos: rl.Vector2) -> int {
 GetChunkAtScreenPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2) -> ^Chunk {
 	worldPos := Screen2World(pos)
 	hash := Coords2Hash(int(worldPos.x), int(worldPos.y))
+	defer delete(hash)
 	if chunk, ok := &tileMan.chunks[hash]; ok {
 		return chunk
 	}
@@ -138,6 +139,7 @@ GetChunkAtScreenPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2
 
 GetChunkAtWorldPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2) -> ^Chunk {
 	hash := Coords2Hash(int(pos.x), int(pos.y))
+	defer delete(hash)
 	if chunk, ok := &tileMan.chunks[hash]; ok {
 		return chunk
 	}
@@ -149,6 +151,7 @@ GetChunkAtWorldPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2)
 
 GetChunkAtPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2) -> ^Chunk {
 	hash := Coords2Hash(int(pos.x), int(pos.y))
+	defer delete(hash)
 	if chunk, ok := &tileMan.chunks[hash]; ok {
 		return chunk
 	}

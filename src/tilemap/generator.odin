@@ -65,6 +65,7 @@ GenerateWorld :: proc(tileMan: ^TileManager) {
 	for chunkY in -(worldLength / 2) ..= (worldLength / 2) {
 		for chunkX in -(worldLength / 2) ..= (worldLength / 2) {
 			hash := Coords2Hash(chunkX, chunkY)
+			defer delete(hash)
 			chunk := generateChunk(tileMan, chunkY, chunkX)
 			tileMan.chunks[hash] = chunk
 		}
