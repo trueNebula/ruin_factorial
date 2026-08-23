@@ -89,6 +89,7 @@ Shutdown :: proc(engine: ^Engine) {
 	ecs.EndWorld(engine.world)
 	texture.Shutdown(engine.textureManager)
 	tilemap.Shutdown(engine.tileManager)
+	render.Shutdown(engine.renderManager)
 }
 
 @(private)

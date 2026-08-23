@@ -102,3 +102,9 @@ Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
 	clear(&renMan.object)
 	clear(&renMan.debug)
 }
+
+Shutdown :: proc(renMan: ^RenderManager) {
+	delete(renMan.tile)
+	delete(renMan.object)
+	delete(renMan.debug)
+}
