@@ -83,12 +83,11 @@ Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
 		switch cmd.shape {
 		case .RECTANGLE:
 			{
-				rl.DrawRectanglePro(
-					cmd.rect,
-					/*origin=*/
-					{0, 0},
-					/*rotation=*/
-					0,
+				rl.DrawRectangleLines(
+					i32(cmd.rect.x),
+					i32(cmd.rect.y),
+					i32(cmd.rect.width),
+					i32(cmd.rect.height),
 					cmd.color,
 				)
 			}

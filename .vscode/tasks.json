@@ -44,7 +44,8 @@
         "${cwd}/src/main.odin",
         "-file",
         "-collection:src=src",
-        "-debug"
+        "-o:speed",
+        // "-debug"
       ],
       "group": {
         "kind": "test",

@@ -85,30 +85,24 @@ Shutdown :: proc() {
 	}
 }
 
-Print :: proc(args: ..any, sep := " ") {
-	baseLog(..args, sep = sep, level = .PRINT)
+Print :: proc(format: string, args: ..any) {
+	baseLog(format, ..args, level = .PRINT)
 }
 
-Debug :: proc(args: ..any, sep := " ") {
-	baseLog(..args, sep = sep, level = .DEBUG)
+Debug :: proc(format: string, args: ..any) {
+	baseLog(format, ..args, level = .DEBUG)
 }
 
-Warn :: proc(args: ..any, sep := " ") {
-	baseLog(..args, sep = sep, level = .WARNING)
+Warn :: proc(format: string, args: ..any) {
+	baseLog(format, ..args, level = .WARNING)
 }
 
-Err :: proc(args: ..any, sep := " ", panic := true) {
-	baseLog(..args, sep = sep, level = .ERROR, panic = panic)
+Err :: proc(format: string, args: ..any, panic := true) {
+	baseLog(format, ..args, level = .ERROR, panic = panic)
 }
 
 @(private = "file")
-baseLog :: proc(
-	args: ..any,
-	sep := " ",
-	level: LogLevel = .PRINT,
-	panic := false,
-	loc := #caller_location,
-) {
+baseLog :: proc(format: string, args: ..any, level: LogLevel = .PRINT, panic := false) {
 	mark, col: string
 
 	switch level {
@@ -127,7 +121,7 @@ baseLog :: proc(
 		panic := true
 	}
 
-	baseString := fmt.tprintln(..args, sep = sep)
+	baseString := fmt.tprintfln(format, ..args)
 	string := strings.concatenate({mark, " ", baseString})
 	defer delete(string)
 	stringData := transmute([]byte)(string)
@@ -141,7 +135,7 @@ baseLog :: proc(
 	traceCnt := level == .ERROR ? -1 : 2
 	printTrace(traceCnt)
 
-	if (panic) {
+	if panic {
 		Shutdown()
 		runtime.trap()
 	}

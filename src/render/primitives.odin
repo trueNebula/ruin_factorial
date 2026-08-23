@@ -21,3 +21,7 @@ DrawTile :: proc(
 ) {
 	append(&renMan.tile, DrawCommand{texture = texture, src = src, dest = dest, sortY = false})
 }
+
+DrawRect :: proc(renMan: ^RenderManager, rect: rl.Rectangle, color: rl.Color) {
+	append(&renMan.debug, ShapeDrawCommand{rect = rect, color = color})
+}

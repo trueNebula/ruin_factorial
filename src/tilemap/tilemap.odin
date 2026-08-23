@@ -1,5 +1,6 @@
 package tilemap
 
+import "core:math"
 import "src:core"
 import "src:log"
 import "src:render"
@@ -95,15 +96,49 @@ DrawTilemap :: proc(tileMan: ^TileManager, camera: rl.Camera2D, renMan: ^render.
 	}
 }
 
-@(private)
-makeTestChunk :: proc() -> Chunk {
-	baseLayer: Layer = [core.ChunkSize]core.TileId{}
+MaybeGenerateNewChunks :: proc(
+	tileMan: ^TileManager,
+	camera: rl.Camera2D,
+	renMan: ^render.RenderManager,
+) {
+	screenRect := core.GetScreenRect(camera)
+	paddedScreenRect := PadChunkBoundingBox(screenRect, 1 * core.ChunkLenght)
 
-	for idx in 0 ..< core.ChunkSize {
-		baseLayer[idx] = .DIRT
+	render.DrawRect(renMan, paddedScreenRect, rl.WHITE)
+
+	cameraCoords := core.GetPos(paddedScreenRect)
+	chunkCoords := Screen2Chunk(cameraCoords)
+	chunksCoveredHorizontal := math.ceil(
+		paddedScreenRect.width / (core.ChunkLenght * core.TileSize),
+	)
+	chunksCoveredVertical := math.ceil(
+		paddedScreenRect.height / (core.ChunkLenght * core.TileSize),
+	)
+
+	for y in 0 ..< chunksCoveredVertical {
+		for x in 0 ..< chunksCoveredHorizontal {
+			currChunkCoords := chunkCoords + rl.Vector2{x, y}
+			currChunkHash := Coords2Hash(int(currChunkCoords.x), int(currChunkCoords.y))
+			if _, ok := tileMan.chunks[currChunkHash]; ok {
+				// chunk exists, skip
+				continue
+			}
+
+			chunk := generateChunk(tileMan, int(currChunkCoords.x), int(currChunkCoords.y))
+			tileMan.chunks[currChunkHash] = chunk
+		}
+	}
+}
+
+Shutdown :: proc(tileMan: ^TileManager) {
+	delete(tileMan.repo)
+	delete(tileMan.chunks)
+
+	for biome in tileMan.biomes {
+		delete(biome.gradient)
 	}
 
-	return {x = 0, y = 0, base = baseLayer}
+	delete(tileMan.biomes)
 }
 
 @(private)
@@ -120,12 +155,7 @@ drawChunk :: proc(
 	padding := 3 // tiles in each direction
 	boundingBox := GetChunkBoundingBox(chunk)
 	paddedBoundingBox := PadChunkBoundingBox(boundingBox, padding)
-
-	screenRect := rl.Rectangle{}
-	screenRect.width = f32(rl.GetScreenWidth()) / camera.zoom
-	screenRect.height = f32(rl.GetScreenHeight()) / camera.zoom
-	screenRect.x = camera.target.x - (screenRect.width / 2)
-	screenRect.y = camera.target.y - (screenRect.height / 2)
+	screenRect := core.GetScreenRect(camera)
 
 	if !rl.CheckCollisionRecs(paddedBoundingBox, screenRect) {
 		return

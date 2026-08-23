@@ -2,6 +2,7 @@ package tilemap
 
 import "core:math/noise"
 import "src:core"
+import "src:log"
 import rl "vendor:raylib"
 
 HEIGHT_MAP: rl.RenderTexture2D
@@ -90,6 +91,7 @@ generateChunk :: proc(tileMan: ^TileManager, x, y: int) -> Chunk {
 		chunk.base[tileIdx] = tile
 	}
 
+	// log.Debug("Generated new chunk at position %+v %+v!", x, y)
 	return chunk
 }
 

@@ -4,6 +4,7 @@ import "src:ecs"
 import "src:neb_utils"
 import "src:render"
 import "src:texture"
+import "src:tilemap"
 import rl "vendor:raylib"
 
 SceneId :: enum {

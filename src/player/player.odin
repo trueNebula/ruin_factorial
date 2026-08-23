@@ -7,7 +7,7 @@ import "src:input"
 import "src:log"
 import rl "vendor:raylib"
 
-BASE_MOVEMENT_SPEED :: 200
+BASE_MOVEMENT_SPEED :: 1000
 
 SetupPlayer :: proc(world: ^ecs.World) {
 	transform := core.Transform {
@@ -34,7 +34,7 @@ SetupPlayer :: proc(world: ^ecs.World) {
 		camera = rl.Camera2D {
 			target = rl.Vector2{transform.x, transform.y},
 			offset = core.GetScreenCenter(),
-			zoom = 4.0,
+			zoom = 1.0 / 2,
 			rotation = 0,
 		},
 	}
@@ -55,18 +55,25 @@ PlayerInputSystem :: proc(world: ^ecs.World, frameInput: ^input.State) {
 	})
 }
 
-PlayerCameraSystem :: proc(world: ^ecs.World) {
-	ecs.Query3(
+PlayerMovementSystem :: proc(world: ^ecs.World) {
+	ecs.Query4(
 		world,
 		nil,
 		proc(
-			_: ^core.PlayerRef,
 			transform: ^core.Transform,
+			velocity: ^core.Velocity,
+			player: ^core.PlayerRef,
 			camera: ^core.Camera,
 			userData: rawptr,
 		) {
+			dt := rl.GetFrameTime()
+
+			transform.x += velocity.x * dt
+			transform.y += velocity.y * dt
 			camera.camera.target.x = transform.x
 			camera.camera.target.y = transform.y
+			velocity.x = 0
+			velocity.y = 0
 		},
 	)
 }

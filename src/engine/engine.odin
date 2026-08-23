@@ -30,11 +30,11 @@ MakeEngine :: proc() -> Engine {
 	renMan := new(render.RenderManager)
 	renMan^ = render.MakeRenderManager()
 
-	sceneMan := new(scene.SceneManager)
-	sceneMan^ = scene.MakeSceneManger(renMan, texMan, world)
-
 	tileMan := new(tilemap.TileManager)
 	tileMan^ = tilemap.MakeTileManager()
+
+	sceneMan := new(scene.SceneManager)
+	sceneMan^ = scene.MakeSceneManger(renMan, texMan, world)
 
 	engine := Engine {
 		sceneManager   = sceneMan,
@@ -88,6 +88,7 @@ Run :: proc(engine: ^Engine) {
 Shutdown :: proc(engine: ^Engine) {
 	ecs.EndWorld(engine.world)
 	texture.Shutdown(engine.textureManager)
+	tilemap.Shutdown(engine.tileManager)
 }
 
 @(private)
@@ -104,6 +105,11 @@ update :: proc(engine: ^Engine) {
 	}
 
 	camera := playerView[0].c2
+	tilemap.MaybeGenerateNewChunks(engine.tileManager, camera.camera, engine.renderManager)
 	tilemap.DrawTilemap(engine.tileManager, camera.camera, engine.renderManager)
 	render.RenderSprites(engine.world, engine.renderManager, engine.textureManager)
+	screenRect := core.GetScreenRect(camera.camera)
+
+	render.DrawRect(engine.renderManager, screenRect, rl.BLUE)
+
 }

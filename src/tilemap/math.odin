@@ -1,5 +1,6 @@
 package tilemap
 
+import "core:math"
 import "core:strconv"
 import "core:strings"
 import "src:core"
@@ -91,8 +92,8 @@ Screen2WorldVec :: #force_inline proc(pos: rl.Vector2) -> rl.Vector2 {
 }
 
 World2Chunk :: #force_inline proc(pos: rl.Vector2) -> rl.Vector2 {
-	chunkX := int(pos.x) / core.ChunkLenght
-	chunkY := int(pos.y) / core.ChunkLenght
+	chunkX := int(math.floor(pos.x / core.ChunkLenght))
+	chunkY := int(math.floor(pos.y / core.ChunkLenght))
 
 	return {f32(chunkX), f32(chunkY)}
 }

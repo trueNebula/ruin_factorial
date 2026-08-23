@@ -72,3 +72,14 @@ ToVector :: proc {
 IntToVector :: proc(x, y: int) -> rl.Vector2 {
 	return {f32(x), f32(y)}
 }
+
+GetScreenRect :: proc(camera: rl.Camera2D) -> rl.Rectangle {
+	screenRect := rl.Rectangle{}
+	zoom: f32 = 4.0
+	screenRect.width = f32(rl.GetScreenWidth()) / zoom
+	screenRect.height = f32(rl.GetScreenHeight()) / zoom
+	screenRect.x = camera.target.x - (screenRect.width / 2)
+	screenRect.y = camera.target.y - (screenRect.height / 2)
+
+	return screenRect
+}
