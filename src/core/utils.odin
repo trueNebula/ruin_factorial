@@ -64,3 +64,11 @@ GetSize :: proc(rect: rl.Rectangle) -> rl.Vector2 {
 GetScreenCenter :: proc() -> rl.Vector2 {
 	return {f32(rl.GetScreenWidth() / 2), f32(rl.GetScreenHeight() / 2)}
 }
+
+ToVector :: proc {
+	IntToVector,
+}
+
+IntToVector :: proc(x, y: int) -> rl.Vector2 {
+	return {f32(x), f32(y)}
+}

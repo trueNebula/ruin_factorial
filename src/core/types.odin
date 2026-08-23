@@ -60,3 +60,10 @@ Shape :: enum {
 	RECTANGLE,
 	CIRCLE,
 }
+
+BiomeId :: enum {
+	NONE,
+	WATER,
+	DESERT,
+	GRASSLANDS,
+}

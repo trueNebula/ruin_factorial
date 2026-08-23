@@ -26,6 +26,7 @@ ChunkMap :: map[string]Chunk
 TileManager :: struct {
 	repo:   TileRepo,
 	chunks: ChunkMap,
+	biomes: BiomeList,
 }
 
 CreateRepo :: proc() -> TileRepo {
@@ -62,6 +63,7 @@ MakeTileManager :: proc() -> TileManager {
 	tileMan := TileManager {
 		repo   = CreateRepo(),
 		chunks = chunkMap,
+		biomes = CreateBiomes(),
 	}
 
 	GenerateWorld(&tileMan)
