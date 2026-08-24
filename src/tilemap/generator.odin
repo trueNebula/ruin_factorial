@@ -70,7 +70,7 @@ GenerateWorld :: proc(tileMan: ^TileManager) {
 		}
 	}
 
-	if (core.DRAW_CHUNK_NOISE_MAPS) {
+	if (core.DEBUG_DRAW_CHUNK_NOISE_MAPS) {
 		rl.ExportImage(rl.LoadImageFromTexture(HEIGHT_MAP.texture), "height_map.png")
 		rl.ExportImage(rl.LoadImageFromTexture(BIOME_MAP.texture), "biome_map.png")
 		rl.ExportImage(rl.LoadImageFromTexture(BIOME_WARP.texture), "warp.png")
@@ -106,7 +106,7 @@ generateTile :: proc(tileMan: ^TileManager, x, y: int, cX, cY: int) -> core.Tile
 	biomeValue := fbmPixel(core.ToVector(texX, texY), BIOME_SEED, BIOME_MAP_SETTINGS)
 	warp := fbmPixel(core.ToVector(texX, texY), BIOME_WARP_SEED, BIOME_WARP_SETTINGS)
 
-	if (core.DRAW_CHUNK_NOISE_MAPS) {
+	if (core.DEBUG_DRAW_CHUNK_NOISE_MAPS) {
 		rl.BeginTextureMode(HEIGHT_MAP)
 		hColor := rl.Color {
 			u8(heightValue * 255),

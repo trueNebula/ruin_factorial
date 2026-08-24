@@ -113,7 +113,7 @@ update :: proc(engine: ^Engine) {
 	render.RenderSprites(engine.world, engine.renderManager, engine.textureManager)
 	screenRect := core.GetScreenRect(camera.camera)
 
-	if core.DRAW_SCREEN_BOUNDS {
+	if core.DEBUG_DRAW_SCREEN_BOUNDS {
 		render.DrawRect(engine.renderManager, screenRect, rl.BLUE)
 	}
 }

@@ -104,7 +104,7 @@ MaybeGenerateNewChunks :: proc(
 	screenRect := core.GetScreenRect(camera)
 	paddedScreenRect := PadChunkBoundingBox(screenRect, 1 * core.ChunkLenght)
 
-	if core.DRAW_CHUNK_GEN_BOUNDS {
+	if core.DEBUG_DRAW_CHUNK_GEN_BOUNDS {
 		render.DrawRect(renMan, paddedScreenRect, rl.WHITE)
 	}
 
@@ -169,7 +169,7 @@ drawChunk :: proc(
 		return
 	}
 
-	if core.DRAW_CHUNK_BOUNDS {
+	if core.DEBUG_DRAW_CHUNK_BOUNDS {
 		render.DrawRect(renMan, boundingBox, rl.GRAY)
 	}
 
