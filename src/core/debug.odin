@@ -9,7 +9,7 @@ DEBUG_DRAW_CHUNK_BOUNDS :: true
 DEBUG_DRAW_CHUNK_GEN_BOUNDS :: false
 DEBUG_DEFAULT_ZOOM :: 4.0
 @(private = "file")
-DEBUG_ZOOM :: 1.0
+DEBUG_ZOOM :: 0.0
 
 DebugOptions :: struct {
 	drawChunkNoiseMaps: bool,

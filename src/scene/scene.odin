@@ -67,6 +67,15 @@ LoadFirstScene :: proc(sceneMan: ^SceneManager) {
 	loadMenuScene(sceneMan)
 }
 
+LoadScene :: proc(sceneMan: ^SceneManager, id: SceneId) {
+	switch id {
+	case .MENU:
+		loadMenuScene(sceneMan)
+	case .GAME:
+		loadGameScene(sceneMan)
+	}
+}
+
 @(private)
 triggerSceneTransition :: proc(sceneMan: ^SceneManager, target: SceneId) {
 	if sceneMan.transition.state != .NONE {
@@ -101,20 +110,11 @@ unloadScene :: proc(sceneMan: ^SceneManager) {
 	}
 }
 
-Input :: proc(sceneMan: ^SceneManager) {
+Input :: proc(sceneMan: ^SceneManager) -> bool {
 	if sceneMan.transition.state != .NONE {
-		return
+		return true
 	}
-	switch sceneMan.current {
-	case .MENU:
-		if rl.IsMouseButtonPressed(.LEFT) {
-			loadGameScene(sceneMan)
-		}
-	case .GAME:
-		if rl.IsKeyPressed(.ENTER) {
-			loadMenuScene(sceneMan)
-		}
-	}
+	return false
 }
 
 Update :: proc(sceneMan: ^SceneManager) {

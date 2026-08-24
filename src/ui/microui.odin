@@ -2,12 +2,14 @@ package ui
 
 import "core:fmt"
 import "src:core"
+import "src:input"
 import mu "vendor:microui"
 import rl "vendor:raylib"
 
 MuState :: struct {
 	muCtx:        mu.Context,
 	atlasTexture: rl.Texture2D,
+	windowPos:    rl.Rectangle,
 }
 
 @(private = "file")
@@ -35,10 +37,11 @@ InitMu :: proc() {
 	ctx.text_width = mu.default_atlas_text_width
 	ctx.text_height = mu.default_atlas_text_height
 	state.atlasTexture = rl.LoadTextureFromImage(image)
+	state.windowPos = {0, f32(rl.GetScreenHeight()) - 450, 350, 450}
 }
 
-FrameMu :: proc() {
-	update()
+FrameMu :: proc(frameInput: ^input.State) {
+	update(frameInput)
 	debug()
 	end()
 }
@@ -47,8 +50,7 @@ ShutdownMu :: proc() {
 	rl.UnloadTexture(state.atlasTexture)
 }
 
-@(private = "file")
-update :: proc() {
+InputMu :: proc(frameInput: ^input.State) {
 	ctx := &state.muCtx
 
 	mouse_pos := [2]i32{rl.GetMouseX(), rl.GetMouseY()}
@@ -56,18 +58,26 @@ update :: proc() {
 	mu.input_scroll(ctx, 0, i32(rl.GetMouseWheelMove() * -30))
 
 	@(static) buttons_to_key := [?]struct {
-		rl_button: rl.MouseButton,
+		rl_button: core.MouseButton,
 		mu_button: mu.Mouse,
-	}{{.LEFT, .LEFT}, {.RIGHT, .RIGHT}, {.MIDDLE, .MIDDLE}}
+	}{{.LEFT, .LEFT}, {.RIGHT, .RIGHT}}
+
+	if !rl.CheckCollisionPointRec(frameInput.mousePos, state.windowPos) {
+		return
+	}
 
 	for button in buttons_to_key {
-		if rl.IsMouseButtonPressed(button.rl_button) {
+		if input.MaybeConsumeMouse(frameInput, button.rl_button) {
 			mu.input_mouse_down(ctx, mouse_pos.x, mouse_pos.y, button.mu_button)
-		} else if rl.IsMouseButtonReleased(button.rl_button) {
+		} else if rl.IsMouseButtonReleased(cast(rl.MouseButton)button.rl_button) {
 			mu.input_mouse_up(ctx, mouse_pos.x, mouse_pos.y, button.mu_button)
 		}
 	}
-	mu.begin(ctx)
+}
+
+@(private = "file")
+update :: proc(frameInput: ^input.State) {
+	mu.begin(&state.muCtx)
 	rl.BeginScissorMode(0, 0, rl.GetScreenWidth(), rl.GetScreenHeight())
 }
 
@@ -81,10 +91,10 @@ end :: proc() {
 
 @(private = "file")
 debug :: proc() {
-	@(static) opts := mu.Options{.NO_CLOSE}
+	@(static) opts := mu.Options{.NO_CLOSE, .NO_RESIZE, .NO_TITLE}
 	ctx := &state.muCtx
 
-	if (mu.window(ctx, "Debug Menu", {0, rl.GetScreenHeight() - 450, 300, 450}, opts)) {
+	if (mu.window(ctx, "Debug Menu", rectangleToRect(state.windowPos), opts)) {
 		window := mu.get_current_container(ctx)
 		mu.layout_row(ctx, {300}, 0)
 		mu.label(ctx, fmt.tprint("FPS:", rl.GetFPS()))
@@ -93,14 +103,6 @@ debug :: proc() {
 		mu.checkbox(ctx, "Draw Screen Bounds", &core.DEBUG.drawScreenBounds)
 		mu.checkbox(ctx, "Draw Chunk Bounds", &core.DEBUG.drawChunkBounds)
 		mu.checkbox(ctx, "Draw Chunk Generation Bounds", &core.DEBUG.drawChunkGenBounds)
-
-		// mu.checkbox(ctx, "God Mode", &u.DEBUG_OPTS.GOD_MODE);
-		// mu.checkbox(ctx, "Draw Colliders", &u.DEBUG_OPTS.SHOW_COLLIDERS);
-		// mu.checkbox(ctx, "Draw Chunk Borders", &u.DEBUG_OPTS.SHOW_CHUNK_BORDERS);
-		// mu.checkbox(ctx, "Draw Base Layer", &u.DEBUG_OPTS.RENDER_LAYER_BASE);
-		// mu.checkbox(ctx, "Draw Top Layer", &u.DEBUG_OPTS.RENDER_LAYER_TOP);
-		// mu.checkbox(ctx, "Draw Decals Layer", &u.DEBUG_OPTS.RENDER_LAYER_DECALS);
-		// mu.checkbox(ctx, "Draw Objects Layer", &u.DEBUG_OPTS.RENDER_LAYER_OBJECTS);
 
 		// mu.checkbox(ctx, "Do player collision", &u.DEBUG_OPTS.DO_PLAYER_COLLISION);
 		// mu.label(ctx, "Player speed multiplier");
@@ -151,4 +153,9 @@ render :: proc(ctx: ^mu.Context) {
 			unreachable()
 		}
 	}
+}
+
+@(private = "file")
+rectangleToRect :: proc(rect: rl.Rectangle) -> mu.Rect {
+	return {i32(rect.x), i32(rect.y), i32(rect.width), i32(rect.height)}
 }

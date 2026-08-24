@@ -15,7 +15,6 @@ State :: struct {
 Poll :: proc(binds: core.Keybinds) -> State {
 	state: State
 
-	// TODO: use keybinds
 	if rl.IsKeyPressed(binds.Up) do state.actionPressed += {.UP}
 	if rl.IsKeyPressed(binds.Down) do state.actionPressed += {.DOWN}
 	if rl.IsKeyPressed(binds.Left) do state.actionPressed += {.LEFT}
@@ -41,7 +40,7 @@ Poll :: proc(binds: core.Keybinds) -> State {
 }
 
 MaybeConsumeMouse :: proc(state: ^State, button: core.MouseButton) -> (consumed: bool) {
-	if button not_in state.mouseHeld do return false
+	if button not_in state.mouseHeld || button not_in state.mousePressed do return false
 	if button in state.mouseConsumed do return false
 	state.mouseConsumed += {button}
 	return true

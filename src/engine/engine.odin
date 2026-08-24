@@ -54,12 +54,14 @@ Init :: proc(engine: ^Engine) {
 }
 
 Run :: proc(engine: ^Engine) {
+	shouldBlockInput: bool
 	for !rl.WindowShouldClose() {
 		core.FullscreenManager()
 
 		engine.frameInput = input.Poll(core.DefaultKeybinds)
-		scene.Input(engine.sceneManager)
+		shouldBlockInput := scene.Input(engine.sceneManager)
 
+		if !shouldBlockInput do engineInput(engine)
 		update(engine)
 
 		rl.BeginDrawing()
@@ -83,7 +85,7 @@ Run :: proc(engine: ^Engine) {
 		scene.DrawTransition(engine.sceneManager)
 		rl.DrawText(rl.TextFormat("%d", rl.GetFPS()), 12, 12, 24, rl.BLACK)
 		rl.DrawText(rl.TextFormat("%d", rl.GetFPS()), 10, 10, 24, rl.WHITE)
-		ui.FrameMu()
+		ui.FrameMu(&engine.frameInput)
 		rl.EndDrawing()
 
 		ecs.FrameEnd(engine.world)
@@ -96,6 +98,21 @@ Shutdown :: proc(engine: ^Engine) {
 	tilemap.Shutdown(engine.tileManager)
 	render.Shutdown(engine.renderManager)
 	ui.ShutdownMu()
+}
+
+@(private)
+engineInput :: proc(engine: ^Engine) {
+	ui.InputMu(&engine.frameInput)
+	switch engine.sceneManager.current {
+	case .MENU:
+		if input.MaybeConsumeMouse(&engine.frameInput, .LEFT) {
+			scene.LoadScene(engine.sceneManager, .GAME)
+		}
+	case .GAME:
+		if rl.IsKeyPressed(.ENTER) {
+			scene.LoadScene(engine.sceneManager, .MENU)
+		}
+	}
 }
 
 @(private)
