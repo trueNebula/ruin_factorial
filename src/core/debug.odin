@@ -1,3 +1,6 @@
 package core
 
 DRAW_CHUNK_NOISE_MAPS :: false
+DRAW_SCREEN_BOUNDS :: false
+DRAW_CHUNK_BOUNDS :: true
+DRAW_CHUNK_GEN_BOUNDS :: false

@@ -14,9 +14,7 @@
     },
     {
       "label": "Build",
-      "dependsOn": [
-        "build"
-      ]
+      "dependsOn": ["build"]
     },
     {
       "label": "Run Main (Windows)",
@@ -26,7 +24,9 @@
         "run",
         "${cwd}/src/main.odin",
         "-file",
-        "-collection:src=src"
+        "-collection:src=src",
+        // "-o:speed"
+        "-debug"
       ],
       "group": {
         "kind": "test",

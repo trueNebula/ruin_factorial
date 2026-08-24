@@ -11,6 +11,7 @@ main :: proc() {
 	track: mem.Tracking_Allocator
 	mem.tracking_allocator_init(&track, context.allocator)
 	context.allocator = mem.tracking_allocator(&track)
+	defer mem.tracking_allocator_destroy(&track)
 
 	rl.SetConfigFlags({.WINDOW_RESIZABLE})
 	rl.SetExitKey(.KEY_NULL)
@@ -31,7 +32,6 @@ main :: proc() {
 	for _, entry in track.allocation_map {
 		log.Print("%+v - %+v bytes", entry.location, entry.size)
 	}
-	mem.tracking_allocator_destroy(&track)
 
 	log.Shutdown()
 }

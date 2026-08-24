@@ -34,7 +34,7 @@ SetupPlayer :: proc(world: ^ecs.World) {
 		camera = rl.Camera2D {
 			target = rl.Vector2{transform.x, transform.y},
 			offset = core.GetScreenCenter(),
-			zoom = 1.0 / 2,
+			zoom = 1.0 / 1,
 			rotation = 0,
 		},
 	}

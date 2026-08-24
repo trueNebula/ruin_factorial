@@ -104,7 +104,9 @@ MaybeGenerateNewChunks :: proc(
 	screenRect := core.GetScreenRect(camera)
 	paddedScreenRect := PadChunkBoundingBox(screenRect, 1 * core.ChunkLenght)
 
-	render.DrawRect(renMan, paddedScreenRect, rl.WHITE)
+	if core.DRAW_CHUNK_GEN_BOUNDS {
+		render.DrawRect(renMan, paddedScreenRect, rl.WHITE)
+	}
 
 	cameraCoords := core.GetPos(paddedScreenRect)
 	chunkCoords := Screen2Chunk(cameraCoords)
@@ -119,8 +121,8 @@ MaybeGenerateNewChunks :: proc(
 		for x in 0 ..< chunksCoveredHorizontal {
 			currChunkCoords := chunkCoords + rl.Vector2{x, y}
 			currChunkHash := Coords2Hash(int(currChunkCoords.x), int(currChunkCoords.y))
-			defer delete(currChunkHash)
 			if _, ok := tileMan.chunks[currChunkHash]; ok {
+				delete(currChunkHash)
 				// chunk exists, skip
 				continue
 			}
@@ -133,6 +135,11 @@ MaybeGenerateNewChunks :: proc(
 
 Shutdown :: proc(tileMan: ^TileManager) {
 	delete(tileMan.repo)
+	for hash, chunk in tileMan.chunks {
+		delete_key(&tileMan.chunks, hash)
+		delete(hash)
+	}
+
 	delete(tileMan.chunks)
 
 	for biome in tileMan.biomes {
@@ -155,14 +162,30 @@ drawChunk :: proc(
 
 	padding := 3 // tiles in each direction
 	boundingBox := GetChunkBoundingBox(chunk)
-	paddedBoundingBox := PadChunkBoundingBox(boundingBox, padding)
 	screenRect := core.GetScreenRect(camera)
+	paddedScreenRect := PadChunkBoundingBox(screenRect, padding)
 
-	if !rl.CheckCollisionRecs(paddedBoundingBox, screenRect) {
+	if !rl.CheckCollisionRecs(boundingBox, paddedScreenRect) {
 		return
 	}
 
+	if core.DRAW_CHUNK_BOUNDS {
+		render.DrawRect(renMan, boundingBox, rl.GRAY)
+	}
+
 	for tile, idx in chunk.base {
+		tileX := chunk.x * core.ChunkLenght + idx % core.ChunkLenght
+		tileY := chunk.y * core.ChunkLenght + idx / core.ChunkLenght
+
+		fromX := int(math.floor(paddedScreenRect.x / core.TileSize))
+		fromY := int(math.floor(paddedScreenRect.y / core.TileSize))
+		toX := int(math.ceil((paddedScreenRect.x + paddedScreenRect.width) / core.TileSize))
+		toY := int(math.ceil((paddedScreenRect.y + paddedScreenRect.height) / core.TileSize))
+
+		if tileX < fromX || tileX > toX || tileY < fromY || tileY > toY {
+			continue
+		}
+
 		drawTile(tileMan, tile, idx, chunk, renMan)
 	}
 }

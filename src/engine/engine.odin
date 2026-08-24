@@ -79,6 +79,8 @@ Run :: proc(engine: ^Engine) {
 		}
 
 		scene.DrawTransition(engine.sceneManager)
+		rl.DrawText(rl.TextFormat("%d", rl.GetFPS()), 12, 12, 24, rl.BLACK)
+		rl.DrawText(rl.TextFormat("%d", rl.GetFPS()), 10, 10, 24, rl.WHITE)
 		rl.EndDrawing()
 
 		ecs.FrameEnd(engine.world)
@@ -111,6 +113,7 @@ update :: proc(engine: ^Engine) {
 	render.RenderSprites(engine.world, engine.renderManager, engine.textureManager)
 	screenRect := core.GetScreenRect(camera.camera)
 
-	render.DrawRect(engine.renderManager, screenRect, rl.BLUE)
-
+	if core.DRAW_SCREEN_BOUNDS {
+		render.DrawRect(engine.renderManager, screenRect, rl.BLUE)
+	}
 }
