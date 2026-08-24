@@ -9,6 +9,7 @@ import "src:render"
 import "src:scene"
 import "src:texture"
 import "src:tilemap"
+import "src:ui"
 import rl "vendor:raylib"
 
 Engine :: struct {
@@ -48,6 +49,7 @@ MakeEngine :: proc() -> Engine {
 }
 
 Init :: proc(engine: ^Engine) {
+	ui.InitMu()
 	scene.LoadFirstScene(engine.sceneManager)
 }
 
@@ -81,6 +83,7 @@ Run :: proc(engine: ^Engine) {
 		scene.DrawTransition(engine.sceneManager)
 		rl.DrawText(rl.TextFormat("%d", rl.GetFPS()), 12, 12, 24, rl.BLACK)
 		rl.DrawText(rl.TextFormat("%d", rl.GetFPS()), 10, 10, 24, rl.WHITE)
+		ui.FrameMu()
 		rl.EndDrawing()
 
 		ecs.FrameEnd(engine.world)
@@ -92,6 +95,7 @@ Shutdown :: proc(engine: ^Engine) {
 	texture.Shutdown(engine.textureManager)
 	tilemap.Shutdown(engine.tileManager)
 	render.Shutdown(engine.renderManager)
+	ui.ShutdownMu()
 }
 
 @(private)
@@ -113,7 +117,7 @@ update :: proc(engine: ^Engine) {
 	render.RenderSprites(engine.world, engine.renderManager, engine.textureManager)
 	screenRect := core.GetScreenRect(camera.camera)
 
-	if core.DEBUG_DRAW_SCREEN_BOUNDS {
+	if core.DEBUG.drawScreenBounds {
 		render.DrawRect(engine.renderManager, screenRect, rl.BLUE)
 	}
 }

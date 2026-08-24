@@ -75,7 +75,7 @@ IntToVector :: proc(x, y: int) -> rl.Vector2 {
 
 GetScreenRect :: proc(camera: rl.Camera2D) -> rl.Rectangle {
 	screenRect := rl.Rectangle{}
-	zoom: f32 = 4.0
+	zoom: f32 = DEBUG_DEFAULT_ZOOM
 	screenRect.width = f32(rl.GetScreenWidth()) / zoom
 	screenRect.height = f32(rl.GetScreenHeight()) / zoom
 	screenRect.x = camera.target.x - (screenRect.width / 2)

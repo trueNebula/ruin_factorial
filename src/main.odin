@@ -21,6 +21,7 @@ main :: proc() {
 
 	log.Init()
 	Engine := engine.MakeEngine()
+	engine.Init(&Engine)
 	engine.Run(&Engine)
 	engine.Shutdown(&Engine)
 
