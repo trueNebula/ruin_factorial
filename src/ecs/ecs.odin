@@ -1,5 +1,6 @@
 package ecs
 
+import "src:log"
 // v1.0.0
 
 import "base:runtime"
@@ -71,6 +72,27 @@ Delete :: proc(world: ^World, entityId: u32) {
 	} else {
 		deleteInternal(world, entityId)
 	}
+}
+
+Get :: proc(world: ^World, entityId: u32, tids: ..typeid) -> []Component {
+	components := make([]Component, len(tids), context.temp_allocator)
+
+	for tid, idx in tids {
+		component, err := getComponent(world, entityId, typeid_of(tid))
+		if (err) {
+			log.Warn(
+				"Tried getting component %+v on entity %+v, but entity does not have said component!",
+				tid,
+				entityId,
+			)
+			continue
+		}
+
+		components[idx] = component
+	}
+
+	return components[:]
+
 }
 
 AddComponent :: proc(world: ^World, entityId: u32, component: Component) {
