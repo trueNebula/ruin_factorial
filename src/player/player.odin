@@ -8,6 +8,9 @@ import "src:input"
 import "src:log"
 import rl "vendor:raylib"
 
+MAIN_PLAYER_REF :: core.PlayerRef {
+	id = 1,
+}
 BASE_MOVEMENT_SPEED :: 1000
 
 SetupPlayer :: proc(world: ^ecs.World) {
@@ -25,10 +28,7 @@ SetupPlayer :: proc(world: ^ecs.World) {
 		anchor = .CENTER,
 	}
 
-	player := core.PlayerRef {
-		id = 1,
-	}
-
+	player := MAIN_PLAYER_REF
 	velocity := core.Velocity{0, 0}
 
 	camera := core.Camera {
@@ -88,4 +88,32 @@ CameraTransformSystem :: proc(world: ^ecs.World) {
 
 		camera.camera.zoom = core.DEBUG_DEFAULT_ZOOM * math.pow(2, core.DEBUG.zoom)
 	})
+}
+
+GetPlayer :: proc(
+	world: ^ecs.World,
+	ref := MAIN_PLAYER_REF,
+	tids: ..typeid,
+) -> (
+	components: ecs.ComponentSet,
+	err: bool,
+) {
+	entityId := getPlayerId(world, ref)
+	if entityId == 0 {
+		return {}, true
+	}
+
+	return ecs.Get(world, entityId, ..tids), false
+}
+
+@(private)
+getPlayerId :: proc(world: ^ecs.World, ref := MAIN_PLAYER_REF) -> u32 {
+	view := ecs.View1(world, core.PlayerRef)
+	for entity in view {
+		if entity.id == ref.id {
+			return entity.id
+		}
+	}
+
+	return 0
 }

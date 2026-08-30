@@ -1,5 +1,6 @@
 package engine
 
+import "core:reflect"
 import "src:core"
 import "src:ecs"
 import "src:input"
@@ -71,12 +72,21 @@ Run :: proc(engine: ^Engine) {
 		case .MENU:
 		// TODO: add menu scene rendering
 		case .GAME:
-			playerView := ecs.View2(engine.world, core.PlayerRef, core.Camera)
-			if len(playerView) == 0 {
+			playerEntity, playerErr := player.GetPlayer(
+				engine.world,
+				player.MAIN_PLAYER_REF,
+				core.Camera,
+			)
+			defer ecs.Cleanup(&playerEntity)
+			if playerErr {
 				// No camera set up yet, skip rendering
 				break
 			}
-			camera := playerView[0].c2
+			cameraComponent, camErr := ecs.ComponentSetGet(&playerEntity, core.Camera)
+			if camErr {
+				break
+			}
+			camera := cast(^core.Camera)cameraComponent
 			rl.BeginMode2D(camera.camera)
 			render.Flush(engine.renderManager, engine.textureManager)
 			rl.EndMode2D()
@@ -98,6 +108,14 @@ Shutdown :: proc(engine: ^Engine) {
 	tilemap.Shutdown(engine.tileManager)
 	render.Shutdown(engine.renderManager)
 	ui.ShutdownMu()
+
+	free(engine.world)
+	free(engine.textureManager)
+	free(engine.tileManager)
+	free(engine.renderManager)
+	free(engine.sceneManager)
+
+	free_all(context.temp_allocator)
 }
 
 @(private)

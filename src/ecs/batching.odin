@@ -244,3 +244,11 @@ executeDeletionCommands :: proc(world: ^World, batch: ^BatchManager) {
 		batchDeleteData(world, &cmd)
 	}
 }
+
+@(private)
+cleanupBatch :: proc(batch: ^BatchManager) {
+	delete(batch.addQueue)
+	delete(batch.deleteQueue)
+	delete(batch.additions)
+	delete(batch.deletions)
+}

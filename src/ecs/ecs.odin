@@ -74,11 +74,11 @@ Delete :: proc(world: ^World, entityId: u32) {
 	}
 }
 
-Get :: proc(world: ^World, entityId: u32, tids: ..typeid) -> []Component {
-	components := make([]Component, len(tids), context.temp_allocator)
+Get :: proc(world: ^World, entityId: u32, tids: ..typeid) -> ComponentSet {
+	componentSet := MakeComponentSet(allocator = context.temp_allocator)
 
 	for tid, idx in tids {
-		component, err := getComponent(world, entityId, typeid_of(tid))
+		data, err := getComponentRaw(world, entityId, tid)
 		if (err) {
 			log.Warn(
 				"Tried getting component %+v on entity %+v, but entity does not have said component!",
@@ -88,11 +88,14 @@ Get :: proc(world: ^World, entityId: u32, tids: ..typeid) -> []Component {
 			continue
 		}
 
-		components[idx] = component
+		component := new(Component, context.temp_allocator)
+		reflect.set_union_variant_type_info(component^, type_info_of(tid))
+		mem.copy(component, data, reflect.size_of_typeid(tid))
+		ComponentSetAdd(&componentSet, component)
+
 	}
 
-	return components[:]
-
+	return componentSet
 }
 
 AddComponent :: proc(world: ^World, entityId: u32, component: Component) {
@@ -151,8 +154,10 @@ EndWorld :: proc(world: ^World) {
 		}
 
 		delete(arch.columns)
+		free(arch)
 	}
 
+	cleanupBatch(&world.batch)
 	delete(world.archetypes)
 	delete(world.entities)
 	delete(world.meta)

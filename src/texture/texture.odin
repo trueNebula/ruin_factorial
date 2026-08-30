@@ -64,6 +64,7 @@ UnloadTexture :: proc(texMan: ^TextureManager, id: core.Texture) -> (err: bool) 
 	}
 
 	rl.UnloadTexture(texMan.data[id].resource)
+	delete(texData.path)
 	delete_key(&texMan.data, id)
 	return false
 }

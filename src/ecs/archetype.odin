@@ -406,6 +406,20 @@ getComponent :: proc(world: ^World, entityId: u32, $T: typeid) -> (component: ^T
 }
 
 @(private)
+getComponentRaw :: proc(
+	world: ^World,
+	entityId: u32,
+	tid: typeid,
+) -> (
+	rawdata: rawptr,
+	err: bool,
+) {
+	record := world.entities[entityId]
+	return getComponentData(world, record.archetype, tid, record.row)
+}
+
+
+@(private)
 getRecord :: proc(world: ^World, entityId: u32) -> EntityRecord {
 	return world.entities[entityId]
 }
