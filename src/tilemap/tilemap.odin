@@ -84,6 +84,7 @@ MakeTileManager :: proc() -> TileManager {
 		biomes = CreateBiomes(),
 	}
 
+	// TODO: move this to the menu UI, maybe add tileManager to the sceneManager
 	GenerateWorld(&tileMan)
 
 	return tileMan

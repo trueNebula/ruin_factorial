@@ -133,7 +133,7 @@ baseLog :: proc(format: string, args: ..any, level: LogLevel = .PRINT, panic := 
 	fmt.print(BOLD, col, ansi.SGR, mark, " " + MID + ansi.SGR, baseString, END, sep = "")
 
 	traceCnt := level == .ERROR ? -1 : 2
-	printTrace(traceCnt)
+	// printTrace(traceCnt)
 
 	if panic {
 		Shutdown()
@@ -141,6 +141,7 @@ baseLog :: proc(format: string, args: ..any, level: LogLevel = .PRINT, panic := 
 	}
 }
 
+// TODO: this causes a lag spike, investigate
 @(private = "file")
 printTrace :: proc(lines: int) {
 	context.allocator = trace.tracking_allocator(&tracker)
@@ -162,20 +163,11 @@ printTrace :: proc(lines: int) {
 
 		fmt.sbprintf(&sb, "%s#%v %v at %v", "\t", i, location.procedure, location.file_path)
 		if location.line > 0 {
-			when ODIN_ERROR_POS_STYLE == .Default {
-				fmt.sbprintf(&sb, "(%v", location.line)
-				if location.column > 0 {
-					fmt.sbprintf(&sb, ":%v)", location.column)
-				} else {
-					fmt.sbprint(&sb, ")")
-				}
-			} else when ODIN_ERROR_POS_STYLE == .Unix {
-				fmt.sbprintf(&sb, ":%v", location.line)
-				if location.column > 0 {
-					fmt.sbprintf(&sb, ":%v", location.column)
-				}
+			fmt.sbprintf(&sb, "(%v", location.line)
+			if location.column > 0 {
+				fmt.sbprintf(&sb, ":%v)", location.column)
 			} else {
-				#panic("unhandled ODIN_ERROR_POS_STYLE")
+				fmt.sbprint(&sb, ")")
 			}
 		}
 

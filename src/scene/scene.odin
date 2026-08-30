@@ -159,6 +159,13 @@ DrawTransition :: proc(sceneMan: ^SceneManager) {
 	case .FADE_OUT:
 		alpha := neb_utils.OpacityLerp(0, 255, transition.timer / transition.duration)
 		rl.DrawRectangle(0, 0, rl.GetScreenWidth(), rl.GetScreenHeight(), {0, 0, 0, alpha})
+		rl.DrawText(
+			"Loading...",
+			rl.GetScreenWidth() / 2,
+			rl.GetScreenHeight() / 2,
+			24,
+			{255, 255, 255, alpha},
+		)
 	case .FADE_IN:
 		alpha := neb_utils.OpacityLerp(255, 0, transition.timer / transition.duration)
 		rl.DrawRectangle(0, 0, rl.GetScreenWidth(), rl.GetScreenHeight(), {0, 0, 0, alpha})
