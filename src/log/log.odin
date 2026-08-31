@@ -132,8 +132,9 @@ baseLog :: proc(format: string, args: ..any, level: LogLevel = .PRINT, panic := 
 
 	fmt.print(BOLD, col, ansi.SGR, mark, " " + MID + ansi.SGR, baseString, END, sep = "")
 
-	traceCnt := level == .ERROR ? -1 : 2
-	// printTrace(traceCnt)
+	if level == .ERROR {
+		printTrace(4)
+	}
 
 	if panic {
 		Shutdown()
@@ -141,7 +142,6 @@ baseLog :: proc(format: string, args: ..any, level: LogLevel = .PRINT, panic := 
 	}
 }
 
-// TODO: this causes a lag spike, investigate
 @(private = "file")
 printTrace :: proc(lines: int) {
 	context.allocator = trace.tracking_allocator(&tracker)
