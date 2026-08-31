@@ -3,6 +3,7 @@ package engine
 import "core:reflect"
 import "src:core"
 import "src:ecs"
+import "src:event"
 import "src:input"
 import "src:log"
 import "src:player"
@@ -14,6 +15,7 @@ import "src:ui"
 import rl "vendor:raylib"
 
 Engine :: struct {
+	queue:          ^event.Queue,
 	sceneManager:   ^scene.SceneManager,
 	renderManager:  ^render.RenderManager,
 	textureManager: ^texture.TextureManager,
@@ -23,6 +25,9 @@ Engine :: struct {
 }
 
 MakeEngine :: proc() -> Engine {
+	queue := new(event.Queue)
+	queue^ = event.MakeQueue()
+
 	texMan := new(texture.TextureManager)
 	texMan^ = texture.MakeTextureManager()
 
@@ -36,7 +41,7 @@ MakeEngine :: proc() -> Engine {
 	tileMan^ = tilemap.MakeTileManager()
 
 	sceneMan := new(scene.SceneManager)
-	sceneMan^ = scene.MakeSceneManger(renMan, texMan, world)
+	sceneMan^ = scene.MakeSceneManger(renMan, texMan, world, queue)
 
 	engine := Engine {
 		sceneManager   = sceneMan,
@@ -44,6 +49,7 @@ MakeEngine :: proc() -> Engine {
 		textureManager = texMan,
 		tileManager    = tileMan,
 		world          = world,
+		queue          = queue,
 	}
 
 	return engine
@@ -58,11 +64,13 @@ Run :: proc(engine: ^Engine) {
 	shouldBlockInput: bool
 	for !rl.WindowShouldClose() {
 		core.FullscreenManager()
+		processEvents(engine)
 
-		engine.frameInput = input.Poll(core.DefaultKeybinds)
-		shouldBlockInput := scene.Input(engine.sceneManager)
+		if !scene.ShouldBlockInput(engine.sceneManager) {
+			engine.frameInput = input.Poll(core.DefaultKeybinds)
+			engineInput(engine)
+		}
 
-		if !shouldBlockInput do engineInput(engine)
 		update(engine)
 
 		rl.BeginDrawing()
@@ -155,4 +163,16 @@ update :: proc(engine: ^Engine) {
 	if core.DEBUG.drawScreenBounds {
 		render.DrawRect(engine.renderManager, screenRect, rl.BLUE)
 	}
+}
+
+@(private)
+processEvents :: proc(engine: ^Engine) {
+	for item in engine.queue.items {
+		#partial switch variant in item {
+		case event.GenerateWorld:
+			tilemap.GenerateWorld(engine.tileManager)
+		}
+	}
+
+	clear(&engine.queue.items)
 }

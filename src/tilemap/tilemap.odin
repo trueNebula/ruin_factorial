@@ -85,7 +85,7 @@ MakeTileManager :: proc() -> TileManager {
 	}
 
 	// TODO: move this to the menu UI, maybe add tileManager to the sceneManager
-	GenerateWorld(&tileMan)
+	// GenerateWorld(&tileMan)
 
 	return tileMan
 

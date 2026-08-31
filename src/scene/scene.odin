@@ -1,6 +1,7 @@
 package scene
 
 import "src:ecs"
+import "src:event"
 import "src:neb_utils"
 import "src:render"
 import "src:texture"
@@ -24,7 +25,7 @@ TransitionState :: enum {
 }
 
 BASE_DURATION: f32 : 1.0 // Seconds
-FAST_DURATION: f32 : 0.2 // Seconds
+FAST_DURATION: f32 : 0.5 // Seconds
 
 Transition :: struct {
 	state:     TransitionState,
@@ -41,12 +42,14 @@ SceneManager :: struct {
 	renderManager:  ^render.RenderManager,
 	textureManager: ^texture.TextureManager,
 	world:          ^ecs.World,
+	queue:          ^event.Queue,
 }
 
 MakeSceneManger :: proc(
 	renMan: ^render.RenderManager,
 	texMan: ^texture.TextureManager,
 	world: ^ecs.World,
+	queue: ^event.Queue,
 ) -> SceneManager {
 	sceneMan := SceneManager {
 		current = .MENU,
@@ -59,6 +62,7 @@ MakeSceneManger :: proc(
 		renderManager = renMan,
 		textureManager = texMan,
 		world = world,
+		queue = queue,
 	}
 	return sceneMan
 }
@@ -110,7 +114,7 @@ unloadScene :: proc(sceneMan: ^SceneManager) {
 	}
 }
 
-Input :: proc(sceneMan: ^SceneManager) -> bool {
+ShouldBlockInput :: proc(sceneMan: ^SceneManager) -> bool {
 	if sceneMan.transition.state != .NONE {
 		return true
 	}
@@ -169,5 +173,12 @@ DrawTransition :: proc(sceneMan: ^SceneManager) {
 	case .FADE_IN:
 		alpha := neb_utils.OpacityLerp(255, 0, transition.timer / transition.duration)
 		rl.DrawRectangle(0, 0, rl.GetScreenWidth(), rl.GetScreenHeight(), {0, 0, 0, alpha})
+		rl.DrawText(
+			"Loading...",
+			rl.GetScreenWidth() / 2,
+			rl.GetScreenHeight() / 2,
+			24,
+			{255, 255, 255, alpha},
+		)
 	}
 }

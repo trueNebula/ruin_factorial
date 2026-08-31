@@ -1,6 +1,7 @@
 package scene
 
 import "src:ecs"
+import "src:event"
 import "src:physics"
 import "src:player"
 import "src:render"
@@ -17,6 +18,8 @@ initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
 	world := sceneMan.world
 	t.LoadTexture(texMan, .PLAYER, "player.png")
 	t.LoadTexture(texMan, .TILE, "tile_atlas.png")
+
+	event.PushEvent(sceneMan.queue, event.GenerateWorld{seed = 1})
 
 	ecs.RegisterSetupSystem(world, player.SetupPlayer)
 	ecs.RegisterTickSystem(world, player.PlayerMovementSystem)
