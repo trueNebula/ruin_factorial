@@ -39,14 +39,12 @@ SceneManager :: struct {
 	transition:     Transition,
 	data:           Scene,
 	// Context pointers
-	renderManager:  ^render.RenderManager,
 	textureManager: ^texture.TextureManager,
 	world:          ^ecs.World,
 	queue:          ^event.Queue,
 }
 
 MakeSceneManger :: proc(
-	renMan: ^render.RenderManager,
 	texMan: ^texture.TextureManager,
 	world: ^ecs.World,
 	queue: ^event.Queue,
@@ -59,7 +57,6 @@ MakeSceneManger :: proc(
 			duration = FAST_DURATION,
 			nextScene = .MENU,
 		},
-		renderManager = renMan,
 		textureManager = texMan,
 		world = world,
 		queue = queue,

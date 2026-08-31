@@ -13,7 +13,6 @@ GameScene :: struct {
 
 @(private)
 initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
-	renMan := sceneMan.renderManager
 	texMan := sceneMan.textureManager
 	world := sceneMan.world
 	t.LoadTexture(texMan, .PLAYER, "player.png")
