@@ -2,11 +2,14 @@ package event
 
 Event :: union {
 	GenerateWorld,
+	ClearTilemap,
 }
 
 GenerateWorld :: struct {
 	seed: u64,
 }
+
+ClearTilemap :: struct {}
 
 Queue :: struct {
 	items: [dynamic]Event,

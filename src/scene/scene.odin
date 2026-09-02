@@ -95,7 +95,7 @@ triggerSceneTransition :: proc(sceneMan: ^SceneManager, target: SceneId) {
 initNextScene :: proc(sceneMan: ^SceneManager) {
 	switch sceneMan.transition.nextScene {
 	case .MENU:
-		sceneMan.data = initMenuScene()
+		sceneMan.data = initMenuScene(sceneMan)
 	case .GAME:
 		sceneMan.data = initGameScene(sceneMan)
 	}

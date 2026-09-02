@@ -28,6 +28,7 @@ TileManager :: struct {
 	repo:   TileRepo,
 	chunks: ChunkMap,
 	biomes: BiomeList,
+	seeds:  Seeds,
 }
 
 CreateRepo :: proc() -> TileRepo {
@@ -82,10 +83,8 @@ MakeTileManager :: proc() -> TileManager {
 		repo   = CreateRepo(),
 		chunks = chunkMap,
 		biomes = CreateBiomes(),
+		seeds  = CreateSeeds(),
 	}
-
-	// TODO: move this to the menu UI, maybe add tileManager to the sceneManager
-	// GenerateWorld(&tileMan)
 
 	return tileMan
 
@@ -134,6 +133,14 @@ MaybeGenerateNewChunks :: proc(
 	}
 }
 
+ClearChunks :: proc(tileMan: ^TileManager) {
+	for hash, chunk in tileMan.chunks {
+		delete_key(&tileMan.chunks, hash)
+		delete(hash)
+	}
+	clear_map(&tileMan.chunks)
+}
+
 Shutdown :: proc(tileMan: ^TileManager) {
 	delete(tileMan.repo)
 	for hash, chunk in tileMan.chunks {
@@ -161,7 +168,7 @@ drawChunk :: proc(
 		return
 	}
 
-	padding := 3 // tiles in each direction
+	padding := core.DEBUG.largerTilemapRendering ? 3 * core.ChunkLenght : 3 // tiles in each direction
 	boundingBox := GetChunkBoundingBox(chunk)
 	screenRect := core.GetScreenRect(camera)
 	paddedScreenRect := PadChunkBoundingBox(screenRect, padding)

@@ -145,6 +145,25 @@ Initial :: proc(world: ^World) {
 	clear(&batch.addQueue)
 }
 
+ClearWorld :: proc(world: ^World) {
+	for arch in world.archetypes {
+		clear(&arch.entities)
+
+		for column in arch.columns {
+			clear(&arch.columns[column])
+		}
+
+		clear(&arch.columns)
+	}
+
+	clear(&world.archetypes)
+	clear(&world.entities)
+	clear(&world.idQueue)
+	world.nextId = 1
+	clear(&world.setup)
+	clear(&world.tick)
+}
+
 EndWorld :: proc(world: ^World) {
 	for arch in world.archetypes {
 		delete(arch.entities)

@@ -1,8 +1,10 @@
 package tilemap
 
+import "base:runtime"
 import "core:math/noise"
 import "src:core"
 import "src:log"
+import "src:neb_utils"
 import rl "vendor:raylib"
 
 HEIGHT_MAP: rl.RenderTexture2D
@@ -11,6 +13,12 @@ BIOME_WARP: rl.RenderTexture2D
 HEIGHT_SEED :: 6283573998654693917
 BIOME_SEED :: 6283573998129693917
 BIOME_WARP_SEED :: 2283573998129693917
+
+Seeds :: struct {
+	height: i64,
+	biome:  i64,
+	warp:   i64,
+}
 
 NoiseMapSettings :: struct {
 	octaves:    int,
@@ -46,8 +54,19 @@ BIOME_WARP_SETTINGS: NoiseMapSettings : {
 
 WARP_STRENGTH :: 0.1
 
-GenerateWorld :: proc(tileMan: ^TileManager) {
+GenerateWorld :: proc(tileMan: ^TileManager, rng: runtime.Random_Generator) {
 	worldLength: int : 16
+
+	seeds := Seeds {
+		height = neb_utils.RandomI64(rng),
+		biome  = neb_utils.RandomI64(rng),
+		warp   = neb_utils.RandomI64(rng),
+	}
+
+	tileMan.seeds = seeds
+
+	log.Debug("Seeds: Height = %v, Biome = %v, Warp = %v", seeds.height, seeds.biome, seeds.warp)
+	log.Debug("Existing chunks: %v", len(tileMan.chunks))
 
 	HEIGHT_MAP = rl.LoadRenderTexture(
 		i32(core.ChunkLenght * worldLength),
@@ -97,14 +116,14 @@ generateChunk :: proc(tileMan: ^TileManager, x, y: int) -> Chunk {
 
 @(private)
 generateTile :: proc(tileMan: ^TileManager, x, y: int, cX, cY: int) -> core.TileId {
-	coinflip := (x + y) % 2 == 0
+	seeds := tileMan.seeds
 
 	texX := x + cX * core.ChunkLenght
 	texY := y + cY * core.ChunkLenght
 
-	heightValue := fbmPixel(core.ToVector(texX, texY), HEIGHT_SEED, HEIGHT_MAP_SETTINGS)
-	biomeValue := fbmPixel(core.ToVector(texX, texY), BIOME_SEED, BIOME_MAP_SETTINGS)
-	warp := fbmPixel(core.ToVector(texX, texY), BIOME_WARP_SEED, BIOME_WARP_SETTINGS)
+	heightValue := fbmPixel(core.ToVector(texX, texY), seeds.height, HEIGHT_MAP_SETTINGS)
+	biomeValue := fbmPixel(core.ToVector(texX, texY), seeds.biome, BIOME_MAP_SETTINGS)
+	warp := fbmPixel(core.ToVector(texX, texY), seeds.warp, BIOME_WARP_SETTINGS)
 
 	if (core.DEBUG_DRAW_CHUNK_NOISE_MAPS) {
 		rl.BeginTextureMode(HEIGHT_MAP)
@@ -157,4 +176,12 @@ fbmPixel :: proc(coords: rl.Vector2, seed: i64, settings: NoiseMapSettings) -> f
 	/* -1 <= value <= 1 */
 	/* We'll lerp it to be from 0 to 1 */
 	return (value + 1) / 2
+}
+
+CreateSeeds :: proc() -> Seeds {
+	return {
+		height = neb_utils.RandomI64(),
+		biome = neb_utils.RandomI64(),
+		warp = neb_utils.RandomI64(),
+	}
 }

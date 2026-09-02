@@ -1,7 +1,5 @@
 package scene
 
-import rl "vendor:raylib"
-
 Menu :: enum {
 	MAIN,
 	OPTIONS,
@@ -14,7 +12,7 @@ MenuScene :: struct {
 }
 
 @(private)
-initMenuScene :: proc() -> MenuScene {
+initMenuScene :: proc(sceneMan: ^SceneManager) -> MenuScene {
 	return MenuScene{menu = .MAIN}
 }
 

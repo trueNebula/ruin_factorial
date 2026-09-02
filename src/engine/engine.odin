@@ -1,11 +1,12 @@
 package engine
 
-import "core:reflect"
+import "base:runtime"
 import "src:core"
 import "src:ecs"
 import "src:event"
 import "src:input"
 import "src:log"
+import "src:neb_utils"
 import "src:player"
 import "src:render"
 import "src:scene"
@@ -22,6 +23,7 @@ Engine :: struct {
 	tileManager:    ^tilemap.TileManager,
 	world:          ^ecs.World,
 	frameInput:     input.State,
+	rng:            runtime.Random_Generator,
 }
 
 MakeEngine :: proc() -> Engine {
@@ -41,7 +43,9 @@ MakeEngine :: proc() -> Engine {
 	tileMan^ = tilemap.MakeTileManager()
 
 	sceneMan := new(scene.SceneManager)
-	sceneMan^ = scene.MakeSceneManger(renMan, texMan, world, queue)
+	sceneMan^ = scene.MakeSceneManger(texMan, world, queue)
+
+	rng := neb_utils.InitNewGenerator()
 
 	engine := Engine {
 		sceneManager   = sceneMan,
@@ -50,6 +54,7 @@ MakeEngine :: proc() -> Engine {
 		tileManager    = tileMan,
 		world          = world,
 		queue          = queue,
+		rng            = rng,
 	}
 
 	return engine
@@ -132,6 +137,14 @@ engineInput :: proc(engine: ^Engine) {
 	switch engine.sceneManager.current {
 	case .MENU:
 		if input.MaybeConsumeMouse(&engine.frameInput, .LEFT) {
+			free(engine.rng.data)
+			engine.rng = neb_utils.InitNewGenerator()
+			scene.LoadScene(engine.sceneManager, .GAME)
+		}
+		if input.MaybeConsumeMouse(&engine.frameInput, .RIGHT) {
+			free(engine.rng.data)
+			seed := 6283573998654693917
+			engine.rng = neb_utils.InitSeededGenerator(u64(seed))
 			scene.LoadScene(engine.sceneManager, .GAME)
 		}
 	case .GAME:
@@ -155,7 +168,11 @@ update :: proc(engine: ^Engine) {
 	}
 
 	camera := playerView[0].c2
-	tilemap.MaybeGenerateNewChunks(engine.tileManager, camera.camera, engine.renderManager)
+
+	if (engine.sceneManager.transition.state == .NONE) {
+		tilemap.MaybeGenerateNewChunks(engine.tileManager, camera.camera, engine.renderManager)
+	}
+
 	tilemap.DrawTilemap(engine.tileManager, camera.camera, engine.renderManager)
 	render.RenderSprites(engine.world, engine.renderManager, engine.textureManager)
 	screenRect := core.GetScreenRect(camera.camera)
@@ -170,7 +187,9 @@ processEvents :: proc(engine: ^Engine) {
 	for item in engine.queue.items {
 		#partial switch variant in item {
 		case event.GenerateWorld:
-			tilemap.GenerateWorld(engine.tileManager)
+			tilemap.GenerateWorld(engine.tileManager, engine.rng)
+		case event.ClearTilemap:
+			tilemap.ClearChunks(engine.tileManager)
 		}
 	}
 

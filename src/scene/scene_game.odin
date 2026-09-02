@@ -42,7 +42,11 @@ updateGameScene :: proc(sceneMan: ^SceneManager) {
 @(private)
 unloadGameScene :: proc(sceneMan: ^SceneManager) {
 	texMan := sceneMan.textureManager
+	world := sceneMan.world
 	for id, _ in texMan.data {
 		t.UnloadTexture(texMan, id)
 	}
+
+	ecs.ClearWorld(world)
+	event.PushEvent(sceneMan.queue, event.ClearTilemap{})
 }

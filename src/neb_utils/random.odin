@@ -2,11 +2,17 @@ package neb_utils
 
 import "base:runtime"
 import "core:math/rand"
+import "core:time"
 
 InitSeededGenerator :: proc(seed: u64) -> runtime.Random_Generator {
 	generatorState := new(rand.Default_Random_State)
 	generatorState^ = rand.create_u64(seed)
 	return runtime.default_random_generator(generatorState)
+}
+
+InitNewGenerator :: proc() -> runtime.Random_Generator {
+	now := time.now()
+	return InitSeededGenerator(u64(now._nsec))
 }
 
 RandomRange :: proc(
@@ -31,4 +37,8 @@ PercentChance :: proc(
 	generator: runtime.Random_Generator = context.random_generator,
 ) -> bool {
 	return rand.float32(generator) * 100 <= chance
+}
+
+RandomI64 :: proc(generator: runtime.Random_Generator = context.random_generator) -> i64 {
+	return rand.int63(generator)
 }
