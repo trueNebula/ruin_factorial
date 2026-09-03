@@ -113,7 +113,6 @@ generateChunk :: proc(tileMan: ^TileManager, x, y: int) -> Chunk {
 		chunk.base[tileIdx] = tile
 	}
 
-	// log.Debug("Generated new chunk at position %+v %+v!", x, y)
 	return chunk
 }
 
@@ -191,14 +190,18 @@ CreateSeeds :: proc() -> Seeds {
 
 GenerateBlocks :: proc(tileMan: ^TileManager, world: ^ecs.World) {
 	for _, &chunk in tileMan.chunks {
-		for _, idx in chunk.blocks {
-			if chunk.base[idx] != .GRASS {
-				continue
-			}
-			block, ok := generateBlock(tileMan, world, chunk.x, chunk.y, idx)
-			if ok {
-				chunk.blocks[idx] = block
-			}
+		generateBlocksInChunk(tileMan, world, &chunk)
+	}
+}
+
+generateBlocksInChunk :: proc(tileMan: ^TileManager, world: ^ecs.World, chunk: ^Chunk) {
+	for _, idx in chunk.blocks {
+		if chunk.base[idx] != .GRASS {
+			continue
+		}
+		block, ok := generateBlock(tileMan, world, chunk.x, chunk.y, idx)
+		if ok {
+			chunk.blocks[idx] = block
 		}
 	}
 }

@@ -121,14 +121,6 @@ ShouldBlockInput :: proc(sceneMan: ^SceneManager) -> bool {
 Update :: proc(sceneMan: ^SceneManager) {
 	dt := rl.GetFrameTime()
 
-	// TODO: maybe remove these? they may not be necessary
-	switch sceneMan.current {
-	case .MENU:
-		updateMenuScene(sceneMan)
-	case .GAME:
-		updateGameScene(sceneMan)
-	}
-
 	transition := &sceneMan.transition
 	switch transition.state {
 	case .NONE:

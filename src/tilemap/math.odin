@@ -162,29 +162,39 @@ GetChunkAtPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2) -> ^
 	return nil
 }
 
-// TODO: make this also take in a layer or return tiles from all layers
-GetTileAtWorldPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2) -> core.TileId {
+GetTileAtWorldPos :: #force_inline proc(
+	tileMan: ^TileManager,
+	pos: rl.Vector2,
+) -> (
+	core.TileId,
+	Block,
+) {
 	chunk := GetChunkAtPos(tileMan, pos)
 	idx := Tile2Idx(World2Tile(pos))
 
 	if chunk == nil {
-		return .NONE
+		return .NONE, {}
 	}
 
-	return chunk.base[idx]
+	return chunk.base[idx], chunk.blocks[idx]
 }
 
-// TODO: make this also take in a layer or return tiles from all layers
-GetTileAtScreenPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2) -> core.TileId {
+GetTileAtScreenPos :: #force_inline proc(
+	tileMan: ^TileManager,
+	pos: rl.Vector2,
+) -> (
+	core.TileId,
+	Block,
+) {
 	worldPos := Screen2World(pos)
 	chunk := GetChunkAtPos(tileMan, worldPos)
 
 	if chunk == nil {
-		return .NONE
+		return .NONE, {}
 	}
 
 	idx := Tile2Idx(World2Tile(worldPos))
-	return chunk.base[idx]
+	return chunk.base[idx], chunk.blocks[idx]
 }
 
 GetTileSeed :: proc(seed: u64, chunkX, chunkY: int, idx: int) -> u64 {

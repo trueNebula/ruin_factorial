@@ -153,16 +153,7 @@ MaybeGenerateNewChunks :: proc(
 			}
 
 			chunk := generateChunk(tileMan, int(currChunkCoords.x), int(currChunkCoords.y))
-			// TODO: move this to a util function
-			for _, idx in chunk.blocks {
-				if chunk.base[idx] != .GRASS {
-					continue
-				}
-				block, ok := generateBlock(tileMan, world, chunk.x, chunk.y, idx)
-				if ok {
-					chunk.blocks[idx] = block
-				}
-			}
+			generateBlocksInChunk(tileMan, world, &chunk)
 			tileMan.chunks[currChunkHash] = chunk
 		}
 	}
