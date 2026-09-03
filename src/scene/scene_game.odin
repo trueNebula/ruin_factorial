@@ -17,6 +17,7 @@ initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
 	world := sceneMan.world
 	t.LoadTexture(texMan, .PLAYER, "player.png")
 	t.LoadTexture(texMan, .TILE, "tile_atlas.png")
+	t.LoadTexture(texMan, .BLOCK, "block_atlas.png")
 
 	event.PushEvent(sceneMan.queue, event.GenerateWorld{seed = 1})
 
@@ -24,7 +25,6 @@ initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
 	ecs.RegisterTickSystem(world, player.PlayerMovementSystem)
 	ecs.RegisterTickSystem(world, physics.MovementSystem)
 	ecs.RegisterTickSystem(world, player.CameraTransformSystem)
-	ecs.RegisterTickSystem(world, player.InventoryTestSystem)
 	ecs.ProcessSetup(world)
 
 	return {}

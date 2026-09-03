@@ -71,6 +71,11 @@ BiomeId :: enum {
 	GRASSLANDS,
 }
 
+BlockId :: enum {
+	NONE,
+	GRASS,
+}
+
 ItemId :: enum {
 	NONE,
 	WOOD,

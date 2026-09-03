@@ -14,22 +14,30 @@ Tile :: struct {
 }
 
 TileRepo :: map[core.TileId]Tile
+BlockRepo :: map[core.BlockId]Tile
 Layer :: [core.ChunkSize]core.TileId
+BlockLayer :: [core.ChunkSize]Block
+
+Block :: struct {
+	entity: u32,
+	id:     core.BlockId,
+}
 
 Chunk :: struct {
 	x, y:    int,
 	base:    Layer,
 	overlay: Layer,
-	objects: Layer,
+	blocks:  BlockLayer,
 }
 
 ChunkMap :: map[string]Chunk
 
 TileManager :: struct {
-	repo:   TileRepo,
-	chunks: ChunkMap,
-	biomes: BiomeList,
-	seeds:  Seeds,
+	repo:      TileRepo,
+	blockRepo: BlockRepo,
+	chunks:    ChunkMap,
+	biomes:    BiomeList,
+	seeds:     Seeds,
 }
 
 CreateRepo :: proc() -> TileRepo {
@@ -81,17 +89,28 @@ CreateRepo :: proc() -> TileRepo {
 	return tileRepo
 }
 
+CreateBlockRepo :: proc() -> BlockRepo {
+	blockRepo := make(BlockRepo)
+	blockRepo[.GRASS] = Tile {
+		texture = .BLOCK,
+		rect = rl.Rectangle{x = 128, y = 0, width = 16, height = 16},
+		anchor = .BOTTOM_LEFT,
+	}
+
+	return blockRepo
+}
+
 MakeTileManager :: proc() -> TileManager {
 	chunkMap := make(ChunkMap)
 	tileMan := TileManager {
-		repo   = CreateRepo(),
-		chunks = chunkMap,
-		biomes = CreateBiomes(),
-		seeds  = CreateSeeds(),
+		repo      = CreateRepo(),
+		blockRepo = CreateBlockRepo(),
+		chunks    = chunkMap,
+		biomes    = CreateBiomes(),
+		seeds     = CreateSeeds(),
 	}
 
 	return tileMan
-
 }
 
 DrawTilemap :: proc(tileMan: ^TileManager, camera: rl.Camera2D, renMan: ^render.RenderManager) {
@@ -147,6 +166,7 @@ ClearChunks :: proc(tileMan: ^TileManager) {
 
 Shutdown :: proc(tileMan: ^TileManager) {
 	delete(tileMan.repo)
+	delete(tileMan.blockRepo)
 	for hash, chunk in tileMan.chunks {
 		delete_key(&tileMan.chunks, hash)
 		delete(hash)
@@ -186,6 +206,13 @@ drawChunk :: proc(
 	}
 
 	for tile, idx in chunk.base {
+		tileData, ok := tileMan.repo[tile]
+
+		if (!ok) {
+			log.Warn("Tried to access tile with id %v in tile repo, tile id doesnt exist!", tile)
+			continue
+		}
+
 		tileX := chunk.x * core.ChunkLenght + idx % core.ChunkLenght
 		tileY := chunk.y * core.ChunkLenght + idx / core.ChunkLenght
 
@@ -198,24 +225,47 @@ drawChunk :: proc(
 			continue
 		}
 
-		drawTile(tileMan, tile, idx, chunk, renMan)
+		drawTile(tileMan, tileData, idx, chunk, renMan)
+	}
+
+	for block, idx in chunk.blocks {
+		if block.id == .NONE {
+			continue
+		}
+
+		tileData, ok := tileMan.blockRepo[block.id]
+
+		if (!ok) {
+			log.Warn(
+				"Tried to access tile with id %v in block repo, block id doesnt exist!",
+				block,
+			)
+			continue
+		}
+		tileX := chunk.x * core.ChunkLenght + idx % core.ChunkLenght
+		tileY := chunk.y * core.ChunkLenght + idx / core.ChunkLenght
+
+		fromX := int(math.floor(paddedScreenRect.x / core.TileSize))
+		fromY := int(math.floor(paddedScreenRect.y / core.TileSize))
+		toX := int(math.ceil((paddedScreenRect.x + paddedScreenRect.width) / core.TileSize))
+		toY := int(math.ceil((paddedScreenRect.y + paddedScreenRect.height) / core.TileSize))
+
+		if tileX < fromX || tileX > toX || tileY < fromY || tileY > toY {
+			continue
+		}
+
+		drawTile(tileMan, tileData, idx, chunk, renMan)
 	}
 }
 
 @(private)
 drawTile :: proc(
 	tileMan: ^TileManager,
-	tile: core.TileId,
+	tileData: Tile,
 	idx: int,
 	chunk: ^Chunk,
 	renMan: ^render.RenderManager,
 ) {
-	tileData, ok := tileMan.repo[tile]
-	if (!ok) {
-		log.Warn("Tried to access tile with id %v in tile repo, tile id doesnt exist!", tile)
-		return
-	}
-
 	tex := tileData.texture
 	dest := rl.Vector2 {
 		f32(chunk.x * core.ChunkLenght + idx % core.ChunkLenght) * core.TileSize,

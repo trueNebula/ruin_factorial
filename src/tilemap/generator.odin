@@ -94,6 +94,12 @@ GenerateWorld :: proc(tileMan: ^TileManager, rng: runtime.Random_Generator) {
 		rl.ExportImage(rl.LoadImageFromTexture(BIOME_MAP.texture), "biome_map.png")
 		rl.ExportImage(rl.LoadImageFromTexture(BIOME_WARP.texture), "warp.png")
 	}
+
+	chunk := &tileMan.chunks["0;0"]
+	chunk.blocks[0] = Block {
+		entity = 20,
+		id     = .GRASS,
+	}
 }
 
 @(private)
