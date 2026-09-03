@@ -12,6 +12,7 @@ Component :: union {
 	core.PlayerRef,
 	core.Camera,
 	core.Velocity,
+	core.Inventory,
 }
 
 ComponentMask :: [4]u64

@@ -70,3 +70,8 @@ BiomeId :: enum {
 	DESERT,
 	GRASSLANDS,
 }
+
+ItemId :: enum {
+	NONE,
+	WOOD,
+}

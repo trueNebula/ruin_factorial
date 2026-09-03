@@ -24,6 +24,7 @@ initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
 	ecs.RegisterTickSystem(world, player.PlayerMovementSystem)
 	ecs.RegisterTickSystem(world, physics.MovementSystem)
 	ecs.RegisterTickSystem(world, player.CameraTransformSystem)
+	ecs.RegisterTickSystem(world, player.InventoryTestSystem)
 	ecs.ProcessSetup(world)
 
 	return {}

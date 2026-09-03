@@ -46,3 +46,13 @@ Tint :: struct {
 Camera :: struct {
 	camera: rl.Camera2D,
 }
+
+InventorySlot :: struct {
+	item:  ItemId,
+	count: u16,
+}
+
+Inventory :: struct {
+	slots: []InventorySlot,
+	size:  int,
+}

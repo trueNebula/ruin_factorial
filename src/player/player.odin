@@ -12,6 +12,7 @@ MAIN_PLAYER_REF :: core.PlayerRef {
 	id = 1,
 }
 BASE_MOVEMENT_SPEED :: 1000
+INVENTORY_SLOTS :: 41 // 40 + mouse
 
 SetupPlayer :: proc(world: ^ecs.World) {
 	transform := core.Transform {
@@ -40,7 +41,19 @@ SetupPlayer :: proc(world: ^ecs.World) {
 		},
 	}
 
-	ecs.Add(world, transform, velocity, sprite, camera, player)
+	inventory := core.Inventory {
+		slots = make([]core.InventorySlot, INVENTORY_SLOTS),
+		size  = INVENTORY_SLOTS,
+	}
+
+	inventory.slots[0] = {
+		item  = .WOOD,
+		count = 21,
+	}
+
+	log.Debug("Added inventory component: %+v", inventory)
+
+	ecs.Add(world, transform, velocity, sprite, camera, player, inventory)
 
 	log.Debug("Added player with transform %+v and sprite %+v", transform, sprite)
 }

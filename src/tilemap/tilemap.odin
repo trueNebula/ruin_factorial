@@ -240,6 +240,5 @@ drawTile :: proc(
 	rect.width -= inset * 2
 	rect.height -= inset * 2
 
-
 	render.DrawTile(renMan, tex, rect, dest)
 }
