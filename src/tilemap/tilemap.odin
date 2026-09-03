@@ -10,6 +10,7 @@ Tile :: struct {
 	texture: core.Texture,
 	rect:    rl.Rectangle,
 	anchor:  core.Anchor,
+	useMask: bool,
 }
 
 TileRepo :: map[core.TileId]Tile
@@ -35,20 +36,23 @@ CreateRepo :: proc() -> TileRepo {
 	tileRepo := make(TileRepo)
 	tileRepo[.DIRT] = Tile {
 		texture = .TILE,
-		rect = rl.Rectangle{x = 16, y = 0, width = 16, height = 16},
+		rect = rl.Rectangle{x = 256, y = 32, width = 256, height = 256},
 		anchor = .TOP_LEFT,
+		useMask = true,
 	}
 
 	tileRepo[.SAND] = Tile {
 		texture = .TILE,
-		rect = rl.Rectangle{x = 32, y = 0, width = 16, height = 16},
+		rect = rl.Rectangle{x = 512, y = 32, width = 256, height = 256},
 		anchor = .TOP_LEFT,
+		useMask = true,
 	}
 
 	tileRepo[.GRASS] = Tile {
 		texture = .TILE,
-		rect = rl.Rectangle{x = 48, y = 0, width = 16, height = 16},
+		rect = rl.Rectangle{x = 0, y = 32, width = 256, height = 256},
 		anchor = .TOP_LEFT,
+		useMask = true,
 	}
 
 	tileRepo[.WATER] = Tile {
@@ -213,16 +217,29 @@ drawTile :: proc(
 	}
 
 	tex := tileData.texture
-	rect := tileData.rect
+	dest := rl.Vector2 {
+		f32(chunk.x * core.ChunkLenght + idx % core.ChunkLenght) * core.TileSize,
+		f32(chunk.y * core.ChunkLenght + idx / core.ChunkLenght) * core.TileSize,
+	}
+
+	rect: rl.Rectangle
+
+	if tileData.useMask {
+		rect = {
+			x      = tileData.rect.x + f32(i32(dest.x) %% i32(tileData.rect.width)),
+			y      = tileData.rect.y + f32(i32(dest.y) %% i32(tileData.rect.height)),
+			width  = core.TileSize,
+			height = core.TileSize,
+		}
+	} else {
+		rect = tileData.rect
+	}
 	inset :: f32(0.01)
 	rect.x += inset
 	rect.y += inset
 	rect.width -= inset * 2
 	rect.height -= inset * 2
-	dest := rl.Vector2 {
-		f32(chunk.x * core.ChunkLenght + idx % core.ChunkLenght) * core.TileSize,
-		f32(chunk.y * core.ChunkLenght + idx / core.ChunkLenght) * core.TileSize,
-	}
+
 
 	render.DrawTile(renMan, tex, rect, dest)
 }
