@@ -1,14 +1,13 @@
 package event
 
 Event :: union {
+	GenerateBlocks,
 	GenerateWorld,
 	ClearTilemap,
 }
 
-GenerateWorld :: struct {
-	seed: u64,
-}
-
+GenerateWorld :: struct {}
+GenerateBlocks :: struct {}
 ClearTilemap :: struct {}
 
 Queue :: struct {

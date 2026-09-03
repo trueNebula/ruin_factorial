@@ -19,7 +19,8 @@ initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
 	t.LoadTexture(texMan, .TILE, "tile_atlas.png")
 	t.LoadTexture(texMan, .BLOCK, "block_atlas.png")
 
-	event.PushEvent(sceneMan.queue, event.GenerateWorld{seed = 1})
+	event.PushEvent(sceneMan.queue, event.GenerateWorld{})
+	event.PushEvent(sceneMan.queue, event.GenerateBlocks{})
 
 	ecs.RegisterSetupSystem(world, player.SetupPlayer)
 	ecs.RegisterTickSystem(world, player.PlayerMovementSystem)

@@ -2,6 +2,7 @@ package tilemap
 
 import "core:math"
 import "src:core"
+import "src:ecs"
 import "src:log"
 import "src:render"
 import rl "vendor:raylib"
@@ -123,6 +124,7 @@ MaybeGenerateNewChunks :: proc(
 	tileMan: ^TileManager,
 	camera: rl.Camera2D,
 	renMan: ^render.RenderManager,
+	world: ^ecs.World,
 ) {
 	screenRect := core.GetScreenRect(camera)
 	paddedScreenRect := PadChunkBoundingBox(screenRect, 1 * core.ChunkLenght)
@@ -151,6 +153,16 @@ MaybeGenerateNewChunks :: proc(
 			}
 
 			chunk := generateChunk(tileMan, int(currChunkCoords.x), int(currChunkCoords.y))
+			// TODO: move this to a util function
+			for _, idx in chunk.blocks {
+				if chunk.base[idx] != .GRASS {
+					continue
+				}
+				block, ok := generateBlock(tileMan, world, chunk.x, chunk.y, idx)
+				if ok {
+					chunk.blocks[idx] = block
+				}
+			}
 			tileMan.chunks[currChunkHash] = chunk
 		}
 	}

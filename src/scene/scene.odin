@@ -25,7 +25,7 @@ TransitionState :: enum {
 }
 
 BASE_DURATION: f32 : 1.0 // Seconds
-FAST_DURATION: f32 : 0.5 // Seconds
+FAST_DURATION: f32 : 1.0 // Seconds
 
 Transition :: struct {
 	state:     TransitionState,

@@ -1,5 +1,6 @@
 package ecs
 
+import "src:core"
 import "src:log"
 // v1.0.0
 

@@ -1,10 +1,13 @@
 package tilemap
 
 import "base:runtime"
+import "core:hash"
 import "core:math/noise"
 import "src:core"
+import "src:ecs"
 import "src:log"
 import "src:neb_utils"
+import "src:tilemap"
 import rl "vendor:raylib"
 
 HEIGHT_MAP: rl.RenderTexture2D
@@ -93,12 +96,6 @@ GenerateWorld :: proc(tileMan: ^TileManager, rng: runtime.Random_Generator) {
 		rl.ExportImage(rl.LoadImageFromTexture(HEIGHT_MAP.texture), "height_map.png")
 		rl.ExportImage(rl.LoadImageFromTexture(BIOME_MAP.texture), "biome_map.png")
 		rl.ExportImage(rl.LoadImageFromTexture(BIOME_WARP.texture), "warp.png")
-	}
-
-	chunk := &tileMan.chunks["0;0"]
-	chunk.blocks[0] = Block {
-		entity = 20,
-		id     = .GRASS,
 	}
 }
 
@@ -190,4 +187,37 @@ CreateSeeds :: proc() -> Seeds {
 		biome = neb_utils.RandomI64(),
 		warp = neb_utils.RandomI64(),
 	}
+}
+
+GenerateBlocks :: proc(tileMan: ^TileManager, world: ^ecs.World) {
+	for _, &chunk in tileMan.chunks {
+		for _, idx in chunk.blocks {
+			if chunk.base[idx] != .GRASS {
+				continue
+			}
+			block, ok := generateBlock(tileMan, world, chunk.x, chunk.y, idx)
+			if ok {
+				chunk.blocks[idx] = block
+			}
+		}
+	}
+}
+
+@(private)
+generateBlock :: proc(
+	tileMan: ^TileManager,
+	world: ^ecs.World,
+	chunkX, chunkY: int,
+	idx: int,
+) -> (
+	blk: Block,
+	ok: bool,
+) {
+	tileSeed := GetTileSeed(u64(tileMan.seeds.height), chunkX, chunkY, idx)
+	if neb_utils.PercentChanceSeeded(5, tileSeed) {
+		block: core.BlockId = .GRASS
+		entity := ecs.Add(world, block)
+		return Block{entity = entity, id = .GRASS}, true
+	}
+	return {}, false
 }

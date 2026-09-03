@@ -5,6 +5,7 @@ import "core:strconv"
 import "core:strings"
 import "src:core"
 import "src:log"
+import "src:neb_utils"
 import "src:tilemap"
 import rl "vendor:raylib"
 
@@ -184,4 +185,12 @@ GetTileAtScreenPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2)
 
 	idx := Tile2Idx(World2Tile(worldPos))
 	return chunk.base[idx]
+}
+
+GetTileSeed :: proc(seed: u64, chunkX, chunkY: int, idx: int) -> u64 {
+	h := seed
+	h = neb_utils.Mix64(h ~ u64(u32(chunkX)))
+	h = neb_utils.Mix64(h ~ u64(u32(chunkY)))
+	h = neb_utils.Mix64(h ~ u64(idx))
+	return h
 }

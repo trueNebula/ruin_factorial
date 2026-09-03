@@ -116,12 +116,21 @@ Run :: proc(engine: ^Engine) {
 }
 
 Shutdown :: proc(engine: ^Engine) {
+	inventoryView := ecs.View1(engine.world, core.Inventory)
+
+	for entity in inventoryView {
+		delete(entity.c1.slots)
+	}
+
 	ecs.EndWorld(engine.world)
 	texture.Shutdown(engine.textureManager)
 	tilemap.Shutdown(engine.tileManager)
 	render.Shutdown(engine.renderManager)
 	ui.ShutdownMu()
 
+	free(engine.rng.data)
+	delete(engine.queue.items)
+	free(engine.queue)
 	free(engine.world)
 	free(engine.textureManager)
 	free(engine.tileManager)
@@ -170,7 +179,12 @@ update :: proc(engine: ^Engine) {
 	camera := playerView[0].c2
 
 	if (engine.sceneManager.transition.state == .NONE) {
-		tilemap.MaybeGenerateNewChunks(engine.tileManager, camera.camera, engine.renderManager)
+		tilemap.MaybeGenerateNewChunks(
+			engine.tileManager,
+			camera.camera,
+			engine.renderManager,
+			engine.world,
+		)
 	}
 
 	tilemap.DrawTilemap(engine.tileManager, camera.camera, engine.renderManager)
@@ -190,6 +204,8 @@ processEvents :: proc(engine: ^Engine) {
 			tilemap.GenerateWorld(engine.tileManager, engine.rng)
 		case event.ClearTilemap:
 			tilemap.ClearChunks(engine.tileManager)
+		case event.GenerateBlocks:
+			tilemap.GenerateBlocks(engine.tileManager, engine.world)
 		}
 	}
 

@@ -39,6 +39,15 @@ PercentChance :: proc(
 	return rand.float32(generator) * 100 <= chance
 }
 
+PercentChanceSeeded :: proc(chance: f32, seed: u64) -> bool {
+	return chance > hashToF32(seed) * 100
+}
+
 RandomI64 :: proc(generator: runtime.Random_Generator = context.random_generator) -> i64 {
 	return rand.int63(generator)
+}
+
+@(private)
+hashToF32 :: proc(h: u64) -> f32 {
+	return f32(h >> 40) / f32(1 << 24)
 }

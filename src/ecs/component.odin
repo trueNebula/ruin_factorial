@@ -13,6 +13,7 @@ Component :: union {
 	core.Camera,
 	core.Velocity,
 	core.Inventory,
+	core.BlockId,
 }
 
 ComponentMask :: [4]u64
