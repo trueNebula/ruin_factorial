@@ -56,3 +56,8 @@ Inventory :: struct {
 	slots: []InventorySlot,
 	size:  int,
 }
+
+Health :: struct {
+	current: int,
+	max:     int,
+}

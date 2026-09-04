@@ -177,6 +177,7 @@ update :: proc(engine: ^Engine) {
 	}
 
 	camera := playerView[0].c2
+	tilemap.TilemapClickSystem(engine.tileManager, engine.world, &engine.frameInput, camera.camera)
 
 	if (engine.sceneManager.transition.state == .NONE) {
 		tilemap.MaybeGenerateNewChunks(

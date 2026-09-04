@@ -99,6 +99,14 @@ Get :: proc(world: ^World, entityId: u32, tids: ..typeid) -> ComponentSet {
 	return componentSet
 }
 
+GetComponentForEntity :: proc(world: ^World, entityId: u32, $T: typeid) -> (ptr: ^T, err: bool) {
+	data, error := getComponentRaw(world, entityId, T)
+	if error {
+		return nil, true
+	}
+	return cast(^T)data, false
+}
+
 AddComponent :: proc(world: ^World, entityId: u32, component: Component) {
 	if USE_BATCHING {
 		addComponentToEntity(&world.batch, entityId, component)

@@ -14,6 +14,7 @@ Component :: union {
 	core.Velocity,
 	core.Inventory,
 	core.BlockId,
+	core.Health,
 }
 
 ComponentMask :: [4]u64

@@ -85,11 +85,11 @@ Screen2World :: proc {
 }
 
 Screen2WorldFloat :: #force_inline proc(pos: f32) -> f32 {
-	return f32(int(pos / core.TileSize))
+	return f32(math.floor(pos / core.TileSize))
 }
 
 Screen2WorldVec :: #force_inline proc(pos: rl.Vector2) -> rl.Vector2 {
-	return {f32(int(pos.x / core.TileSize)), f32(int(pos.y / core.TileSize))}
+	return {Screen2WorldFloat(pos.x), Screen2WorldFloat(pos.y)}
 }
 
 World2Chunk :: #force_inline proc(pos: rl.Vector2) -> rl.Vector2 {
@@ -167,16 +167,19 @@ GetTileAtWorldPos :: #force_inline proc(
 	pos: rl.Vector2,
 ) -> (
 	core.TileId,
-	Block,
+	^Block,
 ) {
-	chunk := GetChunkAtPos(tileMan, pos)
+	chunk := GetChunkAtPos(
+		tileMan,
+		{math.floor(pos.x / core.ChunkLenght), math.floor(pos.y / core.ChunkLenght)},
+	)
 	idx := Tile2Idx(World2Tile(pos))
 
 	if chunk == nil {
 		return .NONE, {}
 	}
 
-	return chunk.base[idx], chunk.blocks[idx]
+	return chunk.base[idx], &chunk.blocks[idx]
 }
 
 GetTileAtScreenPos :: #force_inline proc(
@@ -184,17 +187,20 @@ GetTileAtScreenPos :: #force_inline proc(
 	pos: rl.Vector2,
 ) -> (
 	core.TileId,
-	Block,
+	^Block,
 ) {
 	worldPos := Screen2World(pos)
-	chunk := GetChunkAtPos(tileMan, worldPos)
+	chunk := GetChunkAtPos(
+		tileMan,
+		{math.floor(worldPos.x / core.ChunkLenght), math.floor(worldPos.y / core.ChunkLenght)},
+	)
 
 	if chunk == nil {
 		return .NONE, {}
 	}
 
 	idx := Tile2Idx(World2Tile(worldPos))
-	return chunk.base[idx], chunk.blocks[idx]
+	return chunk.base[idx], &chunk.blocks[idx]
 }
 
 GetTileSeed :: proc(seed: u64, chunkX, chunkY: int, idx: int) -> u64 {

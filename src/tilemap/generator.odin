@@ -87,7 +87,7 @@ GenerateWorld :: proc(tileMan: ^TileManager, rng: runtime.Random_Generator) {
 	for chunkY in -(worldLength / 2) ..= (worldLength / 2) {
 		for chunkX in -(worldLength / 2) ..= (worldLength / 2) {
 			hash := Coords2Hash(chunkX, chunkY)
-			chunk := generateChunk(tileMan, chunkY, chunkX)
+			chunk := generateChunk(tileMan, chunkX, chunkY)
 			tileMan.chunks[hash] = chunk
 		}
 	}
@@ -219,7 +219,11 @@ generateBlock :: proc(
 	tileSeed := GetTileSeed(u64(tileMan.seeds.height), chunkX, chunkY, idx)
 	if neb_utils.PercentChanceSeeded(5, tileSeed) {
 		block: core.BlockId = .GRASS
-		entity := ecs.Add(world, block)
+		health := core.Health {
+			current = 3,
+			max     = 3,
+		}
+		entity := ecs.Add(world, block, health)
 		return Block{entity = entity, id = .GRASS}, true
 	}
 	return {}, false
