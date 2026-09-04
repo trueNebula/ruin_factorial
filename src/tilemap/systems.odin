@@ -32,6 +32,16 @@ TilemapClickSystem :: proc(
 			ecs.Delete(world, block.entity)
 			block.entity = 0
 			block.id = .NONE
+			return
 		}
+
+		tintTween := core.TintTween {
+			destination = rl.Color{0, 0, 0, 127},
+			duration    = 0.3,
+			curve       = .LINEAR,
+			reverse     = true,
+		}
+
+		ecs.AddComponent(world, block.entity, tintTween)
 	}
 }

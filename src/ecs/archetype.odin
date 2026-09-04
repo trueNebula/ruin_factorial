@@ -111,6 +111,24 @@ batchMoveData :: proc(world: ^World, cmd: ^BatchAddCommand) {
 
 	src := cmd.src
 	dst := cmd.dst
+
+	// Handle case where we re-add the same component: update the data
+	if src == dst {
+		for i in 0 ..< entityCount {
+			entityId := cmd.entities[i]
+			row := world.entities[entityId].row
+
+			for tid, &compList in cmd.components {
+				size := world.meta[tid].size
+				col := dst.columns[tid]
+				start := row * size
+				mem.copy(&col[start], rawptr(&compList[i]), size)
+				dst.columns[tid] = col
+			}
+		}
+		return
+	}
+
 	srcComp := getComponentsFromMask(&cmd.src.mask)
 	dstComp := getComponentsFromMask(&cmd.dst.mask)
 
@@ -223,6 +241,18 @@ batchDeleteData :: proc(world: ^World, cmd: ^BatchDeleteCommand) {
 
 	src := cmd.src
 	dst := cmd.dst
+
+	// Components are likely empty, so just remove the entire entity.
+	if src == dst {
+		if isMaskEmpty(&dst.mask) {
+			for entityId in cmd.entities {
+				delete_key(&world.entities, entityId)
+				removeFromEntities(world, dst, entityId)
+			}
+		}
+		return
+	}
+
 	srcComp := getComponentsFromMask(&cmd.src.mask)
 	dstComp := getComponentsFromMask(&cmd.dst.mask)
 

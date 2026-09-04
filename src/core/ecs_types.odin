@@ -36,13 +36,6 @@ Animation :: struct {
 	timer:  f32,
 }
 
-Tint :: struct {
-	start:    rl.Color,
-	dest:     rl.Color,
-	timer:    f32,
-	duration: f32,
-}
-
 Camera :: struct {
 	camera: rl.Camera2D,
 }
@@ -60,4 +53,14 @@ Inventory :: struct {
 Health :: struct {
 	current: int,
 	max:     int,
+}
+
+Tint :: rl.Color
+
+TintTween :: struct {
+	destination: rl.Color,
+	duration:    f32,
+	timer:       f32,
+	curve:       TweenCurve,
+	reverse:     bool,
 }

@@ -1,6 +1,7 @@
 package core
 
 import "src:log"
+import "src:neb_utils"
 import rl "vendor:raylib"
 
 FullscreenManager :: proc() {
@@ -82,4 +83,25 @@ GetScreenRect :: proc(camera: rl.Camera2D) -> rl.Rectangle {
 	screenRect.y = camera.target.y - (screenRect.height / 2)
 
 	return screenRect
+}
+
+DoTintTweenMath :: proc(tween: TintTween, tint: Tint = rl.WHITE) -> Tint {
+	a := tint
+	b := tween.destination
+	t := tween.timer / tween.duration
+
+	if tween.reverse {
+		temp := a
+		a = b
+		b = temp
+	}
+
+	#partial switch tween.curve {
+	case .LINEAR:
+		a = neb_utils.ColorLerp(a, b, t)
+	case:
+		a = b
+	}
+
+	return a
 }

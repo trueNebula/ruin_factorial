@@ -5,16 +5,17 @@ import "core:reflect"
 import "src:core"
 
 Component :: union {
-	core.EntityRef,
-	core.Transform,
-	core.Sprite,
 	core.Animation,
-	core.PlayerRef,
-	core.Camera,
-	core.Velocity,
-	core.Inventory,
 	core.BlockId,
+	core.Camera,
+	core.EntityRef,
 	core.Health,
+	core.Inventory,
+	core.PlayerRef,
+	core.Sprite,
+	core.TintTween,
+	core.Transform,
+	core.Velocity,
 }
 
 ComponentMask :: [4]u64

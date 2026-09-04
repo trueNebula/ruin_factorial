@@ -114,9 +114,14 @@ MakeTileManager :: proc() -> TileManager {
 	return tileMan
 }
 
-DrawTilemap :: proc(tileMan: ^TileManager, camera: rl.Camera2D, renMan: ^render.RenderManager) {
+DrawTilemap :: proc(
+	tileMan: ^TileManager,
+	camera: rl.Camera2D,
+	renMan: ^render.RenderManager,
+	world: ^ecs.World,
+) {
 	for _, &chunk in tileMan.chunks {
-		drawChunk(tileMan, &chunk, camera, renMan)
+		drawChunk(tileMan, &chunk, camera, renMan, world)
 	}
 }
 
@@ -190,6 +195,7 @@ drawChunk :: proc(
 	chunk: ^Chunk,
 	camera: rl.Camera2D,
 	renMan: ^render.RenderManager,
+	world: ^ecs.World,
 ) {
 	if chunk == nil {
 		return
@@ -257,7 +263,12 @@ drawChunk :: proc(
 			continue
 		}
 
-		drawTile(tileMan, tileData, idx, chunk, renMan)
+		tint := rl.WHITE
+		if tween, err2 := ecs.GetComponentForEntity(world, block.entity, core.TintTween); !err2 {
+			tint = core.DoTintTweenMath(tween^, tint)
+		}
+
+		drawTile(tileMan, tileData, idx, chunk, renMan, tint)
 	}
 }
 
@@ -268,6 +279,7 @@ drawTile :: proc(
 	idx: int,
 	chunk: ^Chunk,
 	renMan: ^render.RenderManager,
+	tint: core.Tint = rl.WHITE,
 ) {
 	tex := tileData.texture
 	dest := rl.Vector2 {
@@ -293,5 +305,5 @@ drawTile :: proc(
 	rect.width -= inset * 2
 	rect.height -= inset * 2
 
-	render.DrawTile(renMan, tex, rect, dest)
+	render.DrawTile(renMan, tex, rect, dest, tint)
 }

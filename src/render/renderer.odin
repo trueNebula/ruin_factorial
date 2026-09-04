@@ -10,6 +10,7 @@ DrawCommand :: struct {
 	src:     rl.Rectangle,
 	dest:    rl.Vector2,
 	sortY:   bool,
+	tint:    rl.Color,
 }
 
 ShapeDrawCommand :: struct {
@@ -52,8 +53,7 @@ Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
 			{0, 0},
 			/*rotation=*/
 			0,
-			/*tint=*/
-			rl.WHITE,
+			cmd.tint,
 		)
 	}
 

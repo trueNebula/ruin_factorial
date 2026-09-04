@@ -6,7 +6,8 @@ import rl "vendor:raylib"
 ColorLerp :: proc(a: rl.Color, b: rl.Color, t: f32) -> rl.Color {
 	src := rl.ColorNormalize(a)
 	dst := rl.ColorNormalize(b)
-	return rl.ColorFromNormalized(linalg.lerp(src, dst, t))
+	res := linalg.lerp(src, dst, t)
+	return rl.ColorFromNormalized(res)
 }
 
 OpacityLerp :: proc(a: u8, b: u8, t: f32) -> u8 {

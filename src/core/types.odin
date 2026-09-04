@@ -80,3 +80,11 @@ ItemId :: enum {
 	NONE,
 	WOOD,
 }
+
+TweenCurve :: enum {
+	NONE, // instant a->b
+	LINEAR, // linear fade a->b
+	EASE_IN, // ease-in fade a->b
+	EASE_OUT, // ease-out fade a->b
+	EASE_IN_OUT, // ease-in-out fade a->b
+}

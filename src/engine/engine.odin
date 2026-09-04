@@ -188,7 +188,7 @@ update :: proc(engine: ^Engine) {
 		)
 	}
 
-	tilemap.DrawTilemap(engine.tileManager, camera.camera, engine.renderManager)
+	tilemap.DrawTilemap(engine.tileManager, camera.camera, engine.renderManager, engine.world)
 	render.RenderSprites(engine.world, engine.renderManager, engine.textureManager)
 	screenRect := core.GetScreenRect(camera.camera)
 
