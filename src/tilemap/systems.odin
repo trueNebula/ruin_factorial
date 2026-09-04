@@ -25,7 +25,6 @@ TilemapClickSystem :: proc(
 			return
 		}
 
-		log.Debug("Clicked on pos %v, got block %+v with component &+v", pos, block, health)
 
 		health.current -= 1
 		if health.current <= 0 {
@@ -38,7 +37,7 @@ TilemapClickSystem :: proc(
 		tintTween := core.TintTween {
 			destination = rl.Color{0, 0, 0, 127},
 			duration    = 0.3,
-			curve       = .LINEAR,
+			curve       = .EASE_OUT,
 			reverse     = true,
 		}
 

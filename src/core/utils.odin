@@ -1,5 +1,6 @@
 package core
 
+import "core:math"
 import "src:log"
 import "src:neb_utils"
 import rl "vendor:raylib"
@@ -99,6 +100,14 @@ DoTintTweenMath :: proc(tween: TintTween, tint: Tint = rl.WHITE) -> Tint {
 	#partial switch tween.curve {
 	case .LINEAR:
 		a = neb_utils.ColorLerp(a, b, t)
+	case .EASE_OUT:
+		src := rl.ColorNormalize(a)
+		dst := rl.ColorNormalize(b)
+		res := [4]f32{}
+		for i in 0 ..< 4 {
+			res[i] = math.clamp(rl.EaseCubicOut(t, src[i], dst[i], 1.0), 0, 1)
+		}
+		a = rl.ColorFromNormalized(res)
 	case:
 		a = b
 	}
