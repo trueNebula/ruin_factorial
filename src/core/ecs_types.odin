@@ -20,9 +20,10 @@ Transform :: struct {
 Velocity :: rl.Vector2
 
 Sprite :: struct {
-	texture: Texture,
-	rect:    rl.Rectangle,
-	anchor:  Anchor,
+	texture:          Texture,
+	rect:             rl.Rectangle,
+	anchor:           Anchor,
+	offsetX, offsetY: f32,
 }
 
 AnimationFrame :: struct {
@@ -73,4 +74,10 @@ Drop :: struct {
 
 DropTable :: struct {
 	drops: []Drop,
+}
+
+Float :: struct {
+	amplitude: f32,
+	frequency: f32, // Hz
+	timer:     f32,
 }

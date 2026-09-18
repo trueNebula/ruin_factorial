@@ -2,6 +2,7 @@ package scene
 
 import "src:ecs"
 import "src:event"
+import "src:item"
 import "src:physics"
 import "src:player"
 import "src:render"
@@ -28,6 +29,7 @@ initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
 	ecs.RegisterTickSystem(world, physics.MovementSystem)
 	ecs.RegisterTickSystem(world, player.CameraTransformSystem)
 	ecs.RegisterTickSystem(world, render.ApplyTintTween)
+	ecs.RegisterTickSystem(world, item.FloatItem)
 	ecs.ProcessSetup(world)
 
 	return {}

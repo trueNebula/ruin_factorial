@@ -1,5 +1,6 @@
 package item
 
+import "core:math"
 import "src:core"
 import "src:ecs"
 import "src:log"
@@ -32,7 +33,12 @@ DropItem :: proc(world: ^ecs.World, itemId: core.ItemId, qty: u16, pos: rl.Vecto
 		sizeY    = 1,
 	}
 
-	return ecs.Add(world, item, sprite, transform)
+	float := core.Float {
+		amplitude = 2,
+		frequency = 2,
+	}
+
+	return ecs.Add(world, item, sprite, transform, float)
 }
 
 GetRectForId :: proc(itemId: core.ItemId) -> (rect: rl.Rectangle, err: bool) {
@@ -47,4 +53,22 @@ GetRectForId :: proc(itemId: core.ItemId) -> (rect: rl.Rectangle, err: bool) {
 
 RollQuantity :: proc(range: core.RangeInt) -> int {
 	return int(neb_utils.RandomRangeGaussian(f32(range.min), f32(range.max)))
+}
+
+FloatItem :: proc(world: ^ecs.World) {
+	view := ecs.View2(world, core.Sprite, core.Float)
+
+	for entity in view {
+		sprite := entity.c1
+		float := entity.c2
+
+		float.timer += rl.GetFrameTime()
+
+		if float.timer >= 2 * math.PI {
+			float.timer -= 2 * math.PI
+		}
+
+		offset := math.sin_f32(float.timer * float.frequency) * float.amplitude
+		sprite.offsetY = -offset
+	}
 }

@@ -34,8 +34,8 @@ MoveRect :: proc(r: rl.Rectangle, offset: rl.Vector2) -> rl.Rectangle {
 
 GetDestRect :: proc(t: Transform, s: Sprite) -> rl.Rectangle {
 	rect := rl.Rectangle {
-		x      = t.x,
-		y      = t.y,
+		x      = t.x + s.offsetX,
+		y      = t.y + s.offsetY,
 		width  = s.rect.width * t.sizeX,
 		height = s.rect.height * t.sizeY,
 	}

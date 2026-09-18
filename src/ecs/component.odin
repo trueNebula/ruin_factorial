@@ -10,6 +10,7 @@ Component :: union {
 	core.Camera,
 	core.DropTable,
 	core.EntityRef,
+	core.Float,
 	core.Health,
 	core.Inventory,
 	core.Item,
