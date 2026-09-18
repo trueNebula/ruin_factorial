@@ -40,13 +40,13 @@ Camera :: struct {
 	camera: rl.Camera2D,
 }
 
-InventorySlot :: struct {
-	item:  ItemId,
+Item :: struct {
+	id:    ItemId,
 	count: u16,
 }
 
 Inventory :: struct {
-	slots: []InventorySlot,
+	slots: []Item,
 	size:  int,
 }
 
@@ -63,4 +63,15 @@ TintTween :: struct {
 	timer:       f32,
 	curve:       TweenCurve,
 	reverse:     bool,
+}
+
+Drop :: struct {
+	item:   ItemId,
+	qty:    RangeInt,
+	weight: i32,
+}
+
+DropTable :: struct {
+	drops: []Drop,
+	size:  int,
 }

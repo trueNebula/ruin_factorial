@@ -25,11 +25,29 @@ RandomRange :: proc(
 	return min + rand.float32(generator) * (max - min)
 }
 
+RandomRangeI32 :: proc(
+	min, max: i32,
+	generator: runtime.Random_Generator = context.random_generator,
+) -> i32 {
+	if min >= max {
+		return min
+	}
+	return min + rand.int31_max(max - min, generator)
+}
+
 RandomPick :: proc(
 	list: []$T,
 	generator: runtime.Random_Generator = context.random_generator,
 ) -> T {
 	return rand.choice(list[:], generator)
+}
+
+RandomRangeGaussian :: proc(
+	min: f32,
+	max: f32,
+	generator: runtime.Random_Generator = context.random_generator,
+) -> f32 {
+	return rand.float32_normal((max + min) / 2, 1.0, generator)
 }
 
 PercentChance :: proc(
@@ -41,6 +59,13 @@ PercentChance :: proc(
 
 PercentChanceSeeded :: proc(chance: f32, seed: u64) -> bool {
 	return chance > hashToF32(seed) * 100
+}
+
+XInYChance :: proc(
+	chance: f32,
+	generator: runtime.Random_Generator = context.random_generator,
+) -> bool {
+	return rand.float32(generator) <= chance
 }
 
 RandomI64 :: proc(generator: runtime.Random_Generator = context.random_generator) -> i64 {

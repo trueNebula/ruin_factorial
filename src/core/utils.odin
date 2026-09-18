@@ -114,3 +114,14 @@ DoTintTweenMath :: proc(tween: TintTween, tint: Tint = rl.WHITE) -> Tint {
 
 	return a
 }
+
+GetTotalWeightFromTable :: proc(table: ^DropTable) -> i32 {
+	weight: i32 = 0
+	for drop in table.drops {
+		if drop.weight == -1 {
+			continue
+		}
+		weight += drop.weight
+	}
+	return weight
+}

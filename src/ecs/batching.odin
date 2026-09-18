@@ -51,6 +51,7 @@ addEntity :: proc(
 		addComponentToEntity(batch, entityId, component)
 	}
 
+	// TODO: dont make this optimistic, move ts to FrameEnd inside batch
 	record := EntityRecord {
 		archetype = arch,
 		row       = len(arch.entities),

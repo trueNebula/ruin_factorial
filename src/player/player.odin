@@ -42,12 +42,12 @@ SetupPlayer :: proc(world: ^ecs.World) {
 	}
 
 	inventory := core.Inventory {
-		slots = make([]core.InventorySlot, INVENTORY_SLOTS),
+		slots = make([]core.Item, INVENTORY_SLOTS),
 		size  = INVENTORY_SLOTS,
 	}
 
 	inventory.slots[0] = {
-		item  = .WOOD,
+		id    = .WOOD,
 		count = 21,
 	}
 

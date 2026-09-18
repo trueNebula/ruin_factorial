@@ -415,6 +415,9 @@ getComponentData :: proc(
 	data: rawptr,
 	err: bool,
 ) {
+	if arch == nil {
+		return nil, true
+	}
 	if tid not_in arch.columns {
 		return nil, true
 	}

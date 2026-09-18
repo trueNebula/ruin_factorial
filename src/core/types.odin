@@ -88,3 +88,13 @@ TweenCurve :: enum {
 	EASE_OUT, // ease-out fade a->b
 	EASE_IN_OUT, // ease-in-out fade a->b
 }
+
+RangeInt :: struct {
+	min: i32,
+	max: i32,
+}
+
+Range :: struct {
+	min: f32,
+	max: f32,
+}
