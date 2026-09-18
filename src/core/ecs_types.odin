@@ -73,5 +73,4 @@ Drop :: struct {
 
 DropTable :: struct {
 	drops: []Drop,
-	size:  int,
 }

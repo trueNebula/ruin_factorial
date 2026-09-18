@@ -1,14 +1,15 @@
 package ecs
 
-import "core:fmt"
 import "core:reflect"
 import "core:slice"
 
 BatchManager :: struct {
-	additions:   map[u32][dynamic]Component,
-	deletions:   map[u32][dynamic]typeid,
-	addQueue:    [dynamic]BatchAddCommand,
-	deleteQueue: [dynamic]BatchDeleteCommand,
+	additions:         map[u32][dynamic]Component,
+	deletions:         map[u32][dynamic]typeid,
+	addQueue:          [dynamic]BatchAddCommand,
+	deleteQueue:       [dynamic]BatchDeleteCommand,
+	addEntityQueue:    [dynamic]BatchAddEntityCommand,
+	deleteEntityQueue: [dynamic]BatchDeleteEntityCommand,
 }
 
 BatchAddCommand :: struct {
@@ -23,6 +24,15 @@ BatchDeleteCommand :: struct {
 	dst:        ^Archetype,
 	entities:   [dynamic]u32,
 	components: [dynamic]typeid,
+}
+
+BatchAddEntityCommand :: struct {
+	arch:     ^Archetype,
+	entityId: u32,
+}
+
+BatchDeleteEntityCommand :: struct {
+	entityId: u32,
 }
 
 CommandType :: enum {
@@ -51,13 +61,7 @@ addEntity :: proc(
 		addComponentToEntity(batch, entityId, component)
 	}
 
-	// TODO: dont make this optimistic, move ts to FrameEnd inside batch
-	record := EntityRecord {
-		archetype = arch,
-		row       = len(arch.entities),
-	}
-	world.entities[entityId] = record
-	append(&arch.entities, entityId)
+	append(&batch.addEntityQueue, BatchAddEntityCommand{arch = arch, entityId = entityId})
 
 	return entityId
 }
@@ -247,9 +251,32 @@ executeDeletionCommands :: proc(world: ^World, batch: ^BatchManager) {
 }
 
 @(private)
+executeEntityAdditionCommands :: proc(world: ^World, batch: ^BatchManager) {
+	for &cmd in batch.addEntityQueue {
+		arch := cmd.arch
+		entityId := cmd.entityId
+		record := EntityRecord {
+			archetype = arch,
+			row       = len(arch.entities),
+		}
+		world.entities[entityId] = record
+		append(&arch.entities, entityId)
+	}
+}
+
+@(private)
+executeEntityDeletionCommands :: proc(world: ^World, batch: ^BatchManager) {
+	for cmd in batch.deleteEntityQueue {
+		append(&world.idQueue, cmd.entityId)
+	}
+}
+
+@(private)
 cleanupBatch :: proc(batch: ^BatchManager) {
 	delete(batch.addQueue)
 	delete(batch.deleteQueue)
 	delete(batch.additions)
 	delete(batch.deletions)
+	delete(batch.addEntityQueue)
+	delete(batch.deleteEntityQueue)
 }

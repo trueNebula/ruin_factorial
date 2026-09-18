@@ -38,6 +38,8 @@ CreateWorld :: proc() -> World {
 			deletions = make(map[u32][dynamic]typeid),
 			addQueue = make([dynamic]BatchAddCommand),
 			deleteQueue = make([dynamic]BatchDeleteCommand),
+			addEntityQueue = make([dynamic]BatchAddEntityCommand),
+			deleteEntityQueue = make([dynamic]BatchDeleteEntityCommand),
 		},
 	}
 
@@ -67,10 +69,10 @@ Add :: proc(world: ^World, components: ..Component) -> u32 {
 }
 
 Delete :: proc(world: ^World, entityId: u32) {
-	append(&world.idQueue, entityId)
 	if USE_BATCHING {
 		deleteEntity(world, &world.batch, entityId)
 	} else {
+		append(&world.idQueue, entityId)
 		deleteInternal(world, entityId)
 	}
 }
@@ -115,10 +117,6 @@ AddComponent :: proc(world: ^World, entityId: u32, component: Component) {
 	}
 }
 
-GetComponent :: proc(world: ^World, entityId: u32, $T: typeid) -> (component: ^T, err: bool) {
-	return getComponent(world, entityId, component)
-}
-
 DeleteComponent :: proc(world: ^World, entityId: u32, tid: typeid) {
 	if USE_BATCHING {
 		deleteComponentFromEntity(&world.batch, entityId, tid)
@@ -129,19 +127,22 @@ DeleteComponent :: proc(world: ^World, entityId: u32, tid: typeid) {
 
 FrameEnd :: proc(world: ^World) {
 	batch := &world.batch
-	processAdditionsIntoCommands(world, batch)
+
+	executeEntityDeletionCommands(world, batch)
 	processDeletionsIntoCommands(world, batch)
-
-	// sortAdditionCommands(world, batch)
-	// sortDeletionCommands(world, batch)
-
-	executeAdditionCommands(world, batch)
 	executeDeletionCommands(world, batch)
 
-	clear(&batch.additions)
+	executeEntityAdditionCommands(world, batch)
+	processAdditionsIntoCommands(world, batch)
+	executeAdditionCommands(world, batch)
+
+	clear(&batch.deleteEntityQueue)
 	clear(&batch.deletions)
-	clear(&batch.addQueue)
 	clear(&batch.deleteQueue)
+
+	clear(&batch.addEntityQueue)
+	clear(&batch.addQueue)
+	clear(&batch.additions)
 
 	free_all(context.temp_allocator)
 }

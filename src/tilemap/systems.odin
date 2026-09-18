@@ -30,7 +30,7 @@ TilemapClickSystem :: proc(
 		health.current -= 1
 		if health.current <= 0 {
 			ecs.Delete(world, block.entity)
-			worldPos := Screen2World(pos)
+			worldPos := Screen2World(pos) * core.TileSize + core.TileSize / 2
 			breakTile(world, block.entity, worldPos)
 			block.entity = 0
 			block.id = .NONE

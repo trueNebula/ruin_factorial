@@ -6,6 +6,7 @@ import "core:math/noise"
 import "src:core"
 import "src:ecs"
 import "src:log"
+import "src:loot"
 import "src:neb_utils"
 import "src:tilemap"
 import rl "vendor:raylib"
@@ -224,15 +225,9 @@ generateBlock :: proc(
 			max     = 3,
 		}
 		dropTable := core.DropTable {
-			size  = 1,
-			drops = make([]core.Drop, 1),
+			drops = loot.GRASS_TILE_LOOT[:],
 		}
 
-		dropTable.drops[0] = core.Drop {
-			item = .WOOD,
-			qty = core.RangeInt{min = 1, max = 4},
-			weight = -1,
-		}
 		entity := ecs.Add(world, block, health, dropTable)
 		return Block{entity = entity, id = .GRASS}, true
 	}
