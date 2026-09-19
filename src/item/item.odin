@@ -38,7 +38,9 @@ DropItem :: proc(world: ^ecs.World, itemId: core.ItemId, qty: u16, pos: rl.Vecto
 		frequency = 2,
 	}
 
-	return ecs.Add(world, item, sprite, transform, float)
+	shadow := core.Shadow.SMALL
+
+	return ecs.Add(world, item, sprite, transform, float, shadow)
 }
 
 GetRectForId :: proc(itemId: core.ItemId) -> (rect: rl.Rectangle, err: bool) {

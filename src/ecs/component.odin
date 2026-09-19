@@ -15,6 +15,7 @@ Component :: union {
 	core.Inventory,
 	core.Item,
 	core.PlayerRef,
+	core.Shadow,
 	core.Sprite,
 	core.TintTween,
 	core.Transform,

@@ -3,7 +3,6 @@ package render
 import "src:core"
 import "src:ecs"
 import "src:log"
-import "src:neb_utils"
 import "src:texture"
 import rl "vendor:raylib"
 
@@ -53,5 +52,16 @@ ApplyTintTween :: proc(world: ^ecs.World) {
 			ecs.DeleteComponent(world, entity.id, core.TintTween)
 			return
 		}
+	}
+}
+
+RenderShadows :: proc(world: ^ecs.World, renMan: ^RenderManager, texMan: ^texture.TextureManager) {
+	view := ecs.View2(world, core.Transform, core.Shadow)
+	for entity in view {
+		transform := entity.c1
+		shadow := entity.c2
+		dest := rl.Vector2{transform.x - core.TileSize / 2, transform.y - core.TileSize / 2}
+
+		DrawShadow(renMan, shadow^, dest)
 	}
 }

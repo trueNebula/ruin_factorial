@@ -81,3 +81,8 @@ Float :: struct {
 	frequency: f32, // Hz
 	timer:     f32,
 }
+
+Shadow :: enum {
+	SMALL,
+	LARGE,
+}

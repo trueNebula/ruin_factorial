@@ -23,16 +23,18 @@ ShapeDrawCommand :: struct {
 
 RenderManager :: struct {
 	tile:   [dynamic]DrawCommand,
+	shadow: [dynamic]DrawCommand,
 	object: [dynamic]DrawCommand,
 	debug:  [dynamic]ShapeDrawCommand,
 }
 
 MakeRenderManager :: proc() -> RenderManager {
 	tile := make([dynamic]DrawCommand)
+	shadow := make([dynamic]DrawCommand)
 	object := make([dynamic]DrawCommand)
 	debug := make([dynamic]ShapeDrawCommand)
 
-	return {tile = tile, object = object, debug = debug}
+	return {tile = tile, shadow = shadow, object = object, debug = debug}
 }
 
 Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
@@ -54,6 +56,28 @@ Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
 			/*rotation=*/
 			0,
 			cmd.tint,
+		)
+	}
+
+	for cmd in renMan.shadow {
+		texData, err := texture.GetTexture(texMan, cmd.texture)
+
+		if (err) {
+			log.Err("Unable to get texture with ID %s. Unloaded?", cmd.texture, panic = false)
+			continue
+		}
+
+		destRect := core.MakeRect(cmd.dest, core.GetSize(cmd.src))
+		rl.DrawTexturePro(
+			texData,
+			cmd.src,
+			destRect,
+			/*origin=*/
+			{0, 0},
+			/*rotation=*/
+			0,
+			/*tint=*/
+			rl.WHITE,
 		)
 	}
 
