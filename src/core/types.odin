@@ -98,3 +98,20 @@ Range :: struct {
 	min: f32,
 	max: f32,
 }
+
+ColliderType :: enum {
+	RECTANGLE,
+	CIRCLE,
+}
+
+ColliderLayer :: enum {
+	PLAYER,
+	PLAYER_HURT,
+	ENEMY,
+	ENEMY_HURT,
+	WORLD,
+	ITEM,
+	INTERACT,
+}
+
+CollisionLayers :: bit_set[ColliderLayer]

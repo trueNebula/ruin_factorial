@@ -41,6 +41,14 @@ SetupPlayer :: proc(world: ^ecs.World) {
 		},
 	}
 
+	collider := core.Collider {
+		type   = .CIRCLE,
+		offset = {0, 0},
+		size   = {4, 0},
+		layer  = {.PLAYER},
+		mask   = {.WORLD, .INTERACT, .ITEM},
+	}
+
 	inventory := core.Inventory {
 		slots = make([]core.Item, INVENTORY_SLOTS),
 		size  = INVENTORY_SLOTS,
@@ -53,7 +61,7 @@ SetupPlayer :: proc(world: ^ecs.World) {
 
 	log.Debug("Added inventory component: %+v", inventory)
 
-	ecs.Add(world, transform, velocity, sprite, camera, player, inventory)
+	ecs.Add(world, transform, velocity, sprite, camera, player, inventory, collider)
 
 	log.Debug("Added player with transform %+v and sprite %+v", transform, sprite)
 }

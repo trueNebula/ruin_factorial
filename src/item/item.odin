@@ -40,7 +40,15 @@ DropItem :: proc(world: ^ecs.World, itemId: core.ItemId, qty: u16, pos: rl.Vecto
 
 	shadow := core.Shadow.SMALL
 
-	return ecs.Add(world, item, sprite, transform, float, shadow)
+	collider := core.Collider {
+		type   = .CIRCLE,
+		offset = {0, 0},
+		size   = {4, 0},
+		layer  = {.ITEM},
+		mask   = {},
+	}
+
+	return ecs.Add(world, item, sprite, transform, float, shadow, collider)
 }
 
 GetRectForId :: proc(itemId: core.ItemId) -> (rect: rl.Rectangle, err: bool) {

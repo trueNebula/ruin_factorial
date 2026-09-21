@@ -7,6 +7,7 @@ import "src:event"
 import "src:input"
 import "src:log"
 import "src:neb_utils"
+import "src:physics"
 import "src:player"
 import "src:render"
 import "src:scene"
@@ -168,6 +169,7 @@ update :: proc(engine: ^Engine) {
 	scene.Update(engine.sceneManager)
 	player.PlayerInputSystem(engine.world, &engine.frameInput)
 	ecs.ProcessTick(engine.world)
+	physics.CheckCollisions(engine.world, engine.queue)
 
 	playerView := ecs.View2(engine.world, core.PlayerRef, core.Camera)
 
@@ -208,6 +210,8 @@ processEvents :: proc(engine: ^Engine) {
 			tilemap.ClearChunks(engine.tileManager)
 		case event.GenerateBlocks:
 			tilemap.GenerateBlocks(engine.tileManager, engine.world)
+		case event.Collision:
+			log.Debug("Collided! %+v", variant)
 		}
 	}
 

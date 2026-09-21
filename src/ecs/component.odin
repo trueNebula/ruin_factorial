@@ -8,6 +8,7 @@ Component :: union {
 	core.Animation,
 	core.BlockId,
 	core.Camera,
+	core.Collider,
 	core.DropTable,
 	core.EntityRef,
 	core.Float,
