@@ -47,7 +47,9 @@ RandomRangeGaussian :: proc(
 	max: f32,
 	generator: runtime.Random_Generator = context.random_generator,
 ) -> f32 {
-	return rand.float32_normal((max + min) / 2, 1.0, generator)
+	mean := (max + min) / 2
+	stddev := (max - min) / 6
+	return clamp(rand.float32_normal(mean, stddev, generator), min, max)
 }
 
 PercentChance :: proc(
