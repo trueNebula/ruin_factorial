@@ -110,6 +110,8 @@ debug :: proc() {
 		// mu.slider(ctx, &u.DEBUG_OPTS.PLAYER_SPEED_MULTIPLIER, 1, 10, 0.5);
 		mu.label(ctx, "Camera zoom")
 		mu.slider(ctx, &core.DEBUG.zoom, -6, 3, 1)
+
+		mu.checkbox(ctx, "God Mode", &core.DEBUG.godMode)
 	}
 }
 

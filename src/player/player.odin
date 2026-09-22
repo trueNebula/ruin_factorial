@@ -11,7 +11,8 @@ import rl "vendor:raylib"
 MAIN_PLAYER_REF :: core.PlayerRef {
 	id = 1,
 }
-BASE_MOVEMENT_SPEED :: 1000
+BASE_MOVEMENT_SPEED: f32 : 200.0
+GOD_MODE_MULTIPLIER: f32 : 10.0
 INVENTORY_SLOTS :: 41 // 40 + mouse
 
 SetupPlayer :: proc(world: ^ecs.World) {
@@ -73,7 +74,9 @@ PlayerInputSystem :: proc(world: ^ecs.World, frameInput: ^input.State) {
 		if .DOWN in frameInput.actionHeld do velocity.y += 1
 		if .LEFT in frameInput.actionHeld do velocity.x -= 1
 		if .RIGHT in frameInput.actionHeld do velocity.x += 1
-		velocity^ = linalg.normalize0(velocity^) * BASE_MOVEMENT_SPEED
+
+		speedMultiplier := core.DEBUG.godMode ? GOD_MODE_MULTIPLIER : 1
+		velocity^ = linalg.normalize0(velocity^) * BASE_MOVEMENT_SPEED * speedMultiplier
 	})
 }
 
