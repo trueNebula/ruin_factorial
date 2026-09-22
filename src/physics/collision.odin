@@ -59,7 +59,7 @@ CheckCollisions :: proc(world: ^ecs.World, queue: ^event.Queue) {
 			aWants := wantsCollision(a.c1.mask, b.c1.layer)
 			bWants := wantsCollision(b.c1.mask, a.c1.layer)
 
-			if !aWants && !bWants do return
+			if !aWants && !bWants do continue
 
 			if CheckCollision(a.c1, a.c2, b.c1, b.c2) {
 				aIsPlayer, bIsPlayer := false, false
@@ -72,10 +72,16 @@ CheckCollisions :: proc(world: ^ecs.World, queue: ^event.Queue) {
 				}
 
 				if aWants {
-					event.PushEvent(queue, event.Collision{a.id, b.id, aIsPlayer, bIsPlayer})
+					event.PushEvent(
+						queue,
+						event.Collision{a.id, b.id, aIsPlayer, bIsPlayer, a.c1.mask & b.c1.layer},
+					)
 				}
 				if bWants {
-					event.PushEvent(queue, event.Collision{b.id, a.id, aIsPlayer, bIsPlayer})
+					event.PushEvent(
+						queue,
+						event.Collision{b.id, a.id, aIsPlayer, bIsPlayer, b.c1.mask & a.c1.layer},
+					)
 				}
 			}
 		}
@@ -85,4 +91,12 @@ CheckCollisions :: proc(world: ^ecs.World, queue: ^event.Queue) {
 @(private)
 wantsCollision :: proc(a, b: core.CollisionLayers) -> bool {
 	return a & b != {}
+}
+
+RouteCollision :: proc(collision: event.Collision, queue: ^event.Queue) {
+	switch {
+	case .ITEM in collision.onLayers && collision.selfIsPlayer:
+		event.PushEvent(queue, event.Pickup{collector = collision.self, item = collision.other})
+	case:
+	}
 }

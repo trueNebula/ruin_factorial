@@ -5,7 +5,7 @@ import "src:core"
 import "src:ecs"
 import "src:event"
 import "src:input"
-import "src:log"
+import "src:item"
 import "src:neb_utils"
 import "src:physics"
 import "src:player"
@@ -70,7 +70,6 @@ Run :: proc(engine: ^Engine) {
 	shouldBlockInput: bool
 	for !rl.WindowShouldClose() {
 		core.FullscreenManager()
-		processEvents(engine)
 
 		if !scene.ShouldBlockInput(engine.sceneManager) {
 			engine.frameInput = input.Poll(core.DefaultKeybinds)
@@ -78,6 +77,7 @@ Run :: proc(engine: ^Engine) {
 		}
 
 		update(engine)
+		processEvents(engine)
 
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.BLACK)
@@ -202,8 +202,8 @@ update :: proc(engine: ^Engine) {
 
 @(private)
 processEvents :: proc(engine: ^Engine) {
-	for item in engine.queue.items {
-		#partial switch variant in item {
+	for eventItem in engine.queue.items {
+		#partial switch variant in eventItem {
 		case event.GenerateWorld:
 			tilemap.GenerateWorld(engine.tileManager, engine.rng)
 		case event.ClearTilemap:
@@ -211,7 +211,11 @@ processEvents :: proc(engine: ^Engine) {
 		case event.GenerateBlocks:
 			tilemap.GenerateBlocks(engine.tileManager, engine.world)
 		case event.Collision:
-			log.Debug("Collided! %+v", variant)
+			physics.RouteCollision(variant, engine.queue)
+
+		case event.Pickup:
+			player.TryAddToInventory(engine.world, variant.collector, variant.item)
+			ecs.Delete(engine.world, variant.item)
 		}
 	}
 

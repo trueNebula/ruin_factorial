@@ -55,7 +55,7 @@ SetupPlayer :: proc(world: ^ecs.World) {
 		size  = INVENTORY_SLOTS,
 	}
 
-	inventory.slots[0] = {
+	inventory.slots[1] = {
 		id    = .WOOD,
 		count = 21,
 	}
@@ -140,4 +140,37 @@ getPlayerId :: proc(world: ^ecs.World, ref := MAIN_PLAYER_REF) -> u32 {
 	}
 
 	return 0
+}
+
+@(private)
+getPlayerRef :: proc(world: ^ecs.World, id: u32) -> core.PlayerRef {
+	entity, err := ecs.GetComponentForEntity(world, id, core.PlayerRef)
+	if err {
+		return {}
+	}
+
+	return entity^
+}
+
+TryAddToInventory :: proc(world: ^ecs.World, playerId: u32, itemId: u32) -> bool {
+	// TODO: maybe figure out a way to use PlayerRef instead idk
+	inventory, invErr := ecs.GetComponentForEntity(world, playerId, core.Inventory)
+
+	if invErr {
+		return false
+	}
+
+	item, itemErr := ecs.GetComponentForEntity(world, itemId, core.Item)
+
+	if itemErr {
+		return false
+	}
+
+	result := tryAddItemToInventory(inventory, item^)
+
+	if result {
+		log.Debug("Picked up item %+v! Inventory: %+v", item^, inventory^)
+	}
+
+	return result
 }

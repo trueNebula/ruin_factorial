@@ -1,21 +1,28 @@
 package event
 
 import "src:core"
+
 Event :: union {
 	GenerateBlocks,
 	GenerateWorld,
 	ClearTilemap,
 	Collision,
+	Pickup,
 }
 
 GenerateWorld :: struct {}
 GenerateBlocks :: struct {}
 ClearTilemap :: struct {}
 Collision :: struct {
-	entity:           u32,
-	collider:         u32,
-	entityIsPlayer:   bool,
-	colliderIsPlayer: bool,
+	self:          u32,
+	other:         u32,
+	selfIsPlayer:  bool,
+	otherIsPlayer: bool,
+	onLayers:      core.CollisionLayers,
+}
+Pickup :: struct {
+	collector: u32,
+	item:      u32,
 }
 
 Queue :: struct {
