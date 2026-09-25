@@ -22,6 +22,7 @@ Engine :: struct {
 	renderManager:  ^render.RenderManager,
 	textureManager: ^texture.TextureManager,
 	tileManager:    ^tilemap.TileManager,
+	uiManager:      ^ui.UiManager,
 	world:          ^ecs.World,
 	frameInput:     input.State,
 	rng:            runtime.Random_Generator,
@@ -43,8 +44,11 @@ MakeEngine :: proc() -> Engine {
 	tileMan := new(tilemap.TileManager)
 	tileMan^ = tilemap.MakeTileManager()
 
+	uiMan := new(ui.UiManager)
+	uiMan^ = ui.MakeUiManager()
+
 	sceneMan := new(scene.SceneManager)
-	sceneMan^ = scene.MakeSceneManger(texMan, world, queue)
+	sceneMan^ = scene.MakeSceneManger(texMan, world, queue, uiMan)
 
 	rng := neb_utils.InitNewGenerator()
 
@@ -53,6 +57,7 @@ MakeEngine :: proc() -> Engine {
 		renderManager  = renMan,
 		textureManager = texMan,
 		tileManager    = tileMan,
+		uiManager      = uiMan,
 		world          = world,
 		queue          = queue,
 		rng            = rng,
@@ -71,14 +76,17 @@ Run :: proc(engine: ^Engine) {
 	for !rl.WindowShouldClose() {
 		core.FullscreenManager()
 
+		// input, top-down blocking
 		if !scene.ShouldBlockInput(engine.sceneManager) {
 			engine.frameInput = input.Poll(core.DefaultKeybinds)
 			engineInput(engine)
 		}
 
+		// update, bottom-up
 		update(engine)
 		processEvents(engine)
 
+		// render, bottom-up
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.BLACK)
 
@@ -86,21 +94,15 @@ Run :: proc(engine: ^Engine) {
 		case .MENU:
 		// TODO: add menu scene rendering
 		case .GAME:
-			playerEntity, playerErr := player.GetPlayer(
+			camera, camErr := player.GetPlayerComponent(
 				engine.world,
 				player.MAIN_PLAYER_REF,
 				core.Camera,
 			)
-			defer ecs.Cleanup(&playerEntity)
-			if playerErr {
+			if camErr {
 				// No camera set up yet, skip rendering
 				break
 			}
-			cameraComponent, camErr := ecs.ComponentSetGet(&playerEntity, core.Camera)
-			if camErr {
-				break
-			}
-			camera := cast(^core.Camera)cameraComponent
 			rl.BeginMode2D(camera.camera)
 			render.Flush(engine.renderManager, engine.textureManager)
 			rl.EndMode2D()
@@ -146,6 +148,7 @@ engineInput :: proc(engine: ^Engine) {
 	ui.InputMu(&engine.frameInput)
 	switch engine.sceneManager.current {
 	case .MENU:
+		// TODO: this sucks ass, figure out a way to make it suck less
 		if input.MaybeConsumeMouse(&engine.frameInput, .LEFT) {
 			free(engine.rng.data)
 			engine.rng = neb_utils.InitNewGenerator()
@@ -224,4 +227,16 @@ processEvents :: proc(engine: ^Engine) {
 	}
 
 	clear(&engine.queue.items)
+}
+
+updateUi :: proc(engine: ^Engine) {
+	inventory, invErr := player.GetPlayerComponent(
+		engine.world,
+		player.MAIN_PLAYER_REF,
+		core.Inventory,
+	)
+	if !invErr {
+		hotbarState := ui.GetState(engine.uiManager, .HOTBAR).(ui.HotbarState)
+		hotbarState.slots = inventory.slots[0:10]
+	}
 }

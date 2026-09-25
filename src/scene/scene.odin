@@ -6,6 +6,7 @@ import "src:neb_utils"
 import "src:render"
 import "src:texture"
 import "src:tilemap"
+import "src:ui"
 import rl "vendor:raylib"
 
 SceneId :: enum {
@@ -42,12 +43,14 @@ SceneManager :: struct {
 	textureManager: ^texture.TextureManager,
 	world:          ^ecs.World,
 	queue:          ^event.Queue,
+	ui:             ^ui.UiManager,
 }
 
 MakeSceneManger :: proc(
 	texMan: ^texture.TextureManager,
 	world: ^ecs.World,
 	queue: ^event.Queue,
+	ui: ^ui.UiManager,
 ) -> SceneManager {
 	sceneMan := SceneManager {
 		current = .MENU,
@@ -60,6 +63,7 @@ MakeSceneManger :: proc(
 		textureManager = texMan,
 		world = world,
 		queue = queue,
+		ui = ui,
 	}
 	return sceneMan
 }

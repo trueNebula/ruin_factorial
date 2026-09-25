@@ -130,6 +130,22 @@ GetPlayer :: proc(
 	return ecs.Get(world, entityId, ..tids), false
 }
 
+GetPlayerComponent :: proc(
+	world: ^ecs.World,
+	ref: core.PlayerRef,
+	$T: typeid,
+) -> (
+	component: ^T,
+	err: bool,
+) {
+	entityId := getPlayerId(world, ref)
+	if entityId == 0 {
+		return {}, true
+	}
+
+	return ecs.GetComponentForEntity(world, entityId, ..tids), false
+}
+
 @(private)
 getPlayerId :: proc(world: ^ecs.World, ref := MAIN_PLAYER_REF) -> u32 {
 	view := ecs.View1(world, core.PlayerRef)
