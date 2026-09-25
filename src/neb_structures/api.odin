@@ -15,6 +15,11 @@ MakeSet :: proc {
 	setMakeFromSlice,
 }
 
+MakePair :: proc {
+	pairMakeEmpty,
+	pairMakeCopy,
+}
+
 Delete :: proc {
 	stackDelete,
 	queueDelete,
@@ -49,6 +54,14 @@ Peek :: proc {
 
 Get :: proc {
 	setGet,
+}
+
+GetFirst :: proc {
+	pairGetFirst,
+}
+
+GetSecond :: proc {
+	pairGetSecond,
 }
 
 Includes :: proc {
