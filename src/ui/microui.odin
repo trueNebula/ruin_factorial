@@ -104,6 +104,7 @@ debug :: proc() {
 		mu.checkbox(ctx, "Draw Chunk Bounds", &core.DEBUG.drawChunkBounds)
 		mu.checkbox(ctx, "Draw Chunk Generation Bounds", &core.DEBUG.drawChunkGenBounds)
 		mu.checkbox(ctx, "Do Larger Tilemap Rendering", &core.DEBUG.largerTilemapRendering)
+		mu.checkbox(ctx, "Draw Colliders", &core.DEBUG.drawColliders)
 
 		// mu.checkbox(ctx, "Do player collision", &u.DEBUG_OPTS.DO_PLAYER_COLLISION);
 		// mu.label(ctx, "Player speed multiplier");

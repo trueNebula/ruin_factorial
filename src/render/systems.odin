@@ -65,3 +65,25 @@ RenderShadows :: proc(world: ^ecs.World, renMan: ^RenderManager, texMan: ^textur
 		DrawShadow(renMan, shadow^, dest)
 	}
 }
+
+RenderColliders :: proc(world: ^ecs.World, renMan: ^RenderManager) {
+	view := ecs.View2(world, core.Collider, core.Transform)
+	for entity in view {
+		collider := entity.c1
+		transform := entity.c2
+		switch collider.type {
+		case .CIRCLE:
+			center := rl.Vector2{transform.x + collider.offset.x, transform.y + collider.offset.y}
+			DrawCircle(renMan, center, collider.size.x, rl.BLUE)
+
+		case .RECTANGLE:
+			rect := rl.Rectangle {
+				x      = transform.x + collider.offset.x,
+				y      = transform.y + collider.offset.y,
+				width  = collider.size.x,
+				height = collider.size.y,
+			}
+			DrawRect(renMan, rect, rl.BLUE)
+		}
+	}
+}

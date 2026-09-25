@@ -43,7 +43,7 @@ DropItem :: proc(world: ^ecs.World, itemId: core.ItemId, qty: u16, pos: rl.Vecto
 	collider := core.Collider {
 		type   = .CIRCLE,
 		offset = {0, 0},
-		size   = {4, 0},
+		size   = {6, 0},
 		layer  = {.ITEM},
 		mask   = {},
 	}

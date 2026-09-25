@@ -65,5 +65,12 @@ DrawTile :: proc(
 }
 
 DrawRect :: proc(renMan: ^RenderManager, rect: rl.Rectangle, color: rl.Color) {
-	append(&renMan.debug, ShapeDrawCommand{rect = rect, color = color})
+	append(&renMan.debug, ShapeDrawCommand{shape = .RECTANGLE, rect = rect, color = color})
+}
+
+DrawCircle :: proc(renMan: ^RenderManager, center: rl.Vector2, radius: f32, color: rl.Color) {
+	append(
+		&renMan.debug,
+		ShapeDrawCommand{shape = .CIRCLE, dest = center, radius = radius, color = color},
+	)
 }

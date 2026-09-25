@@ -117,7 +117,7 @@ Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
 			}
 		case .CIRCLE:
 			{
-				rl.DrawCircleV(cmd.dest, cmd.radius, cmd.color)
+				rl.DrawCircleLinesV(cmd.dest, cmd.radius, cmd.color)
 			}
 		}
 	}

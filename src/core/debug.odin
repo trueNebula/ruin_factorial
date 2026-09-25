@@ -11,6 +11,9 @@ DEBUG_DRAW_CHUNK_BOUNDS :: true
 @(private = "file")
 DEBUG_DRAW_CHUNK_GEN_BOUNDS :: false
 
+@(private = "file")
+DEBUG_DRAW_COLLIDERS :: false
+
 DEBUG_DEFAULT_ZOOM :: 4.0
 
 @(private = "file")
@@ -27,6 +30,7 @@ DebugOptions :: struct {
 	drawScreenBounds:       bool,
 	drawChunkBounds:        bool,
 	drawChunkGenBounds:     bool,
+	drawColliders:          bool,
 	largerTilemapRendering: bool,
 	zoom:                   f32,
 	godMode:                bool,
@@ -36,6 +40,7 @@ DEBUG := DebugOptions {
 	drawChunkNoiseMaps     = DEBUG_DRAW_CHUNK_NOISE_MAPS,
 	drawScreenBounds       = DEBUG_DRAW_SCREEN_BOUNDS,
 	drawChunkGenBounds     = DEBUG_DRAW_CHUNK_GEN_BOUNDS,
+	drawColliders          = DEBUG_DRAW_COLLIDERS,
 	largerTilemapRendering = DEBUG_LARGER_TILEMAP_RENDERING,
 	zoom                   = DEBUG_ZOOM,
 	godMode                = DEBUG_GOD_MODE,
