@@ -22,3 +22,7 @@ RegisterComponent :: proc(uiMan: ^UiManager, id: ComponentId, defaultState: Stat
 GetState :: proc(uiMan: ^UiManager, id: ComponentId) -> ^State {
 	return &uiMan.state[id]
 }
+
+Shutdown :: proc(uiMan: ^UiManager) {
+	delete(uiMan.state)
+}

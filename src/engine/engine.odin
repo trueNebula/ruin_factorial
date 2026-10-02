@@ -130,6 +130,7 @@ Shutdown :: proc(engine: ^Engine) {
 	tilemap.Shutdown(engine.tileManager)
 	render.Shutdown(engine.renderManager)
 	ui.ShutdownMu()
+	ui.Shutdown(engine.uiManager)
 
 	free(engine.rng.data)
 	delete(engine.queue.items)
@@ -139,6 +140,7 @@ Shutdown :: proc(engine: ^Engine) {
 	free(engine.tileManager)
 	free(engine.renderManager)
 	free(engine.sceneManager)
+	free(engine.uiManager)
 
 	free_all(context.temp_allocator)
 }
