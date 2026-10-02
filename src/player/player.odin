@@ -143,7 +143,7 @@ GetPlayerComponent :: proc(
 		return {}, true
 	}
 
-	return ecs.GetComponentForEntity(world, entityId, ..tids), false
+	return ecs.GetComponentForEntity(world, entityId, T)
 }
 
 @(private)
