@@ -108,10 +108,16 @@ Run :: proc(engine: ^Engine) {
 			rl.EndMode2D()
 		}
 
+		rl.BeginMode2D(engine.uiManager.camera)
+		rl.DrawRectangle(50, 120, 30, 30, rl.GREEN)
+		rl.EndMode2D()
+
 		scene.DrawTransition(engine.sceneManager)
 		rl.DrawText(rl.TextFormat("%d", rl.GetFPS()), 12, 12, 24, rl.BLACK)
 		rl.DrawText(rl.TextFormat("%d", rl.GetFPS()), 10, 10, 24, rl.WHITE)
-		ui.FrameMu(&engine.frameInput)
+		if core.DEBUG.showWindow {
+			ui.FrameMu(&engine.frameInput)
+		}
 		rl.EndDrawing()
 
 		ecs.FrameEnd(engine.world)
@@ -147,6 +153,10 @@ Shutdown :: proc(engine: ^Engine) {
 
 @(private)
 engineInput :: proc(engine: ^Engine) {
+	if rl.IsKeyPressed(.GRAVE) {
+		core.DEBUG.showWindow = !core.DEBUG.showWindow
+	}
+
 	ui.InputMu(&engine.frameInput)
 	switch engine.sceneManager.current {
 	case .MENU:

@@ -1,5 +1,7 @@
 package core
 
+DEBUG_SHOW_WINDOW :: true
+
 DEBUG_DRAW_CHUNK_NOISE_MAPS :: false
 
 @(private = "file")
@@ -26,6 +28,7 @@ DEBUG_LARGER_TILEMAP_RENDERING :: false
 DEBUG_GOD_MODE :: false
 
 DebugOptions :: struct {
+	showWindow:             bool,
 	drawChunkNoiseMaps:     bool,
 	drawScreenBounds:       bool,
 	drawChunkBounds:        bool,
@@ -37,6 +40,7 @@ DebugOptions :: struct {
 }
 
 DEBUG := DebugOptions {
+	showWindow             = DEBUG_SHOW_WINDOW,
 	drawChunkNoiseMaps     = DEBUG_DRAW_CHUNK_NOISE_MAPS,
 	drawScreenBounds       = DEBUG_DRAW_SCREEN_BOUNDS,
 	drawChunkGenBounds     = DEBUG_DRAW_CHUNK_GEN_BOUNDS,
