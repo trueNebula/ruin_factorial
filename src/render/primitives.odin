@@ -74,3 +74,16 @@ DrawCircle :: proc(renMan: ^RenderManager, center: rl.Vector2, radius: f32, colo
 		ShapeDrawCommand{shape = .CIRCLE, dest = center, radius = radius, color = color},
 	)
 }
+
+DrawUiSprite :: proc(
+	renMan: ^RenderManager,
+	texture: core.Texture,
+	src: rl.Rectangle,
+	dest: rl.Vector2,
+	tint: rl.Color = rl.WHITE,
+) {
+	append(
+		&renMan.uiSprite,
+		DrawCommand{texture = texture, src = src, dest = dest, sortY = false, tint = tint},
+	)
+}

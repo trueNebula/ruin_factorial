@@ -8,6 +8,9 @@ WindowDefaults: WindowProps = {
 	minHeight = 360,
 }
 
+ReferenceWindowWidth: f32 : 1920
+ReferenceWindowHeight: f32 : 1080
+
 DefaultKeybinds :: Keybinds {
 	Up        = .W,
 	Down      = .S,

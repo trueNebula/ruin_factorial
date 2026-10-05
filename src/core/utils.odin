@@ -63,21 +63,37 @@ GetSize :: proc(rect: rl.Rectangle) -> rl.Vector2 {
 	return {rect.width, rect.height}
 }
 
+GetScreenSize :: proc() -> rl.Vector2 {
+	return ToVector(rl.GetScreenWidth(), rl.GetScreenHeight())
+}
+
 GetScreenCenter :: proc() -> rl.Vector2 {
-	return {f32(rl.GetScreenWidth() / 2), f32(rl.GetScreenHeight() / 2)}
+	return ToVector(rl.GetScreenWidth() / 2, rl.GetScreenHeight() / 2)
+}
+
+GetScreenScale :: proc() -> f32 {
+	return min(
+		f32(rl.GetScreenWidth()) / ReferenceWindowWidth,
+		f32(rl.GetScreenHeight()) / ReferenceWindowHeight,
+	)
 }
 
 ToVector :: proc {
 	IntToVector,
+	I32ToVector,
 }
 
 IntToVector :: proc(x, y: int) -> rl.Vector2 {
 	return {f32(x), f32(y)}
 }
 
+I32ToVector :: proc(x, y: i32) -> rl.Vector2 {
+	return {f32(x), f32(y)}
+}
+
 GetScreenRect :: proc(camera: rl.Camera2D) -> rl.Rectangle {
 	screenRect := rl.Rectangle{}
-	zoom: f32 = DEBUG_DEFAULT_ZOOM
+	zoom: f32 = DEBUG_DEFAULT_ZOOM * GetScreenScale()
 	screenRect.width = f32(rl.GetScreenWidth()) / zoom
 	screenRect.height = f32(rl.GetScreenHeight()) / zoom
 	screenRect.x = camera.target.x - (screenRect.width / 2)

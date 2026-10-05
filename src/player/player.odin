@@ -106,11 +106,11 @@ PlayerMovementSystem :: proc(world: ^ecs.World) {
 CameraTransformSystem :: proc(world: ^ecs.World) {
 	ecs.Query2(world, nil, proc(player: ^core.PlayerRef, camera: ^core.Camera, userdata: rawptr) {
 		if rl.IsWindowResized() {
-			camera.camera.target.x = f32(rl.GetScreenWidth() / 2)
-			camera.camera.target.y = f32(rl.GetScreenHeight() / 2)
+			camera.camera.offset = core.GetScreenCenter()
 		}
 
-		camera.camera.zoom = core.DEBUG_DEFAULT_ZOOM * math.pow(2, core.DEBUG.zoom)
+		camera.camera.zoom =
+			core.DEBUG_DEFAULT_ZOOM * math.pow(2, core.DEBUG.zoom) * core.GetScreenScale()
 	})
 }
 

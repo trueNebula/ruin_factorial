@@ -14,6 +14,7 @@ import "src:scene"
 import "src:texture"
 import "src:tilemap"
 import "src:ui"
+import "src:ui/hotbar"
 import rl "vendor:raylib"
 
 Engine :: struct {
@@ -109,7 +110,9 @@ Run :: proc(engine: ^Engine) {
 		}
 
 		rl.BeginMode2D(engine.uiManager.camera)
-		rl.DrawRectangle(50, 120, 30, 30, rl.GREEN)
+		updateUi(engine)
+		renderUi(engine)
+		render.FlushUi(engine.renderManager, engine.textureManager)
 		rl.EndMode2D()
 
 		scene.DrawTransition(engine.sceneManager)
@@ -242,13 +245,32 @@ processEvents :: proc(engine: ^Engine) {
 }
 
 updateUi :: proc(engine: ^Engine) {
-	inventory, invErr := player.GetPlayerComponent(
-		engine.world,
-		player.MAIN_PLAYER_REF,
-		core.Inventory,
-	)
-	if !invErr {
-		hotbarState := ui.GetState(engine.uiManager, .HOTBAR).(ui.HotbarState)
-		hotbarState.slots = inventory.slots[0:10]
+	ui.Update(engine.uiManager)
+
+	switch engine.sceneManager.current {
+	case .MENU:
+	// Menu UI
+	case .GAME:
+		inventory, invErr := player.GetPlayerComponent(
+			engine.world,
+			player.MAIN_PLAYER_REF,
+			core.Inventory,
+		)
+		if !invErr {
+			hotbarState := ui.GetState(engine.uiManager, .HOTBAR).(hotbar.HotbarState)
+			hotbarState.slots = inventory.slots[0:10]
+		}
+	}
+}
+
+renderUi :: proc(engine: ^Engine) {
+	screen := ui.GetScreen(engine.uiManager)
+
+	switch engine.sceneManager.current {
+	case .MENU:
+	// Menu UI
+	case .GAME:
+		hotbarState := ui.GetState(engine.uiManager, .HOTBAR).(hotbar.HotbarState)
+		hotbar.Render(hotbarState, screen, engine.renderManager, engine.textureManager)
 	}
 }

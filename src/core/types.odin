@@ -11,6 +11,7 @@ Texture :: enum {
 	TILE,
 	ITEM,
 	BLOCK,
+	UI_HOTBAR,
 }
 
 Anchor :: enum {

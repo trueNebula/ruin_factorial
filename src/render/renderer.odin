@@ -22,10 +22,11 @@ ShapeDrawCommand :: struct {
 }
 
 RenderManager :: struct {
-	tile:   [dynamic]DrawCommand,
-	shadow: [dynamic]DrawCommand,
-	object: [dynamic]DrawCommand,
-	debug:  [dynamic]ShapeDrawCommand,
+	tile:     [dynamic]DrawCommand,
+	shadow:   [dynamic]DrawCommand,
+	object:   [dynamic]DrawCommand,
+	debug:    [dynamic]ShapeDrawCommand,
+	uiSprite: [dynamic]DrawCommand,
 }
 
 MakeRenderManager :: proc() -> RenderManager {
@@ -33,8 +34,9 @@ MakeRenderManager :: proc() -> RenderManager {
 	shadow := make([dynamic]DrawCommand)
 	object := make([dynamic]DrawCommand)
 	debug := make([dynamic]ShapeDrawCommand)
+	uiSprite := make([dynamic]DrawCommand)
 
-	return {tile = tile, shadow = shadow, object = object, debug = debug}
+	return {tile = tile, shadow = shadow, object = object, debug = debug, uiSprite = uiSprite}
 }
 
 Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
@@ -107,11 +109,10 @@ Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
 		switch cmd.shape {
 		case .RECTANGLE:
 			{
-				rl.DrawRectangleLines(
-					i32(cmd.rect.x),
-					i32(cmd.rect.y),
-					i32(cmd.rect.width),
-					i32(cmd.rect.height),
+				rl.DrawRectangleLinesEx(
+					cmd.rect,
+					/*lineThick=*/
+					0.2,
 					cmd.color,
 				)
 			}
@@ -127,8 +128,35 @@ Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
 	clear(&renMan.debug)
 }
 
+FlushUi :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
+	for cmd in renMan.uiSprite {
+		texData, err := texture.GetTexture(texMan, cmd.texture)
+
+		if (err) {
+			log.Err("Unable to get texture with ID %s. Unloaded?", cmd.texture, panic = false)
+			continue
+		}
+
+		destRect := core.MakeRect(cmd.dest, core.GetSize(cmd.src))
+		rl.DrawTexturePro(
+			texData,
+			cmd.src,
+			destRect,
+			/*origin=*/
+			{0, 0},
+			/*rotation=*/
+			0,
+			/*tint=*/
+			rl.WHITE,
+		)
+	}
+
+	clear(&renMan.uiSprite)
+}
+
 Shutdown :: proc(renMan: ^RenderManager) {
 	delete(renMan.tile)
 	delete(renMan.object)
 	delete(renMan.debug)
+	delete(renMan.uiSprite)
 }
