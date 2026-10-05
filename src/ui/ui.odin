@@ -1,5 +1,6 @@
 package ui
 
+import "core:math"
 import "src:core"
 import "src:log"
 import str "src:neb_structures"
@@ -35,7 +36,7 @@ GetState :: proc(uiMan: ^UiManager, id: ComponentId) -> ^State {
 }
 
 Update :: proc(uiMan: ^UiManager) {
-	scale := core.GetScreenScale() * DEFAULT_UI_ZOOM
+	scale := core.GetScreenScale() * DEFAULT_UI_ZOOM * math.pow(2, core.DEBUG.uiZoom)
 
 	uiMan.camera.zoom = scale
 	uiMan.size = core.GetScreenSize() / scale

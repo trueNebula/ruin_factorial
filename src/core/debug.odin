@@ -22,6 +22,9 @@ DEBUG_DEFAULT_ZOOM :: 4.0
 DEBUG_ZOOM :: 0.0
 
 @(private = "file")
+DEBUG_UI_ZOOM :: 0.0
+
+@(private = "file")
 DEBUG_LARGER_TILEMAP_RENDERING :: false
 
 @(private = "file")
@@ -36,6 +39,7 @@ DebugOptions :: struct {
 	drawColliders:          bool,
 	largerTilemapRendering: bool,
 	zoom:                   f32,
+	uiZoom:                 f32,
 	godMode:                bool,
 }
 
@@ -47,5 +51,6 @@ DEBUG := DebugOptions {
 	drawColliders          = DEBUG_DRAW_COLLIDERS,
 	largerTilemapRendering = DEBUG_LARGER_TILEMAP_RENDERING,
 	zoom                   = DEBUG_ZOOM,
+	uiZoom                 = DEBUG_UI_ZOOM,
 	godMode                = DEBUG_GOD_MODE,
 }
