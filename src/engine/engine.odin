@@ -257,7 +257,7 @@ updateUi :: proc(engine: ^Engine) {
 			core.Inventory,
 		)
 		if !invErr {
-			hotbarState := ui.GetState(engine.uiManager, .HOTBAR).(hotbar.HotbarState)
+			hotbarState := &ui.GetState(engine.uiManager, .HOTBAR).(hotbar.HotbarState)
 			hotbarState.slots = inventory.slots[0:10]
 		}
 	}
@@ -270,7 +270,7 @@ renderUi :: proc(engine: ^Engine) {
 	case .MENU:
 	// Menu UI
 	case .GAME:
-		hotbarState := ui.GetState(engine.uiManager, .HOTBAR).(hotbar.HotbarState)
+		hotbarState := &ui.GetState(engine.uiManager, .HOTBAR).(hotbar.HotbarState)
 		hotbar.Render(hotbarState, screen, engine.renderManager, engine.textureManager)
 	}
 }

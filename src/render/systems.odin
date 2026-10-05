@@ -36,7 +36,16 @@ RenderSprites :: proc(world: ^ecs.World, renMan: ^RenderManager, texMan: ^textur
 			log.Err("Unable to get texture with ID %s. Unloaded?", sprite.texture, panic = false)
 		}
 
-		DrawSprite(renMan, sprite.texture, sprite.rect, core.GetPos(dest), true, tintDest)
+		DrawSprite(
+			renMan,
+			sprite.texture,
+			sprite.rect,
+			core.GetPos(dest),
+			true,
+			/*zoom=*/
+			1.0,
+			tintDest,
+		)
 	}
 }
 

@@ -10,6 +10,7 @@ DrawCommand :: struct {
 	src:     rl.Rectangle,
 	dest:    rl.Vector2,
 	sortY:   bool,
+	zoom:    f32,
 	tint:    rl.Color,
 }
 
@@ -48,7 +49,7 @@ Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
 			continue
 		}
 
-		destRect := core.MakeRect(cmd.dest, {core.TileSize, core.TileSize})
+		destRect := core.MakeRect(cmd.dest, {core.TileSize, core.TileSize} * cmd.zoom)
 		rl.DrawTexturePro(
 			texData,
 			cmd.src,
@@ -69,7 +70,7 @@ Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
 			continue
 		}
 
-		destRect := core.MakeRect(cmd.dest, core.GetSize(cmd.src))
+		destRect := core.MakeRect(cmd.dest, core.GetSize(cmd.src) * cmd.zoom)
 		rl.DrawTexturePro(
 			texData,
 			cmd.src,
@@ -91,7 +92,7 @@ Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
 			continue
 		}
 
-		destRect := core.MakeRect(cmd.dest, core.GetSize(cmd.src))
+		destRect := core.MakeRect(cmd.dest, core.GetSize(cmd.src) * cmd.zoom)
 		rl.DrawTexturePro(
 			texData,
 			cmd.src,
@@ -137,7 +138,7 @@ FlushUi :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
 			continue
 		}
 
-		destRect := core.MakeRect(cmd.dest, core.GetSize(cmd.src))
+		destRect := core.MakeRect(cmd.dest, core.GetSize(cmd.src) * cmd.zoom)
 		rl.DrawTexturePro(
 			texData,
 			cmd.src,

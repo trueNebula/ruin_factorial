@@ -305,5 +305,13 @@ drawTile :: proc(
 	rect.width -= inset * 2
 	rect.height -= inset * 2
 
-	render.DrawTile(renMan, tex, rect, dest, tint)
+	render.DrawTile(
+		renMan,
+		tex,
+		rect,
+		dest,
+		/*zoom=*/
+		1.0,
+		tint,
+	)
 }

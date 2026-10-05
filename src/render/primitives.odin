@@ -9,11 +9,19 @@ DrawSprite :: proc(
 	src: rl.Rectangle,
 	dest: rl.Vector2,
 	sortY: bool,
+	zoom: f32 = 1.0,
 	tint: rl.Color = rl.WHITE,
 ) {
 	append(
 		&renMan.object,
-		DrawCommand{texture = texture, src = src, dest = dest, sortY = sortY, tint = tint},
+		DrawCommand {
+			texture = texture,
+			src = src,
+			dest = dest,
+			sortY = sortY,
+			zoom = zoom,
+			tint = tint,
+		},
 	)
 }
 
@@ -21,6 +29,7 @@ DrawShadow :: proc(
 	renMan: ^RenderManager,
 	shadow: core.Shadow,
 	dest: rl.Vector2,
+	zoom: f32 = 1.0,
 	tint: rl.Color = rl.WHITE,
 ) {
 	src: rl.Rectangle
@@ -47,7 +56,14 @@ DrawShadow :: proc(
 
 	append(
 		&renMan.object,
-		DrawCommand{texture = .ITEM, src = src, dest = dest, sortY = false, tint = tint},
+		DrawCommand {
+			texture = .ITEM,
+			src = src,
+			dest = dest,
+			sortY = false,
+			zoom = zoom,
+			tint = tint,
+		},
 	)
 }
 
@@ -56,11 +72,19 @@ DrawTile :: proc(
 	texture: core.Texture,
 	src: rl.Rectangle,
 	dest: rl.Vector2,
+	zoom: f32 = 1.0,
 	tint: rl.Color = rl.WHITE,
 ) {
 	append(
 		&renMan.tile,
-		DrawCommand{texture = texture, src = src, dest = dest, sortY = false, tint = tint},
+		DrawCommand {
+			texture = texture,
+			src = src,
+			dest = dest,
+			sortY = false,
+			zoom = zoom,
+			tint = tint,
+		},
 	)
 }
 
@@ -80,10 +104,18 @@ DrawUiSprite :: proc(
 	texture: core.Texture,
 	src: rl.Rectangle,
 	dest: rl.Vector2,
+	zoom: f32 = 1.0,
 	tint: rl.Color = rl.WHITE,
 ) {
 	append(
 		&renMan.uiSprite,
-		DrawCommand{texture = texture, src = src, dest = dest, sortY = false, tint = tint},
+		DrawCommand {
+			texture = texture,
+			src = src,
+			dest = dest,
+			sortY = false,
+			zoom = zoom,
+			tint = tint,
+		},
 	)
 }
