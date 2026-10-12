@@ -112,7 +112,6 @@ Run :: proc(engine: ^Engine) {
 		rl.BeginMode2D(engine.uiManager.camera)
 		updateUi(engine)
 		renderUi(engine)
-		render.FlushUi(engine.renderManager, engine.textureManager)
 		rl.EndMode2D()
 
 		scene.DrawTransition(engine.sceneManager)
@@ -218,7 +217,7 @@ update :: proc(engine: ^Engine) {
 
 	if core.DEBUG.drawScreenBounds {
 		screenRect := core.GetScreenRect(camera.camera)
-		render.DrawRect(engine.renderManager, screenRect, rl.BLUE)
+		render.QueueRect(engine.renderManager, screenRect, rl.BLUE)
 	}
 }
 

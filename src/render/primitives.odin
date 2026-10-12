@@ -1,9 +1,15 @@
 package render
 
 import "src:core"
+import "src:log"
+import "src:texture"
 import rl "vendor:raylib"
 
-DrawSprite :: proc(
+/** 
+ * Queue Functions
+ * These get batched and drawn in Flush()
+ */
+QueueSprite :: proc(
 	renMan: ^RenderManager,
 	texture: core.Texture,
 	src: rl.Rectangle,
@@ -25,7 +31,7 @@ DrawSprite :: proc(
 	)
 }
 
-DrawShadow :: proc(
+QueueShadow :: proc(
 	renMan: ^RenderManager,
 	shadow: core.Shadow,
 	dest: rl.Vector2,
@@ -67,7 +73,7 @@ DrawShadow :: proc(
 	)
 }
 
-DrawTile :: proc(
+QueueTile :: proc(
 	renMan: ^RenderManager,
 	texture: core.Texture,
 	src: rl.Rectangle,
@@ -88,34 +94,46 @@ DrawTile :: proc(
 	)
 }
 
-DrawRect :: proc(renMan: ^RenderManager, rect: rl.Rectangle, color: rl.Color) {
+QueueRect :: proc(renMan: ^RenderManager, rect: rl.Rectangle, color: rl.Color) {
 	append(&renMan.debug, ShapeDrawCommand{shape = .RECTANGLE, rect = rect, color = color})
 }
 
-DrawCircle :: proc(renMan: ^RenderManager, center: rl.Vector2, radius: f32, color: rl.Color) {
+QueueCircle :: proc(renMan: ^RenderManager, center: rl.Vector2, radius: f32, color: rl.Color) {
 	append(
 		&renMan.debug,
 		ShapeDrawCommand{shape = .CIRCLE, dest = center, radius = radius, color = color},
 	)
 }
 
-DrawUiSprite :: proc(
+/**
+ * Draw Functions
+ * These get drawn to the screen instantly.
+ */
+DrawSprite :: proc(
 	renMan: ^RenderManager,
-	texture: core.Texture,
+	texMan: ^texture.TextureManager,
+	texId: core.Texture,
 	src: rl.Rectangle,
 	dest: rl.Vector2,
 	zoom: f32 = 1.0,
 	tint: rl.Color = rl.WHITE,
 ) {
-	append(
-		&renMan.uiSprite,
-		DrawCommand {
-			texture = texture,
-			src = src,
-			dest = dest,
-			sortY = false,
-			zoom = zoom,
-			tint = tint,
-		},
+	texData, err := texture.GetTexture(texMan, texId)
+
+	if (err) {
+		log.Err("Unable to get texture with ID %s. Unloaded?", texId, panic = false)
+		return
+	}
+
+	destRect := core.MakeRect(dest, core.GetSize(src) * zoom)
+	rl.DrawTexturePro(
+		texData,
+		src,
+		destRect,
+		/*origin=*/
+		{0, 0},
+		/*rotation=*/
+		0,
+		tint,
 	)
 }

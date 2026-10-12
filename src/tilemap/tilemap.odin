@@ -135,7 +135,7 @@ MaybeGenerateNewChunks :: proc(
 	paddedScreenRect := PadChunkBoundingBox(screenRect, 1 * core.ChunkLenght)
 
 	if core.DEBUG.drawChunkGenBounds {
-		render.DrawRect(renMan, paddedScreenRect, rl.WHITE)
+		render.QueueRect(renMan, paddedScreenRect, rl.WHITE)
 	}
 
 	cameraCoords := core.GetPos(paddedScreenRect)
@@ -211,7 +211,7 @@ drawChunk :: proc(
 	}
 
 	if core.DEBUG.drawChunkBounds {
-		render.DrawRect(renMan, boundingBox, rl.GRAY)
+		render.QueueRect(renMan, boundingBox, rl.GRAY)
 	}
 
 	for tile, idx in chunk.base {
@@ -305,7 +305,7 @@ drawTile :: proc(
 	rect.width -= inset * 2
 	rect.height -= inset * 2
 
-	render.DrawTile(
+	render.QueueTile(
 		renMan,
 		tex,
 		rect,

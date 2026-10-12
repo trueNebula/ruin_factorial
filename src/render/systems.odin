@@ -36,7 +36,7 @@ RenderSprites :: proc(world: ^ecs.World, renMan: ^RenderManager, texMan: ^textur
 			log.Err("Unable to get texture with ID %s. Unloaded?", sprite.texture, panic = false)
 		}
 
-		DrawSprite(
+		QueueSprite(
 			renMan,
 			sprite.texture,
 			sprite.rect,
@@ -71,7 +71,7 @@ RenderShadows :: proc(world: ^ecs.World, renMan: ^RenderManager, texMan: ^textur
 		shadow := entity.c2
 		dest := rl.Vector2{transform.x - core.TileSize / 2, transform.y - core.TileSize / 2}
 
-		DrawShadow(renMan, shadow^, dest)
+		QueueShadow(renMan, shadow^, dest)
 	}
 }
 
@@ -83,7 +83,7 @@ RenderColliders :: proc(world: ^ecs.World, renMan: ^RenderManager) {
 		switch collider.type {
 		case .CIRCLE:
 			center := rl.Vector2{transform.x + collider.offset.x, transform.y + collider.offset.y}
-			DrawCircle(renMan, center, collider.size.x, rl.BLUE)
+			QueueCircle(renMan, center, collider.size.x, rl.BLUE)
 
 		case .RECTANGLE:
 			rect := rl.Rectangle {
@@ -92,7 +92,7 @@ RenderColliders :: proc(world: ^ecs.World, renMan: ^RenderManager) {
 				width  = collider.size.x,
 				height = collider.size.y,
 			}
-			DrawRect(renMan, rect, rl.BLUE)
+			QueueRect(renMan, rect, rl.BLUE)
 		}
 	}
 }

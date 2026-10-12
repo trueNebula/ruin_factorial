@@ -129,32 +129,6 @@ Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
 	clear(&renMan.debug)
 }
 
-FlushUi :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
-	for cmd in renMan.uiSprite {
-		texData, err := texture.GetTexture(texMan, cmd.texture)
-
-		if (err) {
-			log.Err("Unable to get texture with ID %s. Unloaded?", cmd.texture, panic = false)
-			continue
-		}
-
-		destRect := core.MakeRect(cmd.dest, core.GetSize(cmd.src) * cmd.zoom)
-		rl.DrawTexturePro(
-			texData,
-			cmd.src,
-			destRect,
-			/*origin=*/
-			{0, 0},
-			/*rotation=*/
-			0,
-			/*tint=*/
-			rl.WHITE,
-		)
-	}
-
-	clear(&renMan.uiSprite)
-}
-
 Shutdown :: proc(renMan: ^RenderManager) {
 	delete(renMan.tile)
 	delete(renMan.object)

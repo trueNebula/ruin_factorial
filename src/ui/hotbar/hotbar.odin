@@ -37,7 +37,13 @@ Render :: proc(
 	size := core.ToVector(sprite.width, sprite.height)
 	position := core.PlaceWidget(placement, size, screen)
 
-	render.DrawUiSprite(renMan, .UI_HOTBAR, {x = 0, y = 0, width = 320, height = 32}, position)
+	render.DrawSprite(
+		renMan,
+		texMan,
+		.UI_HOTBAR,
+		{x = 0, y = 0, width = 320, height = 32},
+		position,
+	)
 
 	for slot, idx in state.slots {
 		if slot.id == .NONE {
@@ -52,6 +58,6 @@ Render :: proc(
 			continue
 		}
 
-		render.DrawUiSprite(renMan, .ITEM, itemSrc, slotItemPos, itemZoom)
+		render.DrawSprite(renMan, texMan, .ITEM, itemSrc, slotItemPos, itemZoom)
 	}
 }
