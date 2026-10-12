@@ -14,6 +14,11 @@ Texture :: enum {
 	UI_HOTBAR,
 }
 
+Font :: enum {
+	UNKNOWN,
+	MAIN,
+}
+
 Anchor :: enum {
 	BOTTOM_LEFT,
 	CENTER,
