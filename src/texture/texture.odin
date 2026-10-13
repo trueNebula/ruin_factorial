@@ -15,6 +15,7 @@ TextureData :: struct {
 FontData :: struct {
 	path:     core.Path,
 	resource: rl.Font,
+	spacing:  f32,
 }
 
 TextureManager :: struct {
@@ -88,7 +89,14 @@ GetTexture :: proc(texMan: ^TextureManager, id: core.Texture) -> (tex: rl.Textur
 	return texData.resource, false
 }
 
-LoadFont :: proc(texMan: ^TextureManager, id: core.Font, partialPath: core.Path) -> (err: bool) {
+LoadFont :: proc(
+	texMan: ^TextureManager,
+	id: core.Font,
+	partialPath: core.Path,
+	spacing: f32,
+) -> (
+	err: bool,
+) {
 	path := strings.concatenate({"assets/fonts/", partialPath})
 
 	if id in texMan.fonts {
@@ -102,6 +110,8 @@ LoadFont :: proc(texMan: ^TextureManager, id: core.Font, partialPath: core.Path)
 	}
 
 	rlFont := rl.LoadFontEx(rl.TextFormat("%s", path), DEFAULT_FONT_SIZE, nil, 0)
+	rl.GenTextureMipmaps(&rlFont.texture)
+	rl.SetTextureFilter(rlFont.texture, .POINT)
 
 	if rlFont.glyphCount == 0 {
 		fmt.println("Tried loading font at path %s, not found!", path)
@@ -111,6 +121,7 @@ LoadFont :: proc(texMan: ^TextureManager, id: core.Font, partialPath: core.Path)
 	texMan.fonts[id] = FontData {
 		path     = path,
 		resource = rlFont,
+		spacing  = spacing,
 	}
 
 	return false
@@ -130,7 +141,7 @@ UnloadFont :: proc(texMan: ^TextureManager, id: core.Font) -> (err: bool) {
 	return false
 }
 
-GetFont :: proc(texMan: ^TextureManager, id: core.Font) -> (tex: rl.Font, err: bool) {
+GetFont :: proc(texMan: ^TextureManager, id: core.Font) -> (font: FontData, err: bool) {
 	fontData, ok := texMan.fonts[id]
 
 	if !ok {
@@ -138,12 +149,17 @@ GetFont :: proc(texMan: ^TextureManager, id: core.Font) -> (tex: rl.Font, err: b
 		return {}, true
 	}
 
-	return fontData.resource, false
+	return fontData, false
 }
 
 Shutdown :: proc(texMan: ^TextureManager) {
 	for id in texMan.data {
 		UnloadTexture(texMan, id)
 	}
+	for id in texMan.fonts {
+		UnloadFont(texMan, id)
+	}
+
 	delete(texMan.data)
+	delete(texMan.fonts)
 }

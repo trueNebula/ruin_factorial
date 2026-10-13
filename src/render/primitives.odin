@@ -1,5 +1,6 @@
 package render
 
+import "core:fmt"
 import "src:core"
 import "src:log"
 import "src:texture"
@@ -134,6 +135,34 @@ DrawSprite :: proc(
 		{0, 0},
 		/*rotation=*/
 		0,
+		tint,
+	)
+}
+
+DrawText :: proc(
+	text: cstring,
+	texMan: ^texture.TextureManager,
+	fontId: core.Font,
+	dest: rl.Vector2,
+	size: f32,
+	tint: rl.Color = rl.WHITE,
+) {
+	fontData, err := texture.GetFont(texMan, fontId)
+
+	if (err) {
+		return
+	}
+
+	rl.DrawTextPro(
+		fontData.resource,
+		text,
+		dest,
+		/*origin=*/
+		{0, 0},
+		/*rotation=*/
+		0,
+		size,
+		fontData.spacing,
 		tint,
 	)
 }

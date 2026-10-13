@@ -1,5 +1,6 @@
 package hotbar
 
+import "core:fmt"
 import "src:core"
 import "src:item"
 import "src:log"
@@ -52,6 +53,7 @@ Render :: proc(
 
 		slotItemPos := rl.Vector2{f32(idx) * slotSize + slotPadding, itemY} + position
 		itemSrc, err := item.GetRectForId(slot.id)
+		itemRect := core.MakeRect(slotItemPos, core.GetSize(itemSrc) * itemZoom)
 
 		if err {
 			log.Warn("Tried rendering unloaded item with ID %v in hotbar!", slot.id)
@@ -59,5 +61,31 @@ Render :: proc(
 		}
 
 		render.DrawSprite(renMan, texMan, .ITEM, itemSrc, slotItemPos, itemZoom)
+
+		fontData, fontErr := texture.GetFont(texMan, texture.InventorySlotCountStyle.font)
+		if fontErr {
+			continue
+		}
+
+		countStr := fmt.ctprint(slot.count)
+		countSize := rl.MeasureTextEx(
+			fontData.resource,
+			countStr,
+			texture.InventorySlotCountStyle.size,
+			texture.InventorySlotCountStyle.spacing,
+		)
+		countPosition := core.PlaceWidget(
+			{target = core.TR, pivot = core.TR, offset = {-4, 4}},
+			countSize,
+			itemRect,
+		)
+
+		render.DrawText(
+			countStr,
+			texMan,
+			texture.InventorySlotCountStyle.font,
+			countPosition,
+			texture.InventorySlotCountStyle.size,
+		)
 	}
 }

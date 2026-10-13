@@ -17,6 +17,15 @@ Texture :: enum {
 Font :: enum {
 	UNKNOWN,
 	MAIN,
+	BOLD,
+	MONO,
+}
+
+TextStyle :: struct {
+	font:        Font,
+	size:        f32,
+	spacing:     f32,
+	line_height: f32,
 }
 
 Anchor :: enum {

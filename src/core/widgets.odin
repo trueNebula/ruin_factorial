@@ -26,7 +26,13 @@ PlaceWidget :: proc(
 	parent: rl.Rectangle,
 ) -> rl.Vector2 {
 	return {
-		parent.width * placement.target.x - size.x * placement.pivot.x + placement.offset.x,
-		parent.height * placement.target.y - size.y * placement.pivot.y + placement.offset.y,
+		parent.x +
+		parent.width * placement.target.x -
+		size.x * placement.pivot.x +
+		placement.offset.x,
+		parent.y +
+		parent.height * placement.target.y -
+		size.y * placement.pivot.y +
+		placement.offset.y,
 	}
 }

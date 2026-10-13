@@ -55,7 +55,7 @@ MakeSceneManger :: proc(
 	sceneMan := SceneManager {
 		current = .MENU,
 		transition = Transition {
-			state = .FADE_IN,
+			state = .NONE,
 			timer = 0.0,
 			duration = FAST_DURATION,
 			nextScene = .MENU,
