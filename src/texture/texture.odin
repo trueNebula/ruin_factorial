@@ -5,7 +5,7 @@ import "core:strings"
 import "src:core"
 import rl "vendor:raylib"
 
-DEFAULT_FONT_SIZE :: 64
+DEFAULT_FONT_SIZE :: 11
 
 TextureData :: struct {
 	path:     core.Path,
@@ -110,7 +110,6 @@ LoadFont :: proc(
 	}
 
 	rlFont := rl.LoadFontEx(rl.TextFormat("%s", path), DEFAULT_FONT_SIZE, nil, 0)
-	rl.GenTextureMipmaps(&rlFont.texture)
 	rl.SetTextureFilter(rlFont.texture, .POINT)
 
 	if rlFont.glyphCount == 0 {

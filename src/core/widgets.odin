@@ -1,5 +1,6 @@
 package core
 
+import "core:math"
 import rl "vendor:raylib"
 
 WidgetAnchor :: rl.Vector2 // x,y [0..1], 1 is BR
@@ -26,13 +27,17 @@ PlaceWidget :: proc(
 	parent: rl.Rectangle,
 ) -> rl.Vector2 {
 	return {
-		parent.x +
-		parent.width * placement.target.x -
-		size.x * placement.pivot.x +
-		placement.offset.x,
-		parent.y +
-		parent.height * placement.target.y -
-		size.y * placement.pivot.y +
-		placement.offset.y,
+		math.round(
+			parent.x +
+			parent.width * placement.target.x -
+			size.x * placement.pivot.x +
+			placement.offset.x,
+		),
+		math.round(
+			parent.y +
+			parent.height * placement.target.y -
+			size.y * placement.pivot.y +
+			placement.offset.y,
+		),
 	}
 }

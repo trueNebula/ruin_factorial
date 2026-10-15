@@ -72,9 +72,14 @@ GetScreenCenter :: proc() -> rl.Vector2 {
 }
 
 GetScreenScale :: proc() -> f32 {
-	return min(
-		f32(rl.GetScreenWidth()) / ReferenceWindowWidth,
-		f32(rl.GetScreenHeight()) / ReferenceWindowHeight,
+	return math.max(
+		1,
+		math.floor(
+			min(
+				f32(rl.GetScreenWidth()) / ReferenceWindowWidth,
+				f32(rl.GetScreenHeight()) / ReferenceWindowHeight,
+			),
+		),
 	)
 }
 

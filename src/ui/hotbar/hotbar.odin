@@ -84,6 +84,15 @@ Render :: proc(
 			countStr,
 			texMan,
 			texture.InventorySlotCountStyle.font,
+			countPosition + {1, 1},
+			texture.InventorySlotCountStyle.size,
+			rl.BLACK,
+		)
+
+		render.DrawText(
+			countStr,
+			texMan,
+			texture.InventorySlotCountStyle.font,
 			countPosition,
 			texture.InventorySlotCountStyle.size,
 		)

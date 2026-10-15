@@ -1,5 +1,6 @@
 package player
 
+import "core:fmt"
 import "core:math"
 import "core:math/linalg"
 import "src:core"
@@ -95,8 +96,8 @@ PlayerMovementSystem :: proc(world: ^ecs.World) {
 
 			transform.x += velocity.x * dt
 			transform.y += velocity.y * dt
-			camera.camera.target.x = transform.x
-			camera.camera.target.y = transform.y
+			camera.camera.target.x = math.round(transform.x)
+			camera.camera.target.y = math.round(transform.y)
 			velocity.x = 0
 			velocity.y = 0
 		},

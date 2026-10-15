@@ -154,7 +154,7 @@ DrawText :: proc(
 	}
 
 	rl.DrawTextPro(
-		fontData.resource,
+		fontData.resource,// rl.GetFontDefault(),
 		text,
 		dest,
 		/*origin=*/
