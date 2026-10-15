@@ -8,7 +8,7 @@ MONO_FONT_SPACING :: 8
 
 InventorySlotCountStyle :: core.TextStyle {
 	font        = .MAIN,
-	size        = 10,
+	size        = 11,
 	spacing     = MAIN_FONT_SPACING,
 	line_height = 10,
 }

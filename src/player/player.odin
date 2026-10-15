@@ -96,8 +96,8 @@ PlayerMovementSystem :: proc(world: ^ecs.World) {
 
 			transform.x += velocity.x * dt
 			transform.y += velocity.y * dt
-			camera.camera.target.x = math.round(transform.x)
-			camera.camera.target.y = math.round(transform.y)
+			camera.camera.target.x = transform.x
+			camera.camera.target.y = transform.y
 			velocity.x = 0
 			velocity.y = 0
 		},
@@ -110,8 +110,7 @@ CameraTransformSystem :: proc(world: ^ecs.World) {
 			camera.camera.offset = core.GetScreenCenter()
 		}
 
-		camera.camera.zoom =
-			core.DEBUG_DEFAULT_ZOOM * math.pow(2, core.DEBUG.zoom) * core.GetScreenScale()
+		camera.camera.zoom = core.GetWorldZoom()
 	})
 }
 

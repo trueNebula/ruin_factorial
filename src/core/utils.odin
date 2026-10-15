@@ -71,16 +71,22 @@ GetScreenCenter :: proc() -> rl.Vector2 {
 	return ToVector(rl.GetScreenWidth() / 2, rl.GetScreenHeight() / 2)
 }
 
-GetScreenScale :: proc() -> f32 {
-	return math.max(
-		1,
-		math.floor(
-			min(
-				f32(rl.GetScreenWidth()) / ReferenceWindowWidth,
-				f32(rl.GetScreenHeight()) / ReferenceWindowHeight,
-			),
-		),
-	)
+ZoomToFit :: proc(view: rl.Vector2) -> f32 {
+	width := f32(rl.GetScreenWidth())
+	height := f32(rl.GetScreenHeight())
+	return math.max(1, math.max(math.ceil(width / view.x), math.ceil(height / view.y)))
+}
+
+GetBaseWorldZoom :: proc() -> f32 {
+	return ZoomToFit(WorldView)
+}
+
+GetWorldZoom :: proc() -> f32 {
+	return ZoomToFit(WorldView / math.pow(2, DEBUG.zoom))
+}
+
+GetUiZoom :: proc() -> f32 {
+	return ZoomToFit(UiView / math.pow(2, DEBUG.uiZoom))
 }
 
 ToVector :: proc {
@@ -98,7 +104,7 @@ I32ToVector :: proc(x, y: i32) -> rl.Vector2 {
 
 GetScreenRect :: proc(camera: rl.Camera2D) -> rl.Rectangle {
 	screenRect := rl.Rectangle{}
-	zoom: f32 = DEBUG_DEFAULT_ZOOM * GetScreenScale()
+	zoom: f32 = DEBUG.largerTilemapRendering ? GetWorldZoom() : GetBaseWorldZoom()
 	screenRect.width = f32(rl.GetScreenWidth()) / zoom
 	screenRect.height = f32(rl.GetScreenHeight()) / zoom
 	screenRect.x = camera.target.x - (screenRect.width / 2)

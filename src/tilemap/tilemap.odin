@@ -201,7 +201,7 @@ drawChunk :: proc(
 		return
 	}
 
-	padding := core.DEBUG.largerTilemapRendering ? 3 * core.ChunkLenght : 3 // tiles in each direction
+	padding := 3 // tiles in each direction
 	boundingBox := GetChunkBoundingBox(chunk)
 	screenRect := core.GetScreenRect(camera)
 	paddedScreenRect := PadChunkBoundingBox(screenRect, padding)

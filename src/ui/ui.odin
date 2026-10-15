@@ -8,9 +8,6 @@ import "src:ui/layout"
 import rl "vendor:raylib"
 
 @(private)
-DEFAULT_UI_ZOOM :: 2.0
-
-@(private)
 SCREEN_PADDING :: 8.0 // pixels
 
 UiManager :: struct {
@@ -21,7 +18,7 @@ UiManager :: struct {
 }
 
 MakeUiManager :: proc() -> UiManager {
-	return {state = make(StateMap), camera = {zoom = DEFAULT_UI_ZOOM}}
+	return {state = make(StateMap), camera = {zoom = 1}}
 }
 
 RegisterComponent :: proc(uiMan: ^UiManager, id: ComponentId, defaultState: State) {
@@ -36,10 +33,12 @@ GetState :: proc(uiMan: ^UiManager, id: ComponentId) -> ^State {
 }
 
 Update :: proc(uiMan: ^UiManager) {
-	scale := core.GetScreenScale() * DEFAULT_UI_ZOOM * math.pow(2, core.DEBUG.uiZoom)
-
-	uiMan.camera.zoom = scale
-	uiMan.size = core.GetScreenSize() / scale
+	zoom := core.GetUiZoom()
+	uiMan.camera.zoom = zoom
+	uiMan.size = {
+		math.floor(f32(rl.GetScreenWidth()) / zoom),
+		math.floor(f32(rl.GetScreenHeight()) / zoom),
+	}
 }
 
 GetScreen :: proc(uiMan: ^UiManager) -> rl.Rectangle {

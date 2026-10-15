@@ -103,12 +103,10 @@ debug :: proc() {
 		mu.checkbox(ctx, "Draw Screen Bounds", &core.DEBUG.drawScreenBounds)
 		mu.checkbox(ctx, "Draw Chunk Bounds", &core.DEBUG.drawChunkBounds)
 		mu.checkbox(ctx, "Draw Chunk Generation Bounds", &core.DEBUG.drawChunkGenBounds)
-		mu.checkbox(ctx, "Do Larger Tilemap Rendering", &core.DEBUG.largerTilemapRendering)
+		mu.checkbox(ctx, "Do Base Zoom Culling", &core.DEBUG.largerTilemapRendering)
 		mu.checkbox(ctx, "Draw Colliders", &core.DEBUG.drawColliders)
 
 		// mu.checkbox(ctx, "Do player collision", &u.DEBUG_OPTS.DO_PLAYER_COLLISION);
-		// mu.label(ctx, "Player speed multiplier");
-		// mu.slider(ctx, &u.DEBUG_OPTS.PLAYER_SPEED_MULTIPLIER, 1, 10, 0.5);
 		mu.label(ctx, "Camera zoom")
 		mu.slider(ctx, &core.DEBUG.zoom, -6, 3, 1)
 		mu.label(ctx, "UI zoom")

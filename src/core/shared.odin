@@ -1,5 +1,7 @@
 package core
 
+import rl "vendor:raylib"
+
 WindowDefaults: WindowProps = {
 	width     = 1280,
 	height    = 720,
@@ -8,8 +10,8 @@ WindowDefaults: WindowProps = {
 	minHeight = 360,
 }
 
-ReferenceWindowWidth: f32 : 1920
-ReferenceWindowHeight: f32 : 1080
+WorldView :: rl.Vector2{480, 270}
+UiView :: rl.Vector2{960, 540}
 
 DefaultKeybinds :: Keybinds {
 	Up        = .W,

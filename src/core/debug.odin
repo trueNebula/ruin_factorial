@@ -16,8 +16,6 @@ DEBUG_DRAW_CHUNK_GEN_BOUNDS :: false
 @(private = "file")
 DEBUG_DRAW_COLLIDERS :: false
 
-DEBUG_DEFAULT_ZOOM :: 4.0
-
 @(private = "file")
 DEBUG_ZOOM :: 0.0
 
