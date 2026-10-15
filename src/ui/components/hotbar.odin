@@ -1,4 +1,4 @@
-package hotbar
+package components
 
 import "core:fmt"
 import "src:core"
@@ -28,7 +28,7 @@ slotPadding :: 0.0
 itemY :: 0.0
 itemZoom :: 2.0
 
-Render :: proc(
+RenderHotbar :: proc(
 	state: ^HotbarState,
 	screen: rl.Rectangle,
 	renMan: ^render.RenderManager,
@@ -62,7 +62,7 @@ Render :: proc(
 
 		render.DrawSprite(renMan, texMan, .ITEM, itemSrc, slotItemPos, itemZoom)
 
-		fontData, fontErr := texture.GetFont(texMan, texture.InventorySlotCountStyle.font)
+		fontData, fontErr := texture.GetFont(texMan, InventorySlotCountStyle.font)
 		if fontErr {
 			continue
 		}
@@ -71,8 +71,8 @@ Render :: proc(
 		countSize := rl.MeasureTextEx(
 			fontData.resource,
 			countStr,
-			texture.InventorySlotCountStyle.size,
-			texture.InventorySlotCountStyle.spacing,
+			InventorySlotCountStyle.size,
+			InventorySlotCountStyle.spacing,
 		)
 		countPosition := core.PlaceWidget(
 			{target = core.TR, pivot = core.TR, offset = {-4, 4}},
@@ -83,18 +83,18 @@ Render :: proc(
 		render.DrawText(
 			countStr,
 			texMan,
-			texture.InventorySlotCountStyle.font,
+			InventorySlotCountStyle.font,
 			countPosition + {1, 1},
-			texture.InventorySlotCountStyle.size,
+			InventorySlotCountStyle.size,
 			rl.BLACK,
 		)
 
 		render.DrawText(
 			countStr,
 			texMan,
-			texture.InventorySlotCountStyle.font,
+			InventorySlotCountStyle.font,
 			countPosition,
-			texture.InventorySlotCountStyle.size,
+			InventorySlotCountStyle.size,
 		)
 	}
 }

@@ -1,9 +1,9 @@
 package ui
 
-import "hotbar"
+import "components"
 
 State :: union {
-	hotbar.HotbarState,
+	components.HotbarState,
 }
 
 StateMap :: map[ComponentId]State

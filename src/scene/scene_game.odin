@@ -8,7 +8,7 @@ import "src:player"
 import "src:render"
 import t "src:texture"
 import "src:ui"
-import "src:ui/hotbar"
+import "src:ui/components"
 
 GameScene :: struct {
 	// Game state goes here
@@ -27,7 +27,11 @@ initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
 	t.LoadTexture(texMan, .BLOCK, "block_atlas.png")
 	t.LoadTexture(texMan, .UI_HOTBAR, "ui/hotbar.png")
 
-	ui.RegisterComponent(uiMan, .HOTBAR, hotbar.HotbarState{slots = {}, size = 10, selected = 0})
+	ui.RegisterComponent(
+		uiMan,
+		.HOTBAR,
+		components.HotbarState{slots = {}, size = 10, selected = 0},
+	)
 
 	event.PushEvent(queue, event.GenerateWorld{})
 	event.PushEvent(queue, event.GenerateBlocks{})
