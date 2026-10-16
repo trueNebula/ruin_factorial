@@ -51,6 +51,10 @@ ShutdownMu :: proc() {
 }
 
 InputMu :: proc(frameInput: ^input.State) {
+	if !core.DEBUG.showWindow {
+		return
+	}
+
 	ctx := &state.muCtx
 
 	mouse_pos := [2]i32{rl.GetMouseX(), rl.GetMouseY()}
