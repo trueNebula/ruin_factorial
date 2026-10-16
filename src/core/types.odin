@@ -26,6 +26,7 @@ TextStyle :: struct {
 	size:        f32,
 	spacing:     f32,
 	line_height: f32,
+	padding:     [2]f32,
 }
 
 Anchor :: enum {

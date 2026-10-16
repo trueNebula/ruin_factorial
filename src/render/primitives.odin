@@ -111,7 +111,6 @@ QueueCircle :: proc(renMan: ^RenderManager, center: rl.Vector2, radius: f32, col
  * These get drawn to the screen instantly.
  */
 DrawSprite :: proc(
-	renMan: ^RenderManager,
 	texMan: ^texture.TextureManager,
 	texId: core.Texture,
 	src: rl.Rectangle,
@@ -141,20 +140,13 @@ DrawSprite :: proc(
 
 DrawText :: proc(
 	text: cstring,
-	texMan: ^texture.TextureManager,
-	fontId: core.Font,
+	fontData: texture.FontData,
 	dest: rl.Vector2,
 	size: f32,
 	tint: rl.Color = rl.WHITE,
 ) {
-	fontData, err := texture.GetFont(texMan, fontId)
-
-	if (err) {
-		return
-	}
-
 	rl.DrawTextPro(
-		fontData.resource,// rl.GetFontDefault(),
+		fontData.resource, // rl.GetFontDefault(),
 		text,
 		dest,
 		/*origin=*/

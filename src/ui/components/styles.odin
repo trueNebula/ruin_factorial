@@ -9,3 +9,10 @@ InventorySlotCountStyle :: core.TextStyle {
 	spacing     = t.MAIN_FONT_SPACING,
 	line_height = 10,
 }
+
+MenuButtonStyle :: core.TextStyle {
+	font        = .MAIN,
+	size        = 22,
+	spacing     = t.MAIN_FONT_SPACING,
+	line_height = 22,
+}

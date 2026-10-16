@@ -28,23 +28,12 @@ slotPadding :: 0.0
 itemY :: 0.0
 itemZoom :: 2.0
 
-RenderHotbar :: proc(
-	state: ^HotbarState,
-	screen: rl.Rectangle,
-	renMan: ^render.RenderManager,
-	texMan: ^texture.TextureManager,
-) {
+RenderHotbar :: proc(state: ^HotbarState, screen: rl.Rectangle, texMan: ^texture.TextureManager) {
 	sprite, _ := texture.GetTexture(texMan, .UI_HOTBAR)
 	size := core.ToVector(sprite.width, sprite.height)
 	position := core.PlaceWidget(placement, size, screen)
 
-	render.DrawSprite(
-		renMan,
-		texMan,
-		.UI_HOTBAR,
-		{x = 0, y = 0, width = 320, height = 32},
-		position,
-	)
+	render.DrawSprite(texMan, .UI_HOTBAR, {x = 0, y = 0, width = 320, height = 32}, position)
 
 	for slot, idx in state.slots {
 		if slot.id == .NONE {
@@ -60,7 +49,7 @@ RenderHotbar :: proc(
 			continue
 		}
 
-		render.DrawSprite(renMan, texMan, .ITEM, itemSrc, slotItemPos, itemZoom)
+		render.DrawSprite(texMan, .ITEM, itemSrc, slotItemPos, itemZoom)
 
 		fontData, fontErr := texture.GetFont(texMan, InventorySlotCountStyle.font)
 		if fontErr {
@@ -82,19 +71,12 @@ RenderHotbar :: proc(
 
 		render.DrawText(
 			countStr,
-			texMan,
-			InventorySlotCountStyle.font,
+			fontData,
 			countPosition + {1, 1},
 			InventorySlotCountStyle.size,
 			rl.BLACK,
 		)
 
-		render.DrawText(
-			countStr,
-			texMan,
-			InventorySlotCountStyle.font,
-			countPosition,
-			InventorySlotCountStyle.size,
-		)
+		render.DrawText(countStr, fontData, countPosition, InventorySlotCountStyle.size)
 	}
 }

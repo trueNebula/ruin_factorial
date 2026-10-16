@@ -162,18 +162,16 @@ engineInput :: proc(engine: ^Engine) {
 	ui.InputMu(&engine.frameInput)
 	switch engine.sceneManager.current {
 	case .MENU:
-		// TODO: this sucks ass, figure out a way to make it suck less
-		if input.MaybeConsumeMouse(&engine.frameInput, .LEFT) {
-			free(engine.rng.data)
-			engine.rng = neb_utils.InitNewGenerator()
-			scene.LoadScene(engine.sceneManager, .GAME)
-		}
-		if input.MaybeConsumeMouse(&engine.frameInput, .RIGHT) {
-			free(engine.rng.data)
-			seed := 6283573998654693917
-			engine.rng = neb_utils.InitSeededGenerator(u64(seed))
-			scene.LoadScene(engine.sceneManager, .GAME)
-		}
+	// TODO: this sucks ass, figure out a way to make it suck less
+	// if input.MaybeConsumeMouse(&engine.frameInput, .LEFT) {
+
+	// 	resetRng(engine, nil)
+	// 	scene.LoadScene(engine.sceneManager, .GAME)
+	// }
+	// if input.MaybeConsumeMouse(&engine.frameInput, .RIGHT) {
+	// 	resetRng(engine, 6283573998654693917)
+	// 	scene.LoadScene(engine.sceneManager, .GAME)
+	// }
 	case .GAME:
 		if rl.IsKeyPressed(.ENTER) {
 			scene.LoadScene(engine.sceneManager, .MENU)
@@ -184,40 +182,51 @@ engineInput :: proc(engine: ^Engine) {
 @(private)
 update :: proc(engine: ^Engine) {
 	scene.Update(engine.sceneManager)
-	player.PlayerInputSystem(engine.world, &engine.frameInput)
-	ecs.ProcessTick(engine.world)
-	physics.CheckCollisions(engine.world, engine.queue)
 
-	playerView := ecs.View2(engine.world, core.PlayerRef, core.Camera)
+	switch engine.sceneManager.current {
+	case .MENU:
 
-	if len(playerView) == 0 {
-		// No camera set up yet, skip rendering setup
-		return
-	}
+	case .GAME:
+		player.PlayerInputSystem(engine.world, &engine.frameInput)
+		ecs.ProcessTick(engine.world)
+		physics.CheckCollisions(engine.world, engine.queue)
 
-	camera := playerView[0].c2
-	tilemap.TilemapClickSystem(engine.tileManager, engine.world, &engine.frameInput, camera.camera)
+		playerView := ecs.View2(engine.world, core.PlayerRef, core.Camera)
 
-	if (engine.sceneManager.transition.state == .NONE) {
-		tilemap.MaybeGenerateNewChunks(
+		if len(playerView) == 0 {
+			// No camera set up yet, skip rendering setup
+			return
+		}
+
+		camera := playerView[0].c2
+		tilemap.TilemapClickSystem(
 			engine.tileManager,
-			camera.camera,
-			engine.renderManager,
 			engine.world,
+			&engine.frameInput,
+			camera.camera,
 		)
-	}
 
-	tilemap.DrawTilemap(engine.tileManager, camera.camera, engine.renderManager, engine.world)
-	render.RenderShadows(engine.world, engine.renderManager, engine.textureManager)
-	render.RenderSprites(engine.world, engine.renderManager, engine.textureManager)
+		if (engine.sceneManager.transition.state == .NONE) {
+			tilemap.MaybeGenerateNewChunks(
+				engine.tileManager,
+				camera.camera,
+				engine.renderManager,
+				engine.world,
+			)
+		}
 
-	if (core.DEBUG.drawColliders) {
-		render.RenderColliders(engine.world, engine.renderManager)
-	}
+		tilemap.DrawTilemap(engine.tileManager, camera.camera, engine.renderManager, engine.world)
+		render.RenderShadows(engine.world, engine.renderManager, engine.textureManager)
+		render.RenderSprites(engine.world, engine.renderManager, engine.textureManager)
 
-	if core.DEBUG.drawScreenBounds {
-		screenRect := core.GetScreenRect(camera.camera)
-		render.QueueRect(engine.renderManager, screenRect, rl.BLUE)
+		if (core.DEBUG.drawColliders) {
+			render.RenderColliders(engine.world, engine.renderManager)
+		}
+
+		if core.DEBUG.drawScreenBounds {
+			screenRect := core.GetScreenRect(camera.camera)
+			render.QueueRect(engine.renderManager, screenRect, rl.BLUE)
+		}
 	}
 }
 
@@ -267,9 +276,20 @@ renderUi :: proc(engine: ^Engine) {
 
 	switch engine.sceneManager.current {
 	case .MENU:
-	// Menu UI
+		components.RenderMenuButtons(screen, engine.textureManager, &engine.frameInput)
 	case .GAME:
 		hotbarState := &ui.GetState(engine.uiManager, .HOTBAR).(components.HotbarState)
-		components.RenderHotbar(hotbarState, screen, engine.renderManager, engine.textureManager)
+		components.RenderHotbar(hotbarState, screen, engine.textureManager)
+	}
+}
+
+resetRng :: proc(engine: ^Engine, seed: Maybe(int)) {
+	free(engine.rng.data)
+	seedVal, ok := seed.?
+
+	if ok {
+		engine.rng = neb_utils.InitSeededGenerator(u64(seedVal))
+	} else {
+		engine.rng = neb_utils.InitNewGenerator()
 	}
 }
