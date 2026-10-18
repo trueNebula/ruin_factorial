@@ -21,14 +21,6 @@ Font :: enum {
 	MONO,
 }
 
-TextStyle :: struct {
-	font:        Font,
-	size:        f32,
-	spacing:     f32,
-	line_height: f32,
-	padding:     [2]f32,
-}
-
 Anchor :: enum {
 	BOTTOM_LEFT,
 	CENTER,
@@ -131,3 +123,28 @@ ColliderLayer :: enum {
 }
 
 CollisionLayers :: bit_set[ColliderLayer]
+
+Edges :: struct {
+	left, top, right, bottom: f32,
+}
+
+Align :: enum {
+	START,
+	CENTER,
+	END,
+}
+
+TextStyle :: struct {
+	font:        Font,
+	size:        f32,
+	spacing:     f32,
+	line_height: f32,
+	color:       rl.Color,
+	shadow:      Maybe(TextShadow),
+	align:       Align,
+}
+
+TextShadow :: struct {
+	offset: [2]f32,
+	color:  rl.Color,
+}

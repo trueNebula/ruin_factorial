@@ -68,6 +68,25 @@ MakeEngine :: proc() -> Engine {
 }
 
 Init :: proc(engine: ^Engine) {
+	texture.LoadFont(
+		engine.textureManager,
+		core.Font.MAIN,
+		"/PixeloidSans.ttf",
+		texture.MAIN_FONT_SPACING,
+	)
+	texture.LoadFont(
+		engine.textureManager,
+		core.Font.BOLD,
+		"/PixeloidSans-Bold.ttf",
+		texture.BOLD_FONT_SPACING,
+	)
+	texture.LoadFont(
+		engine.textureManager,
+		core.Font.MONO,
+		"/PixeloidMono.ttf",
+		texture.MONO_FONT_SPACING,
+	)
+
 	ui.InitMu()
 	scene.LoadFirstScene(engine.sceneManager)
 }
@@ -77,41 +96,34 @@ Run :: proc(engine: ^Engine) {
 	for !rl.WindowShouldClose() {
 		core.FullscreenManager()
 
-		// input, top-down blocking
-		if !scene.ShouldBlockInput(engine.sceneManager) {
-			engine.frameInput = input.Poll(core.DefaultKeybinds)
-			engineInput(engine)
-		}
+		camera, camErr := player.GetPlayerComponent(
+			engine.world,
+			player.MAIN_PLAYER_REF,
+			core.Camera,
+		)
 
-		// update, bottom-up
+		ui.BeginFrame(engine.uiManager, camErr ? nil : camera.camera)
+		engine.frameInput = input.Poll(core.DefaultKeybinds)
+
+		// update
 		update(engine)
 		processEvents(engine)
+		buildUi(engine)
+		ui.EndFrame(engine.uiManager, engine.textureManager)
 
-		// render, bottom-up
+		// render
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.BLACK)
 
-		switch engine.sceneManager.current {
-		case .MENU:
-		// TODO: add menu scene rendering
-		case .GAME:
-			camera, camErr := player.GetPlayerComponent(
-				engine.world,
-				player.MAIN_PLAYER_REF,
-				core.Camera,
-			)
-			if camErr {
-				// No camera set up yet, skip rendering
-				break
-			}
+		if engine.sceneManager.current == .GAME && !camErr {
 			rl.BeginMode2D(camera.camera)
 			render.Flush(engine.renderManager, engine.textureManager)
+			ui.FlushWorld(engine.uiManager, engine.textureManager)
 			rl.EndMode2D()
 		}
 
 		rl.BeginMode2D(engine.uiManager.camera)
-		updateUi(engine)
-		renderUi(engine)
+		ui.FlushScreen(engine.uiManager, engine.textureManager)
 		rl.EndMode2D()
 
 		scene.DrawTransition(engine.sceneManager)
@@ -252,34 +264,32 @@ processEvents :: proc(engine: ^Engine) {
 	clear(&engine.queue.items)
 }
 
-updateUi :: proc(engine: ^Engine) {
-	ui.Update(engine.uiManager)
-
+buildUi :: proc(engine: ^Engine) {
+	uiMan := engine.uiManager
 	switch engine.sceneManager.current {
 	case .MENU:
-	// Menu UI
+		switch components.MainMenu(engine.uiManager) {
+		case .START:
+			resetRng(engine, nil)
+			scene.LoadScene(engine.sceneManager, .GAME)
+		case .START_SEEDED:
+			resetRng(engine, 6283573998654693917)
+			scene.LoadScene(engine.sceneManager, .GAME)
+		case .SETTINGS:
+		case .EXIT:
+		case .NONE:
+		}
 	case .GAME:
 		inventory, invErr := player.GetPlayerComponent(
 			engine.world,
 			player.MAIN_PLAYER_REF,
 			core.Inventory,
 		)
+		slots := []core.Item{}
 		if !invErr {
-			hotbarState := &ui.GetState(engine.uiManager, .HOTBAR).(components.HotbarState)
-			hotbarState.slots = inventory.slots[0:10]
+			slots = inventory.slots[0:10]
 		}
-	}
-}
-
-renderUi :: proc(engine: ^Engine) {
-	screen := ui.GetScreen(engine.uiManager)
-
-	switch engine.sceneManager.current {
-	case .MENU:
-		components.RenderMenuButtons(screen, engine.textureManager, &engine.frameInput)
-	case .GAME:
-		hotbarState := &ui.GetState(engine.uiManager, .HOTBAR).(components.HotbarState)
-		components.RenderHotbar(hotbarState, screen, engine.textureManager)
+		components.Hotbar(engine.uiManager, {slots = slots, selected = 0})
 	}
 }
 

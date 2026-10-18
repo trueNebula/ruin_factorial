@@ -115,6 +115,7 @@ DrawSprite :: proc(
 	texId: core.Texture,
 	src: rl.Rectangle,
 	dest: rl.Vector2,
+	size: rl.Vector2 = {},
 	zoom: f32 = 1.0,
 	tint: rl.Color = rl.WHITE,
 ) {
@@ -125,7 +126,12 @@ DrawSprite :: proc(
 		return
 	}
 
-	destRect := core.MakeRect(dest, core.GetSize(src) * zoom)
+	rectSize := core.GetSize(src)
+	if size != {} {
+		rectSize = size
+	}
+
+	destRect := core.MakeRect(dest, rectSize * zoom)
 	rl.DrawTexturePro(
 		texData,
 		src,
@@ -157,4 +163,14 @@ DrawText :: proc(
 		fontData.spacing,
 		tint,
 	)
+}
+
+DrawRect :: proc(rect: rl.Rectangle, fill: rl.Color, outline: rl.Color, outlineW: f32) {
+	if fill.a != 0 {
+		rl.DrawRectanglePro(rect, {0, 0}, 0, fill)
+	}
+
+	if outlineW > 0 && outline.a != 0 {
+		rl.DrawRectangleLinesEx(rect, outlineW, outline)
+	}
 }

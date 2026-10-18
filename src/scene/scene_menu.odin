@@ -17,9 +17,9 @@ MenuScene :: struct {
 initMenuScene :: proc(sceneMan: ^SceneManager) -> MenuScene {
 	texMan := sceneMan.textureManager
 
-	texture.LoadFont(texMan, core.Font.MAIN, "/PixeloidSans.ttf", texture.MAIN_FONT_SPACING)
-	texture.LoadFont(texMan, core.Font.BOLD, "/PixeloidSans-Bold.ttf", texture.BOLD_FONT_SPACING)
-	texture.LoadFont(texMan, core.Font.MONO, "/PixeloidMono.ttf", texture.MONO_FONT_SPACING)
+	// texture.LoadFont(texMan, core.Font.MAIN, "/PixeloidSans.ttf", texture.MAIN_FONT_SPACING)
+	// texture.LoadFont(texMan, core.Font.BOLD, "/PixeloidSans-Bold.ttf", texture.BOLD_FONT_SPACING)
+	// texture.LoadFont(texMan, core.Font.MONO, "/PixeloidMono.ttf", texture.MONO_FONT_SPACING)
 
 	return MenuScene{menu = .MAIN}
 }

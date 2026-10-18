@@ -1,9 +1,8 @@
 package ui
 
-import "components"
+import "src:core"
 
-State :: union {
-	components.HotbarState,
+HotbarState :: struct {
+	slots:    []core.Item,
+	selected: int,
 }
-
-StateMap :: map[ComponentId]State
