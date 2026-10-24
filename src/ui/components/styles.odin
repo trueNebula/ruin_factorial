@@ -21,6 +21,14 @@ MenuButtonStyle :: core.TextStyle {
 	color       = rl.WHITE,
 }
 
+ContainerNS :: core.NineSlice {
+	texture = .UI,
+	rect    = {16, 0, 16, 16},
+	scale   = 2,
+	mode    = .STRETCH,
+	border  = core.Edges{3, 3, 3, 3},
+}
+
 @(private)
 pad :: proc {
 	padAll,

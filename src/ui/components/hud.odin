@@ -19,39 +19,44 @@ Hotbar :: proc(uiMan: ^ui.UiManager, state: ui.HotbarState) {
 			{
 				layout = .ROW,
 				size = {{.FIXED, 350}, {.FIXED, 44}},
-				background = ui.SpriteBackground {
-					sprite = {texture = .UI_HOTBAR, rect = {0, 0, 175, 22}},
-				},
+				background = ContainerNS,
 				padding = pad(6),
 				gap = 2,
 			},
 		) {
 			for slot, idx in state.slots {
-				if slot.id == .NONE {
-					continue
-				}
-				itemRect, err := item.GetRectForId(slot.id)
-				if err {
-					continue
-				}
-
 				if ui.Box(
 					uiMan,
 					fmt.tprintf("hotbar_slot_%u", idx),
 					{
-						background = ui.SpriteBackground {
-							sprite = {texture = .ITEM, rect = itemRect},
-						},
 						size = {{.FIXED, 32}, {.FIXED, 32}},
+						background = ui.SpriteBackground {
+							sprite = {texture = .UI, rect = {0, 0, 16, 16}},
+						},
 					},
 				) {
-					ui.Label(
-						uiMan,
-						fmt.tprintf("hotbar_slot_%u_cnt", idx),
-						fmt.tprint(slot.count),
-						InventorySlotCountStyle,
-						{target = core.TR, pivot = core.TR, offset = {-3, 2}},
-					)
+					opts := ui.BoxOpts {
+						size = {{.FIXED, 32}, {.FIXED, 32}},
+					}
+					if slot.id != .NONE {
+						itemRect, err := item.GetRectForId(slot.id)
+						if !err {
+							opts.background = ui.SpriteBackground {
+								sprite = {texture = .ITEM, rect = itemRect},
+							}
+						}
+					}
+					if ui.Box(uiMan, fmt.tprintf("hotbar_slot_%u_itm", idx), opts) {
+						if slot.id != .NONE || slot.count > 0 {
+							ui.Label(
+								uiMan,
+								fmt.tprintf("hotbar_slot_%u_cnt", idx),
+								fmt.tprint(slot.count),
+								InventorySlotCountStyle,
+								{target = core.TR, pivot = core.TR, offset = {-3, 2}},
+							)
+						}
+					}
 				}
 			}
 		}
