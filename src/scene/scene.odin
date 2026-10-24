@@ -1,5 +1,6 @@
 package scene
 
+import "src:core"
 import "src:ecs"
 import "src:event"
 import "src:neb_utils"

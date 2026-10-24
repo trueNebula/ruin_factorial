@@ -88,7 +88,13 @@ Init :: proc(engine: ^Engine) {
 	)
 
 	ui.InitMu()
-	scene.LoadFirstScene(engine.sceneManager)
+
+	if core.DEBUG_SKIP_MENU {
+		resetRng(engine, 6283573998654693917)
+		scene.LoadScene(engine.sceneManager, .GAME)
+	} else {
+		scene.LoadFirstScene(engine.sceneManager)
+	}
 }
 
 Run :: proc(engine: ^Engine) {
@@ -191,16 +197,6 @@ engineInput :: proc(engine: ^Engine) {
 	ui.InputMu(&engine.frameInput)
 	#partial switch engine.sceneManager.current {
 	case .MENU:
-	// TODO: this sucks ass, figure out a way to make it suck less
-	// if input.MaybeConsumeMouse(&engine.frameInput, .LEFT) {
-
-	// 	resetRng(engine, nil)
-	// 	scene.LoadScene(engine.sceneManager, .GAME)
-	// }
-	// if input.MaybeConsumeMouse(&engine.frameInput, .RIGHT) {
-	// 	resetRng(engine, 6283573998654693917)
-	// 	scene.LoadScene(engine.sceneManager, .GAME)
-	// }
 	case .GAME:
 		if rl.IsKeyPressed(.ENTER) {
 			scene.LoadScene(engine.sceneManager, .MENU)
