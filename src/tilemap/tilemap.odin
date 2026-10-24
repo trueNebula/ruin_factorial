@@ -214,61 +214,63 @@ drawChunk :: proc(
 		render.QueueRect(renMan, boundingBox, rl.GRAY)
 	}
 
-	for tile, idx in chunk.base {
-		tileData, ok := tileMan.repo[tile]
+	fromX := int(math.floor(paddedScreenRect.x / core.TileSize))
+	fromY := int(math.floor(paddedScreenRect.y / core.TileSize))
+	toX := int(math.ceil((paddedScreenRect.x + paddedScreenRect.width) / core.TileSize))
+	toY := int(math.ceil((paddedScreenRect.y + paddedScreenRect.height) / core.TileSize))
 
-		if (!ok) {
-			log.Warn("Tried to access tile with id %v in tile repo, tile id doesnt exist!", tile)
-			continue
+	baseX := chunk.x * core.ChunkLenght
+	baseY := chunk.y * core.ChunkLenght
+	x0 := max(fromX - baseX, 0)
+	x1 := min(toX - baseX, core.ChunkLenght - 1)
+	y0 := max(fromY - baseY, 0)
+	y1 := min(toY - baseY, core.ChunkLenght - 1)
+
+
+	for tileY in y0 ..= y1 {
+		for tileX in x0 ..= x1 {
+			idx := tileY * core.ChunkLenght + tileX
+			tile := chunk.base[idx]
+			tileData, ok := tileMan.repo[tile]
+
+			if (!ok) {
+				log.Warn(
+					"Tried to access tile with id %v in tile repo, tile id doesnt exist!",
+					tile,
+				)
+				continue
+			}
+
+			drawTile(tileMan, tileData, idx, chunk, renMan)
 		}
-
-		tileX := chunk.x * core.ChunkLenght + idx % core.ChunkLenght
-		tileY := chunk.y * core.ChunkLenght + idx / core.ChunkLenght
-
-		fromX := int(math.floor(paddedScreenRect.x / core.TileSize))
-		fromY := int(math.floor(paddedScreenRect.y / core.TileSize))
-		toX := int(math.ceil((paddedScreenRect.x + paddedScreenRect.width) / core.TileSize))
-		toY := int(math.ceil((paddedScreenRect.y + paddedScreenRect.height) / core.TileSize))
-
-		if tileX < fromX || tileX > toX || tileY < fromY || tileY > toY {
-			continue
-		}
-
-		drawTile(tileMan, tileData, idx, chunk, renMan)
 	}
 
-	for block, idx in chunk.blocks {
-		if block.id == .NONE {
-			continue
+	for tileY in y0 ..= y1 {
+		for tileX in x0 ..= x1 {
+			idx := tileY * core.ChunkLenght + tileX
+			block := chunk.blocks[idx]
+			if block.id == .NONE {
+				continue
+			}
+
+			tileData, ok := tileMan.blockRepo[block.id]
+
+			if (!ok) {
+				log.Warn(
+					"Tried to access tile with id %v in block repo, block id doesnt exist!",
+					block,
+				)
+				continue
+			}
+
+			tint := rl.WHITE
+			if tween, err2 := ecs.GetComponentForEntity(world, block.entity, core.TintTween);
+			   !err2 {
+				tint = core.DoTintTweenMath(tween^, tint)
+			}
+
+			drawTile(tileMan, tileData, idx, chunk, renMan, tint)
 		}
-
-		tileData, ok := tileMan.blockRepo[block.id]
-
-		if (!ok) {
-			log.Warn(
-				"Tried to access tile with id %v in block repo, block id doesnt exist!",
-				block,
-			)
-			continue
-		}
-		tileX := chunk.x * core.ChunkLenght + idx % core.ChunkLenght
-		tileY := chunk.y * core.ChunkLenght + idx / core.ChunkLenght
-
-		fromX := int(math.floor(paddedScreenRect.x / core.TileSize))
-		fromY := int(math.floor(paddedScreenRect.y / core.TileSize))
-		toX := int(math.ceil((paddedScreenRect.x + paddedScreenRect.width) / core.TileSize))
-		toY := int(math.ceil((paddedScreenRect.y + paddedScreenRect.height) / core.TileSize))
-
-		if tileX < fromX || tileX > toX || tileY < fromY || tileY > toY {
-			continue
-		}
-
-		tint := rl.WHITE
-		if tween, err2 := ecs.GetComponentForEntity(world, block.entity, core.TintTween); !err2 {
-			tint = core.DoTintTweenMath(tween^, tint)
-		}
-
-		drawTile(tileMan, tileData, idx, chunk, renMan, tint)
 	}
 }
 
