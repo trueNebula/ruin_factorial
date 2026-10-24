@@ -12,6 +12,7 @@ Texture :: enum {
 	ITEM,
 	BLOCK,
 	UI_HOTBAR,
+	UI,
 }
 
 Font :: enum {
@@ -147,4 +148,15 @@ TextStyle :: struct {
 TextShadow :: struct {
 	offset: [2]f32,
 	color:  rl.Color,
+}
+
+NineSlice :: struct {
+	texture: Texture,
+	rect:    rl.Rectangle,
+	border:  Edges,
+	scale:   int,
+	mode:    enum {
+		STRETCH,
+		TILE,
+	},
 }

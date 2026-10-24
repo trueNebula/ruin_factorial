@@ -230,8 +230,8 @@ drawNode :: proc(node: ^Node, texMan: ^texture.TextureManager) {
 		}
 
 		render.DrawSprite(texMan, sprite.texture, frame, node.position, rectSize)
-	case NineSlice:
-	// TODO: implement
+	case core.NineSlice:
+		render.DrawNineSlice(texMan, bg, node.position, node.size)
 	}
 
 	switch c in node.content {

@@ -174,3 +174,83 @@ DrawRect :: proc(rect: rl.Rectangle, fill: rl.Color, outline: rl.Color, outlineW
 		rl.DrawRectangleLinesEx(rect, outlineW, outline)
 	}
 }
+
+DrawNineSlice :: proc(
+	texMan: ^texture.TextureManager,
+	ns: core.NineSlice,
+	pos: rl.Vector2,
+	size: rl.Vector2,
+	tint: rl.Color = rl.WHITE,
+) {
+	tex, err := texture.GetTexture(texMan, ns.texture)
+	if err {
+		return
+	}
+
+	scale := f32(max(ns.scale, 1))
+	dest := core.MakeRect(pos, size)
+	src := ns.rect
+	border := ns.border
+	scaled := core.Edges {
+		border.bottom * scale,
+		border.left * scale,
+		border.right * scale,
+		border.top * scale,
+	}
+
+	sx := [3]f32{src.x, src.x + border.left, src.x + src.width - border.right}
+	sw := [3]f32{border.left, src.width - border.left - border.right, border.right}
+	sy := [3]f32{src.y, src.y + border.top, src.y + src.height - border.bottom}
+	sh := [3]f32{border.top, src.height - border.top - border.bottom, border.bottom}
+
+	dx := [3]f32{dest.x, dest.x + scaled.left, dest.x + dest.width - scaled.right}
+	dw := [3]f32{scaled.left, dest.width - scaled.left - scaled.right, scaled.right}
+	dy := [3]f32{dest.y, dest.y + scaled.top, dest.y + dest.height - scaled.bottom}
+	dh := [3]f32{scaled.top, dest.height - scaled.top - scaled.bottom, scaled.bottom}
+
+	tile := ns.mode == .TILE
+
+	for row in 0 ..< 3 {
+		for col in 0 ..< 3 {
+			s := rl.Rectangle{sx[col], sy[row], sw[col], sh[row]}
+			d := rl.Rectangle{dx[col], dy[row], dw[col], dh[row]}
+			if s.width <= 0 || s.height <= 0 || d.width <= 0 || d.height <= 0 {
+				continue
+			}
+
+			if !tile {
+				rl.DrawTexturePro(
+					tex,
+					s,
+					d,
+					/*origin=*/
+					{0, 0},
+					/*rotation=*/
+					0,
+					tint,
+				)
+			} else {
+				tileW := s.width * scale
+				tileH := s.height * scale
+
+				for y := d.y; y < d.y + d.height; y += tileH {
+					height := min(tileH, d.y + d.height - y)
+					for x := d.x; x < d.x + d.width; x += tileW {
+						width := min(tileW, d.x + d.width - x)
+						rl.DrawTexturePro(
+							tex,
+							{s.x, s.y, width / scale, height / scale},
+							{x, y, width, height},
+							/*origin=*/
+							{0, 0},
+							/*rotation=*/
+							0,
+							tint,
+						)
+					}
+				}
+			}
+		}
+	}
+
+}

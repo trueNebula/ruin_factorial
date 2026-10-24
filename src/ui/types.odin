@@ -60,7 +60,7 @@ Node :: struct {
 Background :: union {
 	FlatBackground,
 	SpriteBackground,
-	NineSlice,
+	core.NineSlice,
 }
 
 FlatBackground :: struct {
@@ -72,10 +72,6 @@ FlatBackground :: struct {
 SpriteBackground :: struct {
 	sprite:    core.Sprite,
 	animation: core.Animation,
-}
-
-NineSlice :: struct {
-	// TODO: add support for this
 }
 
 Content :: union {

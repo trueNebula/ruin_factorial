@@ -25,6 +25,7 @@ initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
 	t.LoadTexture(texMan, .ITEM, "item_atlas.png")
 	t.LoadTexture(texMan, .BLOCK, "block_atlas.png")
 	t.LoadTexture(texMan, .UI_HOTBAR, "ui/hotbar.png")
+	t.LoadTexture(texMan, .UI, "ui/ui.png")
 
 	event.PushEvent(queue, event.GenerateWorld{})
 	event.PushEvent(queue, event.GenerateBlocks{})

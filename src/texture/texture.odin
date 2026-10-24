@@ -50,6 +50,7 @@ LoadTexture :: proc(
 	}
 
 	rlTex := rl.LoadTexture(rl.TextFormat("%s", path))
+	rl.SetTextureFilter(rlTex, .POINT)
 
 	if rlTex.id == 0 {
 		fmt.println("Tried loading texture at path %s, not found!", path)
