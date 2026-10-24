@@ -39,6 +39,37 @@ endBox :: proc(uiMan: ^UiManager, label: string, opts: BoxOpts, open: bool) {
 	}
 }
 
+@(require_results, deferred_in_out = endClickableBox)
+ClickableBox :: proc(
+	uiMan: ^UiManager,
+	label: string,
+	opts: BoxOpts,
+) -> (
+	response: Response,
+	open: bool,
+) {
+	id := makeId(uiMan, label)
+	touch(uiMan, id)
+	opts := opts
+	opts.capture = true
+	pushNode(uiMan, id, opts)
+
+	return respond(uiMan, id), true
+}
+
+@(private)
+endClickableBox :: proc(
+	uiMan: ^UiManager,
+	label: string,
+	opts: BoxOpts,
+	response: Response,
+	open: bool,
+) {
+	if open {
+		popNode(uiMan)
+	}
+}
+
 Button :: proc(
 	uiMan: ^UiManager,
 	label: string,
@@ -77,4 +108,14 @@ Label :: proc(
 		str   = text,
 		style = style,
 	}
+}
+
+Scrim :: proc(uiMan: ^UiManager, label: string, color: rl.Color = SCRIM) {
+	id := makeId(uiMan, label)
+	touch(uiMan, id)
+	addNode(
+		uiMan,
+		id,
+		BoxOpts{background = FlatBackground{fill = color}, size = {{.GROW, 1}, {.GROW, 1}}},
+	)
 }

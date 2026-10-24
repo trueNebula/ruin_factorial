@@ -50,7 +50,7 @@ Hotbar :: proc(uiMan: ^ui.UiManager, state: ui.HotbarState) {
 						fmt.tprintf("hotbar_slot_%u_cnt", idx),
 						fmt.tprint(slot.count),
 						InventorySlotCountStyle,
-						{target = core.TR, pivot = core.TR, offset = {-1, 2}},
+						{target = core.TR, pivot = core.TR, offset = {-3, 2}},
 					)
 				}
 			}

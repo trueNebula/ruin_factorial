@@ -104,7 +104,9 @@ Run :: proc(engine: ^Engine) {
 
 		ui.BeginFrame(engine.uiManager, camErr ? nil : camera.camera)
 		engine.frameInput = input.Poll(core.DefaultKeybinds)
-
+		if rl.IsKeyPressed(.E) {
+			engine.uiManager.menuOpen = !engine.uiManager.menuOpen
+		}
 		// update
 		update(engine)
 		processEvents(engine)
@@ -188,6 +190,7 @@ engineInput :: proc(engine: ^Engine) {
 		if rl.IsKeyPressed(.ENTER) {
 			scene.LoadScene(engine.sceneManager, .MENU)
 		}
+
 	}
 }
 
@@ -285,11 +288,15 @@ buildUi :: proc(engine: ^Engine) {
 			player.MAIN_PLAYER_REF,
 			core.Inventory,
 		)
-		slots := []core.Item{}
-		if !invErr {
-			slots = inventory.slots[0:10]
+		if invErr {
+			return
 		}
-		components.Hotbar(engine.uiManager, {slots = slots, selected = 0})
+		if engine.uiManager.menuOpen {
+			components.Inventory(engine.uiManager, {slots = inventory.slots[:], rows = 4})
+		} else {
+			slots := inventory.slots[0:10]
+			components.Hotbar(engine.uiManager, {slots = slots, selected = 0})
+		}
 	}
 }
 

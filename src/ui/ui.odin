@@ -45,8 +45,8 @@ Update :: proc(uiMan: ^UiManager) {
 	}
 }
 
-GetScreen :: proc(uiMan: ^UiManager) -> rl.Rectangle {
-	return layout.Padding(core.MakeRect({0, 0}, uiMan.size), SCREEN_PADDING)
+GetScreen :: proc(uiMan: ^UiManager, padding: f32 = SCREEN_PADDING) -> rl.Rectangle {
+	return layout.Padding(core.MakeRect({0, 0}, uiMan.size), padding)
 }
 
 Shutdown :: proc(uiMan: ^UiManager) {
@@ -143,6 +143,7 @@ EndFrame :: proc(uiMan: ^UiManager, texMan: ^texture.TextureManager) {
 			}
 		} else {
 			parent := &uiMan.nodes[node.parent]
+			grow(parent, &node)
 			node.position = placeChild(parent, &node)
 		}
 
@@ -171,7 +172,7 @@ EndFrame :: proc(uiMan: ^UiManager, texMan: ^texture.TextureManager) {
 FlushScreen :: proc(uiMan: ^UiManager, texMan: ^texture.TextureManager) {
 	for layer in Layer {
 		if layer == .MENU && uiMan.menuOpen {
-			render.DrawRect(GetScreen(uiMan), SCRIM, {}, 0)
+			render.DrawRect(GetScreen(uiMan, 0), SCRIM, {}, 0)
 		}
 		for &node in uiMan.nodes {
 			if node.layer == layer && node.space == .SCREEN {

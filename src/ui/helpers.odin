@@ -11,6 +11,9 @@ import rl "vendor:raylib"
 @(private)
 makeId :: proc(uiMan: ^UiManager, label: string) -> Id {
 	seed := u64(0xd6a6468d2a0dff09)
+	if n := len(uiMan.parents); n > 0 {
+		seed = u64(uiMan.nodes[uiMan.parents[n - 1]].id)
+	}
 	return Id(hash.fnv64a(transmute([]byte)label, seed))
 }
 
@@ -38,12 +41,39 @@ contentSize :: proc(node: ^Node, texMan: ^texture.TextureManager) -> rl.Vector2 
 }
 
 @(private)
+grow :: proc(parent, node: ^Node) {
+	padding := parent.opts.padding
+	paddedSize := rl.Vector2 {
+		parent.size.x - padding.left - padding.right,
+		parent.size.y - padding.top - padding.bottom,
+	}
+
+	for axis in 0 ..< 2 {
+		if node.opts.size[axis].kind != .GROW {
+			continue
+		}
+
+		isMain :=
+			(parent.opts.layout == .ROW && axis == 0) ||
+			(parent.opts.layout == .COLUMN && axis == 1)
+		if isMain && parent.growSum > 0 {
+			free := max(0, paddedSize[axis] - parent.childrenSize[axis])
+			node.size[axis] = math.floor(free * node.opts.size[axis].v / parent.growSum)
+		} else {
+			node.size[axis] = paddedSize[axis]
+		}
+	}
+}
+
+@(private)
 sizeAxis :: proc(size: Size, fit: f32) -> f32 {
 	switch size.kind {
 	case .FIT:
 		return fit
 	case .FIXED:
 		return size.v
+	case .GROW:
+		return 0
 	}
 	return 0
 }

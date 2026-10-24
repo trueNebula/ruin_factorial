@@ -27,6 +27,7 @@ Size :: struct {
 Sizing :: enum {
 	FIT, // Size to content, v unused
 	FIXED, // v UI px
+	GROW, // Grow to leftover space, v is weight
 }
 
 BoxOpts :: struct {
@@ -47,6 +48,7 @@ Node :: struct {
 	space:        Space,
 	padding:      core.Edges,
 	size:         rl.Vector2,
+	growSum:      f32,
 	position:     rl.Vector2,
 	childrenSize: rl.Vector2, // Running size of the children
 	childCount:   int, // For gaps
