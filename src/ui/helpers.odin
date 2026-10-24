@@ -210,7 +210,7 @@ drawNode :: proc(node: ^Node, texMan: ^texture.TextureManager) {
 		rect := core.MakeRect(node.position, node.size)
 		render.DrawRect(rect, bg.fill, bg.outline, bg.outlineW)
 	case SpriteBackground:
-		dt := rl.GetFrameTime()
+		dt := core.FrameTime()
 		sprite := bg.sprite
 		animation := bg.animation
 		frame := sprite.rect

@@ -72,7 +72,7 @@ FloatItem :: proc(world: ^ecs.World) {
 		sprite := entity.c1
 		float := entity.c2
 
-		float.timer += rl.GetFrameTime()
+		float.timer += core.FrameTime()
 
 		if float.timer >= 2 * math.PI {
 			float.timer -= 2 * math.PI

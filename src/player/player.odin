@@ -92,7 +92,7 @@ PlayerMovementSystem :: proc(world: ^ecs.World) {
 			camera: ^core.Camera,
 			userData: rawptr,
 		) {
-			dt := rl.GetFrameTime()
+			dt := core.FrameTime()
 
 			transform.x += velocity.x * dt
 			transform.y += velocity.y * dt

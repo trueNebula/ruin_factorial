@@ -102,7 +102,7 @@ debug :: proc() {
 		window := mu.get_current_container(ctx)
 		mu.layout_row(ctx, {300}, 0)
 		mu.label(ctx, fmt.tprint("FPS:", rl.GetFPS()))
-		mu.label(ctx, fmt.tprintf("Frametime: %3f", rl.GetFrameTime() * 1000))
+		mu.label(ctx, fmt.tprintf("Frametime: %3f", core.FrameTime() * 1000))
 
 		mu.checkbox(ctx, "Draw Screen Bounds", &core.DEBUG.drawScreenBounds)
 		mu.checkbox(ctx, "Draw Chunk Bounds", &core.DEBUG.drawChunkBounds)

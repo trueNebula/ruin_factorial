@@ -5,6 +5,12 @@ import "src:log"
 import "src:neb_utils"
 import rl "vendor:raylib"
 
+MAX_FRAME_TIME :: 1.0 / 20.0
+
+FrameTime :: proc() -> f32 {
+	return min(rl.GetFrameTime(), MAX_FRAME_TIME)
+}
+
 FullscreenManager :: proc() {
 	if (rl.IsKeyPressed(rl.KeyboardKey.F11)) {
 		rl.ToggleBorderlessWindowed()

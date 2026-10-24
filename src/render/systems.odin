@@ -54,7 +54,7 @@ ApplyTintTween :: proc(world: ^ecs.World) {
 
 	for entity in view {
 		tween := entity.c1
-		dt := rl.GetFrameTime()
+		dt := core.FrameTime()
 		tween.timer += dt
 
 		if tween.timer >= tween.duration {

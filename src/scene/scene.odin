@@ -130,7 +130,7 @@ ShouldBlockInput :: proc(sceneMan: ^SceneManager) -> bool {
 }
 
 Update :: proc(sceneMan: ^SceneManager) {
-	dt := rl.GetFrameTime()
+	dt := core.FrameTime()
 
 	transition := &sceneMan.transition
 	switch transition.state {
@@ -155,7 +155,7 @@ Update :: proc(sceneMan: ^SceneManager) {
 }
 
 DrawTransition :: proc(sceneMan: ^SceneManager) {
-	dt := rl.GetFrameTime()
+	dt := core.FrameTime()
 	transition := &sceneMan.transition
 
 	switch transition.state {

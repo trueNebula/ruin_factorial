@@ -9,7 +9,7 @@ MovementSystem :: proc(world: ^ecs.World) {
 		world,
 		nil,
 		proc(transform: ^core.Transform, velocity: ^core.Velocity, userData: rawptr) {
-			dt := rl.GetFrameTime()
+			dt := core.FrameTime()
 
 			transform.x += velocity.x * dt
 			transform.y += velocity.y * dt
