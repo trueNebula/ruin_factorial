@@ -28,12 +28,7 @@ Hotbar :: proc(uiMan: ^ui.UiManager, state: ui.HotbarState) {
 				if ui.Box(
 					uiMan,
 					fmt.tprintf("hotbar_slot_%u", idx),
-					{
-						size = {{.FIXED, 32}, {.FIXED, 32}},
-						background = ui.SpriteBackground {
-							sprite = {texture = .UI, rect = {0, 0, 16, 16}},
-						},
-					},
+					{size = {{.FIXED, 32}, {.FIXED, 32}}, background = ContainerSlotSprite},
 				) {
 					opts := ui.BoxOpts {
 						size = {{.FIXED, 32}, {.FIXED, 32}},

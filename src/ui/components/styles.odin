@@ -2,6 +2,7 @@ package components
 
 import "src:core"
 import t "src:texture"
+import "src:ui"
 import rl "vendor:raylib"
 
 InventorySlotCountStyle :: core.TextStyle {
@@ -27,6 +28,10 @@ ContainerNS :: core.NineSlice {
 	scale   = 2,
 	mode    = .STRETCH,
 	border  = core.Edges{3, 3, 3, 3},
+}
+
+ContainerSlotSprite :: ui.SpriteBackground {
+	sprite = {texture = .UI, rect = {0, 0, 16, 16}},
 }
 
 @(private)

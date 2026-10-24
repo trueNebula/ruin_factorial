@@ -36,9 +36,7 @@ Inventory :: proc(uiMan: ^ui.UiManager, state: ui.InventoryState) {
 							fmt.tprintf("inventory_slot_%u", idx),
 							{
 								size = {{.FIXED, 32}, {.FIXED, 32}},
-								background = ui.SpriteBackground {
-									sprite = {texture = .UI, rect = {0, 0, 16, 16}},
-								},
+								background = ContainerSlotSprite,
 							},
 						); open {
 							opts := ui.BoxOpts {
