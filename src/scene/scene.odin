@@ -3,13 +3,12 @@ package scene
 import "src:ecs"
 import "src:event"
 import "src:neb_utils"
-import "src:render"
 import "src:texture"
-import "src:tilemap"
 import "src:ui"
 import rl "vendor:raylib"
 
 SceneId :: enum {
+	NONE,
 	MENU,
 	GAME,
 }
@@ -53,31 +52,32 @@ MakeSceneManger :: proc(
 	ui: ^ui.UiManager,
 ) -> SceneManager {
 	sceneMan := SceneManager {
-		current = .MENU,
-		transition = Transition {
-			state = .NONE,
-			timer = 0.0,
-			duration = FAST_DURATION,
-			nextScene = .MENU,
-		},
 		textureManager = texMan,
-		world = world,
-		queue = queue,
-		ui = ui,
+		world          = world,
+		queue          = queue,
+		ui             = ui,
 	}
 	return sceneMan
 }
 
 LoadFirstScene :: proc(sceneMan: ^SceneManager) {
-	loadMenuScene(sceneMan)
+	sceneMan.transition = Transition {
+		state     = .FADE_OUT,
+		timer     = 0.0,
+		duration  = BASE_DURATION,
+		nextScene = .MENU,
+	}
 }
 
 LoadScene :: proc(sceneMan: ^SceneManager, id: SceneId) {
-	switch id {
+	#partial switch id {
 	case .MENU:
 		loadMenuScene(sceneMan)
 	case .GAME:
 		loadGameScene(sceneMan)
+	case .NONE:
+	case:
+		unreachable()
 	}
 }
 
@@ -97,21 +97,27 @@ triggerSceneTransition :: proc(sceneMan: ^SceneManager, target: SceneId) {
 
 @(private)
 initNextScene :: proc(sceneMan: ^SceneManager) {
-	switch sceneMan.transition.nextScene {
+	#partial switch sceneMan.transition.nextScene {
 	case .MENU:
 		sceneMan.data = initMenuScene(sceneMan)
 	case .GAME:
 		sceneMan.data = initGameScene(sceneMan)
+	case .NONE:
+	case:
+		unreachable()
 	}
 }
 
 @(private)
 unloadScene :: proc(sceneMan: ^SceneManager) {
-	switch sceneMan.current {
+	#partial switch sceneMan.current {
 	case .MENU:
 		unloadMenuScene(sceneMan)
 	case .GAME:
 		unloadGameScene(sceneMan)
+	case .NONE:
+	case:
+		unreachable()
 	}
 }
 

@@ -146,7 +146,7 @@ Run :: proc(engine: ^Engine) {
 		scene.DrawTransition(engine.sceneManager)
 		rl.DrawText(rl.TextFormat("%d", rl.GetFPS()), 12, 12, 24, rl.BLACK)
 		rl.DrawText(rl.TextFormat("%d", rl.GetFPS()), 10, 10, 24, rl.WHITE)
-		if core.DEBUG.showWindow {
+		if core.DEBUG_SHOW_WINDOW {
 			ui.FrameMu(&engine.frameInput)
 		}
 		rl.EndDrawing()
@@ -189,7 +189,7 @@ engineInput :: proc(engine: ^Engine) {
 	}
 
 	ui.InputMu(&engine.frameInput)
-	switch engine.sceneManager.current {
+	#partial switch engine.sceneManager.current {
 	case .MENU:
 	// TODO: this sucks ass, figure out a way to make it suck less
 	// if input.MaybeConsumeMouse(&engine.frameInput, .LEFT) {
@@ -205,7 +205,9 @@ engineInput :: proc(engine: ^Engine) {
 		if rl.IsKeyPressed(.ENTER) {
 			scene.LoadScene(engine.sceneManager, .MENU)
 		}
-
+	case .NONE:
+	case:
+		unreachable()
 	}
 }
 
@@ -213,9 +215,8 @@ engineInput :: proc(engine: ^Engine) {
 update :: proc(engine: ^Engine) {
 	scene.Update(engine.sceneManager)
 
-	switch engine.sceneManager.current {
+	#partial switch engine.sceneManager.current {
 	case .MENU:
-
 	case .GAME:
 		player.PlayerInputSystem(engine.world, &engine.frameInput)
 		ecs.ProcessTick(engine.world)
@@ -257,6 +258,9 @@ update :: proc(engine: ^Engine) {
 			screenRect := core.GetScreenRect(camera.camera)
 			render.QueueRect(engine.renderManager, screenRect, rl.BLUE)
 		}
+	case .NONE:
+	case:
+		unreachable()
 	}
 }
 
@@ -284,7 +288,7 @@ processEvents :: proc(engine: ^Engine) {
 
 buildUi :: proc(engine: ^Engine) {
 	uiMan := engine.uiManager
-	switch engine.sceneManager.current {
+	#partial switch engine.sceneManager.current {
 	case .MENU:
 		switch components.MainMenu(engine.uiManager) {
 		case .START:
@@ -312,6 +316,9 @@ buildUi :: proc(engine: ^Engine) {
 			slots := inventory.slots[0:10]
 			components.Hotbar(engine.uiManager, {slots = slots, selected = 0})
 		}
+	case .NONE:
+	case:
+		unreachable()
 	}
 }
 

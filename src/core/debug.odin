@@ -1,6 +1,7 @@
 package core
 
 DEBUG_SHOW_WINDOW :: false
+DEBUG_SKIP_MENU :: true
 
 DEBUG_DRAW_CHUNK_NOISE_MAPS :: false
 
