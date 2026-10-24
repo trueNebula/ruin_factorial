@@ -104,9 +104,24 @@ Run :: proc(engine: ^Engine) {
 
 		ui.BeginFrame(engine.uiManager, camErr ? nil : camera.camera)
 		engine.frameInput = input.Poll(core.DefaultKeybinds)
-		if rl.IsKeyPressed(.E) {
-			engine.uiManager.menuOpen = !engine.uiManager.menuOpen
+
+		if ui.WantsMouse(engine.uiManager) {
+			engine.frameInput.mouseHeld = {}
+			engine.frameInput.mousePressed = {}
+			engine.frameInput.mouseConsumed = {}
 		}
+
+		if ui.WantsKeyboard(engine.uiManager) {
+			engine.frameInput.actionHeld &= {.INVENTORY}
+			engine.frameInput.actionPressed &= {.INVENTORY}
+		}
+
+		if ui.AllowsClose(engine.uiManager) {
+			if .INVENTORY in engine.frameInput.actionPressed {
+				engine.uiManager.menuOpen = !engine.uiManager.menuOpen
+			}
+		}
+
 		// update
 		update(engine)
 		processEvents(engine)

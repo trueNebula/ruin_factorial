@@ -20,6 +20,7 @@ Poll :: proc(binds: core.Keybinds) -> State {
 	if rl.IsKeyPressed(binds.Left) do state.actionPressed += {.LEFT}
 	if rl.IsKeyPressed(binds.Right) do state.actionPressed += {.RIGHT}
 	if rl.IsKeyPressed(binds.Inventory) do state.actionPressed += {.INVENTORY}
+	if rl.IsKeyPressed(binds.Close) do state.actionPressed += {.CLOSE}
 	if rl.IsKeyPressed(binds.Menu) do state.actionPressed += {.MENU}
 
 	if rl.IsKeyDown(binds.Up) do state.actionHeld += {.UP}
@@ -27,6 +28,7 @@ Poll :: proc(binds: core.Keybinds) -> State {
 	if rl.IsKeyDown(binds.Left) do state.actionHeld += {.LEFT}
 	if rl.IsKeyDown(binds.Right) do state.actionHeld += {.RIGHT}
 	if rl.IsKeyDown(binds.Inventory) do state.actionHeld += {.INVENTORY}
+	if rl.IsKeyDown(binds.Close) do state.actionHeld += {.CLOSE}
 	if rl.IsKeyDown(binds.Menu) do state.actionHeld += {.MENU}
 
 	state.mousePos = rl.GetMousePosition()

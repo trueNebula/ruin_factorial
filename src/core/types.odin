@@ -29,9 +29,9 @@ Anchor :: enum {
 }
 
 Keybinds :: struct {
-	Up, Down, Left, Right: rl.KeyboardKey,
-	Inventory, Menu:       rl.KeyboardKey,
-	Action, Interact:      rl.MouseButton,
+	Up, Down, Left, Right:  rl.KeyboardKey,
+	Inventory, Menu, Close: rl.KeyboardKey,
+	Action, Interact:       rl.MouseButton,
 }
 
 InputAction :: enum {
@@ -40,6 +40,7 @@ InputAction :: enum {
 	LEFT,
 	RIGHT,
 	INVENTORY,
+	CLOSE,
 	MENU,
 }
 

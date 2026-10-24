@@ -20,7 +20,8 @@ DefaultKeybinds :: Keybinds {
 	Right     = .D,
 	Action    = .LEFT,
 	Interact  = .RIGHT,
-	Inventory = .ESCAPE,
+	Inventory = .E,
+	Close     = .ESCAPE,
 }
 
 TileSize :: 16

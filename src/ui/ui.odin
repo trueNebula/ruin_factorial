@@ -26,6 +26,7 @@ UiManager :: struct {
 	hovered, active, clicked: Id,
 	mouse:                    [Space]rl.Vector2,
 	menuOpen:                 bool,
+	textFieldActive:          bool,
 	frame:                    int,
 }
 
@@ -188,4 +189,25 @@ FlushWorld :: proc(uiMan: ^UiManager, texMan: ^texture.TextureManager) {
 			drawNode(&node, texMan)
 		}
 	}
+}
+
+WantsMouse :: proc(uiMan: ^UiManager) -> bool {
+	if uiMan.menuOpen {
+		return true
+	}
+	return false
+}
+
+WantsKeyboard :: proc(uiMan: ^UiManager) -> bool {
+	if uiMan.menuOpen {
+		return true
+	}
+	return false
+}
+
+AllowsClose :: proc(uiMan: ^UiManager) -> bool {
+	if uiMan.textFieldActive {
+		return false
+	}
+	return true
 }
