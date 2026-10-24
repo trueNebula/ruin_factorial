@@ -11,17 +11,19 @@ Hotbar :: proc(uiMan: ^ui.UiManager, state: ui.HotbarState) {
 		uiMan,
 		"hotbar",
 		.HUD,
-		{placement = {target = core.BC, pivot = core.CC, offset = {0, -16}}},
+		{placement = {target = core.BC, pivot = core.CC, offset = {0, -32}}},
 	) {
 		if ui.Box(
 			uiMan,
 			"hotbar_container",
 			{
 				layout = .ROW,
-				size = {{.FIXED, 320}, {.FIXED, 32}},
+				size = {{.FIXED, 350}, {.FIXED, 44}},
 				background = ui.SpriteBackground {
-					sprite = {texture = .UI_HOTBAR, rect = {0, 0, 320, 32}},
+					sprite = {texture = .UI_HOTBAR, rect = {0, 0, 175, 22}},
 				},
+				padding = pad(6),
+				gap = 2,
 			},
 		) {
 			for slot, idx in state.slots {
@@ -48,7 +50,7 @@ Hotbar :: proc(uiMan: ^ui.UiManager, state: ui.HotbarState) {
 						fmt.tprintf("hotbar_slot_%u_cnt", idx),
 						fmt.tprint(slot.count),
 						InventorySlotCountStyle,
-						{target = core.TR, pivot = core.TR, offset = {-3, 3}},
+						{target = core.TR, pivot = core.TR, offset = {-1, 2}},
 					)
 				}
 			}
