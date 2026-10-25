@@ -1,0 +1,6 @@
+item = {
+  key = "wood"
+	name = "Wood"
+	texture = ITEM
+	rect = {x = 16, y = 0, width = 16, height = 16}
+}

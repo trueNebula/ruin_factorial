@@ -1,9 +1,12 @@
 package repository
 
+import "core:mem"
+import "core:mem/virtual"
 import "src:core"
 import "src:log"
 
 Repository :: struct {
+	arena:   virtual.Arena,
 	items:   Registry(ItemDef, ItemId),
 	itemIds: [dynamic]ItemId,
 }
@@ -24,14 +27,17 @@ MakeRepository :: proc() -> Repository {
 }
 
 Shutdown :: proc(repo: ^Repository) {
+	virtual.arena_destroy(&repo.arena)
 	delete(repo.itemIds)
 	delete(repo.items.defs)
 	delete(repo.items.byKey)
 }
 
 InitializeRepo :: proc(repo: ^Repository) {
+	readRepo(repo)
+
 	Register(&repo.items, "base:none_item", NoneItemDef)
-	Register(&repo.items, "base:wood", WoodDef)
+	// Register(&repo.items, "base:wood", WoodDef)
 
 	resolveItemIds(repo)
 }
@@ -73,4 +79,9 @@ mustFind :: proc(reg: ^Registry($D, $I), key: string) -> I {
 		log.Err("Repository: Required id \"%v\" is missing.", id)
 	}
 	return id
+}
+
+@(private)
+allocator :: proc(repo: ^Repository) -> mem.Allocator {
+	return virtual.arena_allocator(&repo.arena)
 }
