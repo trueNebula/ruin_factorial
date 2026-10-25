@@ -34,7 +34,7 @@ Hotbar :: proc(uiMan: ^ui.UiManager, state: ui.HotbarState) {
 						size = {{.FIXED, 32}, {.FIXED, 32}},
 					}
 					if slot.id != .NONE {
-						itemRect, err := item.GetRectForId(slot.id)
+						itemRect, err := item.GetRectForId(slot.id) // TODO: replace with repo
 						if !err {
 							opts.background = ui.SpriteBackground {
 								sprite = {texture = .ITEM, rect = itemRect},

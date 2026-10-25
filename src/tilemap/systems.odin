@@ -6,6 +6,7 @@ import "src:input"
 import "src:item"
 import "src:log"
 import "src:neb_utils"
+import "src:repository"
 import rl "vendor:raylib"
 
 TilemapClickSystem :: proc(
@@ -13,6 +14,7 @@ TilemapClickSystem :: proc(
 	world: ^ecs.World,
 	frameInput: ^input.State,
 	camera: rl.Camera2D,
+	repo: ^repository.Repository,
 ) {
 	if input.MaybeConsumeMouse(frameInput, .LEFT) {
 		pos := rl.GetScreenToWorld2D(frameInput.mousePos, camera)
@@ -31,7 +33,7 @@ TilemapClickSystem :: proc(
 		if health.current <= 0 {
 			ecs.Delete(world, block.entity)
 			worldPos := Screen2World(pos) * core.TileSize + core.TileSize / 2
-			breakTile(world, block.entity, worldPos)
+			breakTile(world, repo, block.entity, worldPos)
 			block.entity = 0
 			block.id = .NONE
 			return
@@ -49,7 +51,12 @@ TilemapClickSystem :: proc(
 }
 
 @(private)
-breakTile :: proc(world: ^ecs.World, entityId: u32, pos: rl.Vector2) {
+breakTile :: proc(
+	world: ^ecs.World,
+	repo: ^repository.Repository,
+	entityId: u32,
+	pos: rl.Vector2,
+) {
 	dropTable, err := ecs.GetComponentForEntity(world, entityId, core.DropTable)
 	if err {
 		return
@@ -65,7 +72,7 @@ breakTile :: proc(world: ^ecs.World, entityId: u32, pos: rl.Vector2) {
 			qty = 1
 		}
 		if drop.weight == -1 || rng < drop.weight {
-			id := item.DropItem(world, drop.item, u16(qty), pos)
+			id := item.DropItem(world, repo, drop.item, u16(qty), pos)
 			log.Debug("tile id: %+v, item id: %+v", entityId, id)
 			continue
 		}

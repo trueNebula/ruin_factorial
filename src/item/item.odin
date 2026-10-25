@@ -5,15 +5,18 @@ import "src:core"
 import "src:ecs"
 import "src:log"
 import "src:neb_utils"
+import "src:repository"
 import rl "vendor:raylib"
 
-DropItem :: proc(world: ^ecs.World, itemId: core.ItemId, qty: u16, pos: rl.Vector2) -> u32 {
-	rect, err := GetRectForId(itemId)
-
-	if err {
-		return 0
-	}
-
+DropItem :: proc(
+	world: ^ecs.World,
+	repo: ^repository.Repository,
+	itemId: core.ItemId,
+	qty: u16,
+	pos: rl.Vector2,
+) -> u32 {
+	itemDef := repository.Get(&repo.items, repo.itemIds[itemId])
+	rect := itemDef.rect
 	sprite := core.Sprite {
 		texture = core.Texture.ITEM,
 		rect    = rect,

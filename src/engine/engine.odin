@@ -5,11 +5,11 @@ import "src:core"
 import "src:ecs"
 import "src:event"
 import "src:input"
-import "src:item"
 import "src:neb_utils"
 import "src:physics"
 import "src:player"
 import "src:render"
+import "src:repository"
 import "src:scene"
 import "src:texture"
 import "src:tilemap"
@@ -24,6 +24,7 @@ Engine :: struct {
 	textureManager: ^texture.TextureManager,
 	tileManager:    ^tilemap.TileManager,
 	uiManager:      ^ui.UiManager,
+	repo:           ^repository.Repository,
 	world:          ^ecs.World,
 	frameInput:     input.State,
 	rng:            runtime.Random_Generator,
@@ -51,6 +52,9 @@ MakeEngine :: proc() -> Engine {
 	sceneMan := new(scene.SceneManager)
 	sceneMan^ = scene.MakeSceneManger(texMan, world, queue, uiMan)
 
+	repo := new(repository.Repository)
+	repo^ = repository.MakeRepository()
+
 	rng := neb_utils.InitNewGenerator()
 
 	engine := Engine {
@@ -59,6 +63,7 @@ MakeEngine :: proc() -> Engine {
 		textureManager = texMan,
 		tileManager    = tileMan,
 		uiManager      = uiMan,
+		repo           = repo,
 		world          = world,
 		queue          = queue,
 		rng            = rng,
@@ -95,6 +100,8 @@ Init :: proc(engine: ^Engine) {
 	} else {
 		scene.LoadFirstScene(engine.sceneManager)
 	}
+
+	repository.InitializeRepo(engine.repo)
 }
 
 Run :: proc(engine: ^Engine) {
@@ -174,6 +181,7 @@ Shutdown :: proc(engine: ^Engine) {
 	render.Shutdown(engine.renderManager)
 	ui.ShutdownMu()
 	ui.Shutdown(engine.uiManager)
+	repository.Shutdown(engine.repo)
 
 	free(engine.rng.data)
 	delete(engine.queue.items)
@@ -184,6 +192,7 @@ Shutdown :: proc(engine: ^Engine) {
 	free(engine.renderManager)
 	free(engine.sceneManager)
 	free(engine.uiManager)
+	free(engine.repo)
 
 	free_all(context.temp_allocator)
 }
@@ -231,6 +240,7 @@ update :: proc(engine: ^Engine) {
 			engine.world,
 			&engine.frameInput,
 			camera.camera,
+			engine.repo,
 		)
 
 		if (engine.sceneManager.transition.state == .NONE) {
