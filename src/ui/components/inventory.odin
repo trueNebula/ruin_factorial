@@ -2,11 +2,11 @@ package components
 
 import "core:fmt"
 import "src:core"
-import "src:item"
+import "src:repository"
 import "src:ui"
 import rl "vendor:raylib"
 
-Inventory :: proc(uiMan: ^ui.UiManager, state: ui.InventoryState) {
+Inventory :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, state: ui.InventoryState) {
 	if ui.Root(
 		uiMan,
 		"inventory",
@@ -42,14 +42,12 @@ Inventory :: proc(uiMan: ^ui.UiManager, state: ui.InventoryState) {
 							opts := ui.BoxOpts {
 								size = {{.FIXED, 32}, {.FIXED, 32}},
 							}
-							if slot.id != .NONE {
-								itemRect, err := item.GetRectForId(slot.id) // TODO: replace with repo
-								if !err {
-									opts.background = ui.SpriteBackground {
-										sprite = {texture = .ITEM, rect = itemRect},
-									}
-								}
+							// if slot.id != .NONE {
+							itemDef := repository.Get(&repo.items, repo.itemIds[slot.id])
+							opts.background = ui.SpriteBackground {
+								sprite = {texture = itemDef.texture, rect = itemDef.rect},
 							}
+							// }
 							if ui.Box(uiMan, fmt.tprintf("inventory_slot_%u_itm", idx), opts) {
 								if slot.id != .NONE || slot.count > 0 {
 									ui.Label(

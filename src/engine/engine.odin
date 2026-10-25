@@ -317,10 +317,14 @@ buildUi :: proc(engine: ^Engine) {
 			return
 		}
 		if engine.uiManager.menuOpen {
-			components.Inventory(engine.uiManager, {slots = inventory.slots[:], rows = 4})
+			components.Inventory(
+				engine.uiManager,
+				engine.repo,
+				{slots = inventory.slots[:], rows = 4},
+			)
 		} else {
 			slots := inventory.slots[0:10]
-			components.Hotbar(engine.uiManager, {slots = slots, selected = 0})
+			components.Hotbar(engine.uiManager, engine.repo, {slots = slots, selected = 0})
 		}
 	case .NONE:
 	case:

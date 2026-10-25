@@ -22,7 +22,10 @@ WoodDef :: ItemDef {
 	key = "base:wood",
 	name = "Wood",
 	texture = .ITEM,
-	rect = {x = 0, y = 0, width = 16, height = 16},
+	rect = {x = 16, y = 0, width = 16, height = 16},
 }
 
-NoneItemDef :: ItemDef{}
+NoneItemDef :: ItemDef {
+	texture = .ITEM,
+	rect    = {0, 0, 16, 16},
+}

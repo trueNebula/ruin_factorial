@@ -2,11 +2,11 @@ package components
 
 import "core:fmt"
 import "src:core"
-import "src:item"
+import "src:repository"
 import "src:ui"
 import rl "vendor:raylib"
 
-Hotbar :: proc(uiMan: ^ui.UiManager, state: ui.HotbarState) {
+Hotbar :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, state: ui.HotbarState) {
 	if ui.Root(
 		uiMan,
 		"hotbar",
@@ -34,11 +34,9 @@ Hotbar :: proc(uiMan: ^ui.UiManager, state: ui.HotbarState) {
 						size = {{.FIXED, 32}, {.FIXED, 32}},
 					}
 					if slot.id != .NONE {
-						itemRect, err := item.GetRectForId(slot.id) // TODO: replace with repo
-						if !err {
-							opts.background = ui.SpriteBackground {
-								sprite = {texture = .ITEM, rect = itemRect},
-							}
+						itemDef := repository.Get(&repo.items, repo.itemIds[slot.id])
+						opts.background = ui.SpriteBackground {
+							sprite = {texture = itemDef.texture, rect = itemDef.rect},
 						}
 					}
 					if ui.Box(uiMan, fmt.tprintf("hotbar_slot_%u_itm", idx), opts) {
