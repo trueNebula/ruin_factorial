@@ -12,6 +12,7 @@ ItemDef :: struct {
 	rect:    rl.Rectangle,
 }
 
+// Add item ids to the repo list in the same order as the enum values for core.ItemId
 @(private)
 resolveItemIds :: proc(repo: ^Repository) {
 	append(&repo.itemIds, mustFind(&repo.items, "base:none_item"))

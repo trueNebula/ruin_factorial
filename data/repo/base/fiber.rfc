@@ -1,0 +1,6 @@
+item = {
+  key = "fiber"
+	name = "Fiber"
+	texture = ITEM
+	rect = {x = 48, y = 0, width = 16, height = 16}
+}

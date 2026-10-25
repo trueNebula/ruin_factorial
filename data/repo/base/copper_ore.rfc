@@ -1,0 +1,6 @@
+item = {
+  key = "copper_ore"
+	name = "Copper Ore"
+	texture = ITEM
+	rect = {x = 0, y = 32, width = 16, height = 16}
+}

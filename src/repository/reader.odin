@@ -19,29 +19,31 @@ Entry :: struct {
 @(private)
 readRepo :: proc(repo: ^Repository) {
 	scratch := context.temp_allocator
+	nsCnt := 0
+	cfgCnt := 0
 	foundBase := false
 
 	dirHandle, openErr := os.open(REPO_CONFIG_DIR)
 	if openErr != nil {
-		log.Err("Could not open repo directory at %s!", REPO_CONFIG_DIR)
+		log.Err("(Repo) Could not open repo directory at %s!", REPO_CONFIG_DIR)
 	}
 	defer os.close(dirHandle)
 
 	namespaces, readErr := os.read_directory(dirHandle, 0, scratch)
 	if readErr != nil {
-		log.Err("Could not read repo directory at %s!", REPO_CONFIG_DIR)
+		log.Err("(Repo) Could not read repo directory at %s!", REPO_CONFIG_DIR)
 	}
 
 	for namespace in namespaces {
 		if namespace.type != .Directory {
-			log.Warn("%s is a stray file, skipping.", namespace.fullpath)
+			log.Warn("(Repo) %s is a stray file, skipping.", namespace.fullpath)
 			continue
 		}
 
 		nsDirHandle, nsOpenErr := os.open(namespace.fullpath)
 		if nsOpenErr != nil {
 			log.Warn(
-				"Could not open repo namespace directory at %s, skipping.",
+				"(Repo) Could not open repo namespace directory at %s, skipping.",
 				namespace.fullpath,
 			)
 			continue
@@ -51,7 +53,7 @@ readRepo :: proc(repo: ^Repository) {
 		files, nsReadErr := os.read_directory(nsDirHandle, 0, scratch)
 		if nsReadErr != nil {
 			log.Warn(
-				"Could not read repo namespace directory at %s, skipping.",
+				"(Repo) Could not read repo namespace directory at %s, skipping.",
 				namespace.fullpath,
 			)
 			continue
@@ -62,26 +64,34 @@ readRepo :: proc(repo: ^Repository) {
 		}
 
 		for file in files {
-			readFile(file.fullpath, namespace.name, repo)
+			if readFile(file.fullpath, namespace.name, repo) {
+				cfgCnt += 1
+			}
 		}
+
+		nsCnt += 1
 	}
 
 	if !foundBase {
-		log.Err("Did not read any file in the base namespace!")
+		log.Err("(Repo) Did not read any file in the base namespace!")
 	}
+
+	log.Debug("(Repo) Added %d configurations to the repo across %d namespaces.", cfgCnt, nsCnt)
 }
 
 @(private)
-readFile :: proc(path, namespace: string, repo: ^Repository) {
+readFile :: proc(path, namespace: string, repo: ^Repository) -> (ok: bool) {
 	jsonData, readErr := os.read_entire_file(path, context.temp_allocator)
 
 	if readErr != nil {
-		log.Err("Failed to read config file %s!", path)
+		log.Err("(Repo) Failed to read config file %s!", path, panic = false)
+		return false
 	}
 
 	entry: Entry
 	if json.unmarshal(jsonData, &entry, .MJSON, allocator(repo)) != nil {
-		log.Err("Failed to parse config file %s!", path)
+		log.Err("(Repo) Failed to parse config file %s!", path, panic = false)
+		return false
 	}
 
 	if entry.item.key != "" {
@@ -93,4 +103,6 @@ readFile :: proc(path, namespace: string, repo: ^Repository) {
 		}
 		Register(&repo.items, fullKey, entry.item)
 	}
+
+	return true
 }

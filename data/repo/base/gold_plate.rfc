@@ -1,0 +1,6 @@
+item = {
+  key = "gold_plate"
+	name = "Gold Plate"
+	texture = ITEM
+	rect = {x = 32, y = 48, width = 16, height = 16}
+}
