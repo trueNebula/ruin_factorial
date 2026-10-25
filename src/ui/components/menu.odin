@@ -17,7 +17,7 @@ MainMenu :: proc(uiMan: ^ui.UiManager) -> (action: MenuAction) {
 		uiMan,
 		"main_menu",
 		.MENU,
-		{placement = {pivot = core.CL, target = core.CL, offset = {16, 0}}},
+		ui.Screen{placement = {pivot = core.CL, target = core.CL, offset = {16, 0}}},
 	) {
 		if ui.Box(
 			uiMan,

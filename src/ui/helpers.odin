@@ -100,8 +100,25 @@ addChild :: proc(parent: ^Node, boxSize: [2]Size, nodeSize: rl.Vector2) {
 @(private)
 placeRoot :: proc(uiMan: ^UiManager, node: ^Node) -> rl.Vector2 {
 	screen := GetScreen(uiMan)
-	// TODO: add code to attach root to world
-	return core.PlaceWidget(node.opts.placement, node.size, screen)
+	pos: rl.Vector2
+
+	switch attach in node.attach {
+	case nil:
+		pos = {screen.x, screen.y}
+	case Screen:
+		pos = core.PlaceWidget(attach.placement, node.size, screen)
+	case Follow:
+		pos = attach.pos + attach.offset - node.size * attach.pivot
+		if attach.clamp {
+			pos.x = clamp(pos.x, screen.x, screen.x + screen.width - node.size.x)
+			pos.y = clamp(pos.y, screen.y, screen.y + screen.height - node.size.y)
+		}
+		pos = {math.round(pos.x), math.round(pos.y)}
+	case InWorld:
+		pos = attach.pos + attach.offset - node.size * attach.pivot
+		pos = {math.round(pos.x), math.round(pos.y)}
+	}
+	return pos
 }
 
 @(private)

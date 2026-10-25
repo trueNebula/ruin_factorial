@@ -54,6 +54,7 @@ Node :: struct {
 	childCount:   int, // For gaps
 	cursor:       rl.Vector2, // Where the next child will go
 	opts:         BoxOpts,
+	attach:       Attach,
 	content:      Content,
 }
 
@@ -87,6 +88,33 @@ TextContent :: struct {
 ImageContent :: struct {
 	sprite: core.Sprite,
 	scale:  int,
+}
+
+// Root attachment modes
+Attach :: union {
+	Screen,
+	Follow,
+	InWorld,
+}
+
+// Anchored on the screen
+Screen :: struct {
+	placement: core.WidgetPlacement,
+}
+
+// Follows a specific position in screen space
+Follow :: struct {
+	pos:    rl.Vector2, // target position to follow
+	pivot:  core.WidgetAnchor, // which point of the root sits on the position
+	offset: rl.Vector2,
+	clamp:  bool, // keep inside the screen rect
+}
+
+// Only for World Space roots, follows specific world coords
+InWorld :: struct {
+	pos:    rl.Vector2, // target coords to follow
+	pivot:  core.WidgetAnchor, // which point of the root sits on the position
+	offset: rl.Vector2,
 }
 
 Response :: struct {

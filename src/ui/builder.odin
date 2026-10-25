@@ -5,19 +5,33 @@ import "src:core"
 import rl "vendor:raylib"
 
 @(require_results, deferred_in_out = endRoot)
-Root :: proc(uiMan: ^UiManager, label: string, layer: Layer, opts: BoxOpts) -> bool {
+Root :: proc(
+	uiMan: ^UiManager,
+	label: string,
+	layer: Layer,
+	attach: Attach,
+	opts: BoxOpts = {},
+) -> bool {
 	id := makeId(uiMan, label)
 	touch(uiMan, id)
 	idx := pushNode(uiMan, id, opts)
 	node := &uiMan.nodes[idx]
 	node.layer = layer
 	node.space = .SCREEN // TODO: support .WORLD
+	node.attach = attach
 
 	return true
 }
 
 @(private)
-endRoot :: proc(uiMan: ^UiManager, label: string, layer: Layer, opts: BoxOpts, open: bool) {
+endRoot :: proc(
+	uiMan: ^UiManager,
+	label: string,
+	layer: Layer,
+	attach: Attach,
+	opts: BoxOpts,
+	open: bool,
+) {
 	if open {
 		popNode(uiMan)
 	}

@@ -11,7 +11,7 @@ Hotbar :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, state: ui.Hot
 		uiMan,
 		"hotbar",
 		.HUD,
-		{placement = {target = core.BC, pivot = core.CC, offset = {0, -32}}},
+		ui.Screen{placement = {target = core.BC, pivot = core.CC, offset = {0, -32}}},
 	) {
 		if ui.Box(
 			uiMan,
