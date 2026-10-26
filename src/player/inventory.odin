@@ -22,7 +22,7 @@ tryAddItemToInventory :: proc(inventory: ^core.Inventory, item: core.Item) -> (a
 
 	for &slot in inventory.slots {
 		if item.count == 0 do break
-		if slot.id != .NONE do continue
+		if slot.id != 0 do continue
 
 		toAdd := min(MAX_STACK_SIZE, item.count)
 		slot.id = item.id

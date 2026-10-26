@@ -37,14 +37,14 @@ Hotbar :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, props: Hotbar
 					opts := ui.BoxOpts {
 						size = {{.FIXED, 32}, {.FIXED, 32}},
 					}
-					if slot.id != .NONE {
-						itemDef := repository.Get(&repo.items, repo.itemIds[slot.id])
+					if slot.id != 0 {
+						itemDef := repository.Get(&repo.items, slot.id)
 						opts.background = ui.SpriteBackground {
 							sprite = {texture = itemDef.texture, rect = itemDef.rect},
 						}
 					}
 					if ui.Box(uiMan, fmt.tprintf("hotbar_slot_%u_itm", idx), opts) {
-						if slot.id != .NONE || slot.count > 0 {
+						if slot.id != 0 || slot.count > 0 {
 							ui.Label(
 								uiMan,
 								fmt.tprintf("hotbar_slot_%u_cnt", idx),

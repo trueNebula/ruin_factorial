@@ -324,7 +324,7 @@ buildUi :: proc(engine: ^Engine) {
 			)
 		} else {
 			slots := inventory.slots[0:10]
-			components.Hotbar(engine.uiManager, engine.repo, {slots = slots, selected = 0})
+			components.Hotbar(engine.uiManager, engine.repo, {slots = slots})
 		}
 	case .NONE:
 	case:

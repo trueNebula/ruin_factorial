@@ -15,7 +15,7 @@ DropItem :: proc(
 	qty: u16,
 	pos: rl.Vector2,
 ) -> u32 {
-	itemDef := repository.Get(&repo.items, repo.itemIds[itemId])
+	itemDef := repository.Get(&repo.items, itemId)
 	rect := itemDef.rect
 	sprite := core.Sprite {
 		texture = core.Texture.ITEM,
@@ -52,16 +52,6 @@ DropItem :: proc(
 	}
 
 	return ecs.Add(world, item, sprite, transform, float, shadow, collider)
-}
-
-GetRectForId :: proc(itemId: core.ItemId) -> (rect: rl.Rectangle, err: bool) {
-	#partial switch itemId {
-	case .WOOD:
-		return {x = 0, y = 0, width = 16, height = 16}, false
-	}
-
-	log.Warn("Tried getting rect for item id %+v, doesn't exist!", itemId)
-	return {}, true
 }
 
 RollQuantity :: proc(range: core.RangeInt) -> int {

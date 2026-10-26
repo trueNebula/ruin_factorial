@@ -86,10 +86,7 @@ BlockId :: enum {
 	GRASS,
 }
 
-ItemId :: enum {
-	NONE,
-	WOOD,
-}
+ItemId :: distinct u32
 
 TweenCurve :: enum {
 	NONE, // instant a->b

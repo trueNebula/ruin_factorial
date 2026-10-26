@@ -6,9 +6,8 @@ import "src:core"
 import "src:log"
 
 Repository :: struct {
-	arena:   virtual.Arena,
-	items:   Registry(ItemDef, ItemId),
-	itemIds: [dynamic]ItemId,
+	arena: virtual.Arena,
+	items: Registry(ItemDef, core.ItemId),
 }
 
 Registry :: struct($Def: typeid, $Id: typeid) {
@@ -18,17 +17,15 @@ Registry :: struct($Def: typeid, $Id: typeid) {
 
 MakeRepository :: proc() -> Repository {
 	return {
-		items = Registry(ItemDef, ItemId) {
+		items = Registry(ItemDef, core.ItemId) {
 			defs = make([dynamic]ItemDef),
-			byKey = make(map[string]ItemId),
+			byKey = make(map[string]core.ItemId),
 		},
-		itemIds = make([dynamic]ItemId),
 	}
 }
 
 Shutdown :: proc(repo: ^Repository) {
 	virtual.arena_destroy(&repo.arena)
-	delete(repo.itemIds)
 	delete(repo.items.defs)
 	delete(repo.items.byKey)
 }
@@ -37,8 +34,6 @@ InitializeRepo :: proc(repo: ^Repository) {
 	readRepo(repo)
 
 	Register(&repo.items, "base:none_item", NoneItemDef)
-
-	resolveItemIds(repo)
 }
 
 // Register a def by key
