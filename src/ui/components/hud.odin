@@ -6,7 +6,11 @@ import "src:repository"
 import "src:ui"
 import rl "vendor:raylib"
 
-Hotbar :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, state: ui.HotbarState) {
+HotbarProps :: struct {
+	slots: []core.Item,
+}
+
+Hotbar :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, props: HotbarProps) {
 	if ui.Root(
 		uiMan,
 		"hotbar",
@@ -24,7 +28,7 @@ Hotbar :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, state: ui.Hot
 				gap = 2,
 			},
 		) {
-			for slot, idx in state.slots {
+			for slot, idx in props.slots {
 				if ui.Box(
 					uiMan,
 					fmt.tprintf("hotbar_slot_%u", idx),

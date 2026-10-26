@@ -19,13 +19,6 @@ resolveItemIds :: proc(repo: ^Repository) {
 	append(&repo.itemIds, mustFind(&repo.items, "base:wood"))
 }
 
-WoodDef :: ItemDef {
-	key = "base:wood",
-	name = "Wood",
-	texture = .ITEM,
-	rect = {x = 16, y = 0, width = 16, height = 16},
-}
-
 NoneItemDef :: ItemDef {
 	texture = .ITEM,
 	rect    = {0, 0, 16, 16},

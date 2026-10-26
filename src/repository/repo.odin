@@ -37,7 +37,6 @@ InitializeRepo :: proc(repo: ^Repository) {
 	readRepo(repo)
 
 	Register(&repo.items, "base:none_item", NoneItemDef)
-	// Register(&repo.items, "base:wood", WoodDef)
 
 	resolveItemIds(repo)
 }

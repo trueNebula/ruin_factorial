@@ -6,7 +6,12 @@ import "src:repository"
 import "src:ui"
 import rl "vendor:raylib"
 
-Inventory :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, state: ui.InventoryState) {
+InventoryProps :: struct {
+	slots: []core.Item,
+	rows:  int,
+}
+
+Inventory :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, props: InventoryProps) {
 	hoveredItem: ^repository.ItemDef
 
 	if ui.Root(
@@ -26,13 +31,13 @@ Inventory :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, state: ui.
 				gap = 2,
 			},
 		) {
-			for row in 0 ..< state.rows {
+			for row in 0 ..< props.rows {
 				if ui.Box(
 					uiMan,
 					fmt.tprintf("inventory_row_%u", row),
 					{layout = .ROW, gap = 2, size = {{.GROW, 1}, {.FIXED, 32}}},
 				) {
-					for slot, idx in state.slots[row * 10:(row + 1) * 10] {
+					for slot, idx in props.slots[row * 10:(row + 1) * 10] {
 						if response, open := ui.ClickableBox(
 							uiMan,
 							fmt.tprintf("inventory_slot_%u", idx),
@@ -85,6 +90,7 @@ Inventory :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, state: ui.
 }
 
 Tooltip :: proc(uiMan: ^ui.UiManager, item: ^repository.ItemDef) {
+	// TODO: wrap title if needed, add description and wrap it too
 	if ui.Root(
 		uiMan,
 		"tooltip",

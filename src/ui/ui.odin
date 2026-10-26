@@ -28,13 +28,21 @@ UiManager :: struct {
 	menuOpen:                 bool,
 	textFieldActive:          bool,
 	frame:                    int,
+	state:                    map[Id]State,
 }
 
 MakeUiManager :: proc() -> UiManager {
 	nodes := make([dynamic]Node)
 	parents := make([dynamic]int)
 	widgets := make(map[Id]WidgetState)
-	return {nodes = nodes, parents = parents, widgets = widgets, camera = rl.Camera2D{zoom = 1}}
+	state := make(map[Id]State)
+	return {
+		nodes = nodes,
+		parents = parents,
+		widgets = widgets,
+		state = state,
+		camera = rl.Camera2D{zoom = 1},
+	}
 }
 
 Update :: proc(uiMan: ^UiManager) {
@@ -54,6 +62,7 @@ Shutdown :: proc(uiMan: ^UiManager) {
 	delete(uiMan.nodes)
 	delete(uiMan.parents)
 	delete(uiMan.widgets)
+	delete(uiMan.state)
 }
 
 BeginFrame :: proc(uiMan: ^UiManager, worldCamera: Maybe(rl.Camera2D)) {
