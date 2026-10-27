@@ -5,6 +5,7 @@ import "src:core"
 import "src:ecs"
 import "src:log"
 import "src:render"
+import "src:repository"
 import rl "vendor:raylib"
 
 Tile :: struct {
@@ -39,6 +40,7 @@ TileManager :: struct {
 	chunks:    ChunkMap,
 	biomes:    BiomeList,
 	seeds:     Seeds,
+	repo:      ^repository.Repository,
 }
 
 CreateRepo :: proc() -> TileRepo {
@@ -101,7 +103,7 @@ CreateBlockRepo :: proc() -> BlockRepo {
 	return blockRepo
 }
 
-MakeTileManager :: proc() -> TileManager {
+MakeTileManager :: proc(repo: ^repository.Repository) -> TileManager {
 	chunkMap := make(ChunkMap)
 	tileMan := TileManager {
 		tileRepo  = CreateRepo(),
@@ -109,6 +111,7 @@ MakeTileManager :: proc() -> TileManager {
 		chunks    = chunkMap,
 		biomes    = CreateBiomes(),
 		seeds     = CreateSeeds(),
+		repo      = repo,
 	}
 
 	return tileMan

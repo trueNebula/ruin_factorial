@@ -14,7 +14,6 @@ TilemapClickSystem :: proc(
 	world: ^ecs.World,
 	frameInput: ^input.State,
 	camera: rl.Camera2D,
-	repo: ^repository.Repository,
 ) {
 	if input.MaybeConsumeMouse(frameInput, .LEFT) {
 		pos := rl.GetScreenToWorld2D(frameInput.mousePos, camera)
@@ -33,7 +32,7 @@ TilemapClickSystem :: proc(
 		if health.current <= 0 {
 			ecs.Delete(world, block.entity)
 			worldPos := Screen2World(pos) * core.TileSize + core.TileSize / 2
-			breakTile(world, repo, block.entity, worldPos)
+			breakTile(world, tileMan.repo, block.entity, worldPos)
 			block.entity = 0
 			block.id = 0
 			return

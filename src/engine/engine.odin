@@ -34,6 +34,9 @@ MakeEngine :: proc() -> Engine {
 	queue := new(event.Queue)
 	queue^ = event.MakeQueue()
 
+	repo := new(repository.Repository)
+	repo^ = repository.MakeRepository()
+
 	texMan := new(texture.TextureManager)
 	texMan^ = texture.MakeTextureManager()
 
@@ -44,7 +47,7 @@ MakeEngine :: proc() -> Engine {
 	renMan^ = render.MakeRenderManager()
 
 	tileMan := new(tilemap.TileManager)
-	tileMan^ = tilemap.MakeTileManager()
+	tileMan^ = tilemap.MakeTileManager(repo)
 
 	uiMan := new(ui.UiManager)
 	uiMan^ = ui.MakeUiManager()
@@ -52,8 +55,6 @@ MakeEngine :: proc() -> Engine {
 	sceneMan := new(scene.SceneManager)
 	sceneMan^ = scene.MakeSceneManger(texMan, world, queue, uiMan)
 
-	repo := new(repository.Repository)
-	repo^ = repository.MakeRepository()
 
 	rng := neb_utils.InitNewGenerator()
 
@@ -240,7 +241,6 @@ update :: proc(engine: ^Engine) {
 			engine.world,
 			&engine.frameInput,
 			camera.camera,
-			engine.repo,
 		)
 
 		if (engine.sceneManager.transition.state == .NONE) {

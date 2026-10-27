@@ -8,6 +8,7 @@ import "src:ecs"
 import "src:log"
 import "src:loot"
 import "src:neb_utils"
+import "src:repository"
 import "src:tilemap"
 import rl "vendor:raylib"
 
@@ -219,12 +220,18 @@ generateBlock :: proc(
 ) {
 	tileSeed := GetTileSeed(u64(tileMan.seeds.height), chunkX, chunkY, idx)
 	if neb_utils.PercentChanceSeeded(5, tileSeed) {
-		block: core.BlockId = 1
-		health := core.Health {
-			current = 3,
-			max     = 3,
+		block, err := repository.Find(&tileMan.repo.blocks, "base:grass_block")
+
+		if err {
+			return
 		}
-		dropTable := loot.GRASS_TILE_LOOT[:]
+
+		blockDef := repository.Get(&tileMan.repo.blocks, block)
+		health := core.Health {
+			current = blockDef.health,
+			max     = blockDef.health,
+		}
+		dropTable := blockDef.drops[:]
 
 		entity := ecs.Add(world, block, health, dropTable)
 		return Block{entity = entity, id = 1}, true
