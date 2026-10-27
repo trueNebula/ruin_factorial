@@ -158,3 +158,16 @@ GetTotalWeightFromTable :: proc(table: ^DropTable) -> i32 {
 	}
 	return weight
 }
+
+IsNone :: proc {
+	IsNoneItem,
+	IsNoneBlock,
+}
+
+IsNoneItem :: proc(id: ItemId) -> bool {
+	return id == 0
+}
+
+IsNoneBlock :: proc(id: BlockId) -> bool {
+	return id == 0
+}

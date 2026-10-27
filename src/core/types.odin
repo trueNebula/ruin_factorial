@@ -81,11 +81,12 @@ BiomeId :: enum {
 	GRASSLANDS,
 }
 
-BlockId :: enum {
-	NONE,
-	GRASS,
-}
+// BlockId :: enum {
+// 	NONE,
+// 	GRASS,
+// }
 
+BlockId :: distinct u32
 ItemId :: distinct u32
 
 TweenCurve :: enum {

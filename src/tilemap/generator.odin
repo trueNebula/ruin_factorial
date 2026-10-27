@@ -219,7 +219,7 @@ generateBlock :: proc(
 ) {
 	tileSeed := GetTileSeed(u64(tileMan.seeds.height), chunkX, chunkY, idx)
 	if neb_utils.PercentChanceSeeded(5, tileSeed) {
-		block: core.BlockId = .GRASS
+		block: core.BlockId = 1
 		health := core.Health {
 			current = 3,
 			max     = 3,
@@ -229,7 +229,7 @@ generateBlock :: proc(
 		}
 
 		entity := ecs.Add(world, block, health, dropTable)
-		return Block{entity = entity, id = .GRASS}, true
+		return Block{entity = entity, id = 1}, true
 	}
 	return {}, false
 }

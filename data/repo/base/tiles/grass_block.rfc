@@ -1,0 +1,14 @@
+block = {
+  key = "grass_block"
+  health = 3
+  drops = [
+    {
+      item = "base:fiber"
+      qty = {min = 0, max = 5}
+      weight = -1
+    }
+  ]
+  texture = BLOCK
+  anchor = BOTTOM_LEFT
+  rect = {x = 128, y = 0, width = 16, height = 16}
+}

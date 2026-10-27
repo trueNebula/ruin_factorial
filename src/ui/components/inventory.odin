@@ -50,7 +50,7 @@ Inventory :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, props: Inv
 								size = {{.FIXED, 32}, {.FIXED, 32}},
 							}
 
-							if slot.id != 0 {
+							if !core.IsNone(slot.id) {
 								itemDef := repository.Get(&repo.items, slot.id)
 								opts.background = ui.SpriteBackground {
 									sprite = {texture = itemDef.texture, rect = itemDef.rect},
@@ -59,7 +59,7 @@ Inventory :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, props: Inv
 							}
 
 							if ui.Box(uiMan, fmt.tprintf("inventory_slot_%u_itm", idx), opts) {
-								if slot.id != 0 || slot.count > 0 {
+								if !core.IsNone(slot.id) || slot.count > 0 {
 									ui.Label(
 										uiMan,
 										fmt.tprintf("inventory_slot_%u_cnt", idx),

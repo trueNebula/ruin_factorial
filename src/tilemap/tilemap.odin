@@ -92,7 +92,7 @@ CreateRepo :: proc() -> TileRepo {
 
 CreateBlockRepo :: proc() -> BlockRepo {
 	blockRepo := make(BlockRepo)
-	blockRepo[.GRASS] = Tile {
+	blockRepo[1] = Tile {
 		texture = .BLOCK,
 		rect = rl.Rectangle{x = 128, y = 0, width = 16, height = 16},
 		anchor = .BOTTOM_LEFT,
@@ -249,7 +249,7 @@ drawChunk :: proc(
 		for tileX in x0 ..= x1 {
 			idx := tileY * core.ChunkLenght + tileX
 			block := chunk.blocks[idx]
-			if block.id == .NONE {
+			if core.IsNone(block.id) {
 				continue
 			}
 

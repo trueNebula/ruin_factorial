@@ -2,6 +2,7 @@ package repository
 
 import "core:encoding/json"
 import "core:fmt"
+import "core:mem"
 import "core:os"
 import "core:sort"
 import "core:strings"
@@ -14,7 +15,8 @@ BASE_NAMESPACE :: "base"
 
 @(private)
 Entry :: struct {
-	item: ItemDef,
+	item:  ItemDef,
+	block: BlockDef,
 }
 
 @(private)
@@ -121,14 +123,22 @@ readFile :: proc(path, namespace: string, repo: ^Repository) -> (ok: bool) {
 	}
 
 	if entry.item.key != "" {
-		fullKey := ""
-		if strings.contains_rune(entry.item.key, ':') {
-			fullKey = entry.item.key
-		} else {
-			fullKey = strings.concatenate({namespace, ":", entry.item.key}, allocator(repo))
-		}
+		fullKey := getFullKey(entry.item.key, namespace, allocator(repo))
 		Register(&repo.items, fullKey, entry.item)
 	}
 
+	if entry.block.key != "" {
+		fullKey := getFullKey(entry.block.key, namespace, allocator(repo))
+		Register(&repo.blocks, fullKey, entry.block)
+	}
+
 	return true
+}
+
+@(private)
+getFullKey :: proc(key: string, namespace: string, allocator: mem.Allocator) -> string {
+	if strings.contains_rune(key, ':') {
+		return key
+	}
+	return strings.concatenate({namespace, ":", key}, allocator)
 }

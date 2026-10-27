@@ -6,8 +6,9 @@ import "src:core"
 import "src:log"
 
 Repository :: struct {
-	arena: virtual.Arena,
-	items: Registry(ItemDef, core.ItemId),
+	arena:  virtual.Arena,
+	items:  Registry(ItemDef, core.ItemId),
+	blocks: Registry(BlockDef, core.BlockId),
 }
 
 Registry :: struct($Def: typeid, $Id: typeid) {

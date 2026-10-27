@@ -19,7 +19,7 @@ TilemapClickSystem :: proc(
 	if input.MaybeConsumeMouse(frameInput, .LEFT) {
 		pos := rl.GetScreenToWorld2D(frameInput.mousePos, camera)
 		_, block := GetTileAtScreenPos(tileMan, pos)
-		if block.id == .NONE {
+		if core.IsNone(block.id) {
 			return
 		}
 
@@ -35,7 +35,7 @@ TilemapClickSystem :: proc(
 			worldPos := Screen2World(pos) * core.TileSize + core.TileSize / 2
 			breakTile(world, repo, block.entity, worldPos)
 			block.entity = 0
-			block.id = .NONE
+			block.id = 0
 			return
 		}
 
