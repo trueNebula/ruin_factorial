@@ -51,30 +51,51 @@ readRepo :: proc(repo: ^Repository) {
 		}
 		defer os.close(nsDirHandle)
 
-		files, nsReadErr := os.read_directory(nsDirHandle, 0, scratch)
-		if nsReadErr != nil {
+		subdirs, sdReadErr := os.read_directory(nsDirHandle, 0, scratch)
+		if sdReadErr != nil {
 			log.Warn(
-				"(Repo) Could not read repo namespace directory at %s, skipping.",
+				"(Repo) Could not read repo subdirectory at %s, skipping.",
 				namespace.fullpath,
 			)
 			continue
 		}
 
-		if namespace.name == BASE_NAMESPACE {
-			foundBase = true
-		}
-
-		sort.quick_sort_proc(files, proc(a: os.File_Info, b: os.File_Info) -> int {
-			return sort.compare_strings(a.name, b.name)
-		})
-
-		for file in files {
-			if readFile(file.fullpath, namespace.name, repo) {
-				cfgCnt += 1
+		for subdir in subdirs {
+			subdirHandle, subdirOpenErr := os.open(subdir.fullpath)
+			if subdirOpenErr != nil {
+				log.Warn(
+					"(Repo) Could not open repo subdirectory at %s, skipping.",
+					namespace.fullpath,
+				)
+				continue
 			}
-		}
+			defer os.close(subdirHandle)
 
-		nsCnt += 1
+			files, nsReadErr := os.read_directory(subdirHandle, 0, scratch)
+			if nsReadErr != nil {
+				log.Warn(
+					"(Repo) Could not read repo namespace directory at %s, skipping.",
+					namespace.fullpath,
+				)
+				continue
+			}
+
+			if namespace.name == BASE_NAMESPACE {
+				foundBase = true
+			}
+
+			sort.quick_sort_proc(files, proc(a: os.File_Info, b: os.File_Info) -> int {
+				return sort.compare_strings(a.name, b.name)
+			})
+
+			for file in files {
+				if readFile(file.fullpath, namespace.name, repo) {
+					cfgCnt += 1
+				}
+			}
+
+			nsCnt += 1
+		}
 	}
 
 	if !foundBase {
