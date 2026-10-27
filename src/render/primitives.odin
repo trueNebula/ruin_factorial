@@ -74,6 +74,7 @@ QueueShadow :: proc(
 	)
 }
 
+// TODO: handle anchor
 QueueTile :: proc(
 	renMan: ^RenderManager,
 	texture: core.Texture,

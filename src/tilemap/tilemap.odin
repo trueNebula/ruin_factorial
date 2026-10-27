@@ -286,11 +286,6 @@ drawTile :: proc(
 	} else {
 		rect = tileData.rect
 	}
-	inset :: f32(0.01)
-	rect.x += inset
-	rect.y += inset
-	rect.width -= inset * 2
-	rect.height -= inset * 2
 
 	render.QueueTile(
 		renMan,

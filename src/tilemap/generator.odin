@@ -220,7 +220,7 @@ generateBlock :: proc(
 ) {
 	tileSeed := GetTileSeed(u64(tileMan.seeds.height), chunkX, chunkY, idx)
 	if neb_utils.PercentChanceSeeded(5, tileSeed) {
-		block, err := repository.Find(&tileMan.repo.blocks, "base:grass_block")
+		block, err := repository.Find(&tileMan.repo.blocks, "base:tree_pine_block")
 
 		if err {
 			return
@@ -234,7 +234,7 @@ generateBlock :: proc(
 		dropTable := blockDef.drops[:]
 
 		entity := ecs.Add(world, block, health, dropTable)
-		return Block{entity = entity, id = 1}, true
+		return Block{entity = entity, id = block}, true
 	}
 	return {}, false
 }
