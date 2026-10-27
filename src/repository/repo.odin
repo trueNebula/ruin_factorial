@@ -34,9 +34,10 @@ Shutdown :: proc(repo: ^Repository) {
 }
 
 InitializeRepo :: proc(repo: ^Repository) {
-	readRepo(repo)
-
 	Register(&repo.items, "base:none_item", NoneItemDef)
+	Register(&repo.blocks, "base:none_block", NoneBlockDef)
+
+	readRepo(repo)
 }
 
 // Register a def by key

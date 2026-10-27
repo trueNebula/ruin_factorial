@@ -16,7 +16,6 @@ Tile :: struct {
 }
 
 TileRepo :: map[core.TileId]Tile
-BlockRepo :: map[core.BlockId]Tile
 Layer :: [core.ChunkSize]core.TileId
 BlockLayer :: [core.ChunkSize]Block
 
@@ -35,12 +34,11 @@ Chunk :: struct {
 ChunkMap :: map[string]Chunk
 
 TileManager :: struct {
-	tileRepo:  TileRepo,
-	blockRepo: BlockRepo,
-	chunks:    ChunkMap,
-	biomes:    BiomeList,
-	seeds:     Seeds,
-	repo:      ^repository.Repository,
+	tileRepo: TileRepo,
+	chunks:   ChunkMap,
+	biomes:   BiomeList,
+	seeds:    Seeds,
+	repo:     ^repository.Repository,
 }
 
 CreateRepo :: proc() -> TileRepo {
@@ -92,26 +90,14 @@ CreateRepo :: proc() -> TileRepo {
 	return tileRepo
 }
 
-CreateBlockRepo :: proc() -> BlockRepo {
-	blockRepo := make(BlockRepo)
-	blockRepo[1] = Tile {
-		texture = .BLOCK,
-		rect = rl.Rectangle{x = 128, y = 0, width = 16, height = 16},
-		anchor = .BOTTOM_LEFT,
-	}
-
-	return blockRepo
-}
-
 MakeTileManager :: proc(repo: ^repository.Repository) -> TileManager {
 	chunkMap := make(ChunkMap)
 	tileMan := TileManager {
-		tileRepo  = CreateRepo(),
-		blockRepo = CreateBlockRepo(),
-		chunks    = chunkMap,
-		biomes    = CreateBiomes(),
-		seeds     = CreateSeeds(),
-		repo      = repo,
+		tileRepo = CreateRepo(),
+		chunks   = chunkMap,
+		biomes   = CreateBiomes(),
+		seeds    = CreateSeeds(),
+		repo     = repo,
 	}
 
 	return tileMan
@@ -177,7 +163,6 @@ ClearChunks :: proc(tileMan: ^TileManager) {
 
 Shutdown :: proc(tileMan: ^TileManager) {
 	delete(tileMan.tileRepo)
-	delete(tileMan.blockRepo)
 	for hash, chunk in tileMan.chunks {
 		delete_key(&tileMan.chunks, hash)
 		delete(hash)
@@ -256,14 +241,11 @@ drawChunk :: proc(
 				continue
 			}
 
-			tileData, ok := tileMan.blockRepo[block.id]
-
-			if (!ok) {
-				log.Warn(
-					"Tried to access tile with id %v in block repo, block id doesnt exist!",
-					block,
-				)
-				continue
+			blockDef := repository.Get(&tileMan.repo.blocks, block.id)
+			tileData := Tile {
+				texture = blockDef.texture,
+				anchor  = blockDef.anchor,
+				rect    = blockDef.rect,
 			}
 
 			tint := rl.WHITE
