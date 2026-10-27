@@ -3,6 +3,7 @@ package repository
 import "core:encoding/json"
 import "core:fmt"
 import "core:os"
+import "core:sort"
 import "core:strings"
 import "src:log"
 
@@ -62,6 +63,10 @@ readRepo :: proc(repo: ^Repository) {
 		if namespace.name == BASE_NAMESPACE {
 			foundBase = true
 		}
+
+		sort.quick_sort_proc(files, proc(a: os.File_Info, b: os.File_Info) -> int {
+			return sort.compare_strings(a.name, b.name)
+		})
 
 		for file in files {
 			if readFile(file.fullpath, namespace.name, repo) {
