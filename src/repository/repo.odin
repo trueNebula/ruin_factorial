@@ -29,6 +29,8 @@ Shutdown :: proc(repo: ^Repository) {
 	virtual.arena_destroy(&repo.arena)
 	delete(repo.items.defs)
 	delete(repo.items.byKey)
+	delete(repo.blocks.defs)
+	delete(repo.blocks.byKey)
 }
 
 InitializeRepo :: proc(repo: ^Repository) {

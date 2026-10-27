@@ -67,14 +67,12 @@ TintTween :: struct {
 }
 
 Drop :: struct {
-	item:   ItemId,
+	item:   string,
 	qty:    RangeInt,
 	weight: i32,
 }
 
-DropTable :: struct {
-	drops: []Drop,
-}
+DropTable :: []Drop
 
 Float :: struct {
 	amplitude: f32,

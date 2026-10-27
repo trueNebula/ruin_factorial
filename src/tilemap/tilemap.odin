@@ -34,7 +34,7 @@ Chunk :: struct {
 ChunkMap :: map[string]Chunk
 
 TileManager :: struct {
-	repo:      TileRepo,
+	tileRepo:  TileRepo,
 	blockRepo: BlockRepo,
 	chunks:    ChunkMap,
 	biomes:    BiomeList,
@@ -104,7 +104,7 @@ CreateBlockRepo :: proc() -> BlockRepo {
 MakeTileManager :: proc() -> TileManager {
 	chunkMap := make(ChunkMap)
 	tileMan := TileManager {
-		repo      = CreateRepo(),
+		tileRepo  = CreateRepo(),
 		blockRepo = CreateBlockRepo(),
 		chunks    = chunkMap,
 		biomes    = CreateBiomes(),
@@ -173,7 +173,7 @@ ClearChunks :: proc(tileMan: ^TileManager) {
 }
 
 Shutdown :: proc(tileMan: ^TileManager) {
-	delete(tileMan.repo)
+	delete(tileMan.tileRepo)
 	delete(tileMan.blockRepo)
 	for hash, chunk in tileMan.chunks {
 		delete_key(&tileMan.chunks, hash)
@@ -231,7 +231,7 @@ drawChunk :: proc(
 		for tileX in x0 ..= x1 {
 			idx := tileY * core.ChunkLenght + tileX
 			tile := chunk.base[idx]
-			tileData, ok := tileMan.repo[tile]
+			tileData, ok := tileMan.tileRepo[tile]
 
 			if (!ok) {
 				log.Warn(

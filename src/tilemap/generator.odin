@@ -224,9 +224,7 @@ generateBlock :: proc(
 			current = 3,
 			max     = 3,
 		}
-		dropTable := core.DropTable {
-			drops = loot.GRASS_TILE_LOOT[:],
-		}
+		dropTable := loot.GRASS_TILE_LOOT[:]
 
 		entity := ecs.Add(world, block, health, dropTable)
 		return Block{entity = entity, id = 1}, true

@@ -65,14 +65,19 @@ breakTile :: proc(
 	totalWeight := core.GetTotalWeightFromTable(dropTable)
 	rng := neb_utils.RandomRangeI32(1, totalWeight)
 
-	for drop in dropTable.drops {
+	for drop in dropTable {
 		qty := item.RollQuantity(drop.qty)
 		if (qty < 0 || qty > 65535) {
 			log.Warn("Rolled quantity for range %+v, got %+v out of bounds!", drop.qty, qty)
 			qty = 1
 		}
 		if drop.weight == -1 || rng < drop.weight {
-			id := item.DropItem(world, repo, drop.item, u16(qty), pos)
+			itemId, repoErr := repository.Find(&repo.items, drop.item)
+			if repoErr {
+				return
+			}
+
+			id := item.DropItem(world, repo, itemId, u16(qty), pos)
 			log.Debug("tile id: %+v, item id: %+v", entityId, id)
 			continue
 		}
