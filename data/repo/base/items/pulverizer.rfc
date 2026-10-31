@@ -1,6 +1,7 @@
 item = {
   key = "pulverizer"
 	name = "Pulverizer"
+	description = "TODO: Add description"
 	texture = ITEM
 	rect = {x = 64, y = 64, width = 16, height = 16}
 }
