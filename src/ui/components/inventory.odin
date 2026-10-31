@@ -97,7 +97,6 @@ Inventory :: proc(
 
 Tooltip :: proc(uiMan: ^ui.UiManager, texMan: ^texture.TextureManager, item: ^repository.ItemDef) {
 	id := ui.MakeId(uiMan, "tooltip")
-	desc := "this is a long string to test the text wrapping algorithm. this should handle well.\nnew lines should also be handled"
 	fontData, _ := texture.GetFont(texMan, .MAIN)
 	// cache, err := ui.GetState(uiMan, ui.TooltipState, id)
 	state, ok := &uiMan.state[id]
@@ -108,8 +107,13 @@ Tooltip :: proc(uiMan: ^ui.UiManager, texMan: ^texture.TextureManager, item: ^re
 		state = &uiMan.state[id]
 	}
 	cache := state.(ui.TooltipState)
-	if cache.descCacheKey != desc {
-		cache.descCache = core.FitText(desc, InventorySlotCountStyle, fontData.resource, 150)
+	if cache.descCacheKey != item.description {
+		cache.descCache = core.FitText(
+			item.description,
+			InventorySlotCountStyle,
+			fontData.resource,
+			288,
+		)
 	}
 	wrapped = cache.descCache
 
@@ -129,16 +133,17 @@ Tooltip :: proc(uiMan: ^ui.UiManager, texMan: ^texture.TextureManager, item: ^re
 			"tooltip_container",
 			{
 				layout = .COLUMN,
-				size = {{.FIXED, 162}, {.FIT, 0}},
+				size = {{.FIXED, 300}, {.FIT, 0}},
 				background = ContainerNS,
 				padding = pad(6),
+				gap = 4,
 			},
 		) {
 			ui.Label(
 				uiMan,
 				"tooltip_title",
 				item.name,
-				InventorySlotCountStyle,
+				InventoryTitleStyle,
 				{target = core.TR, pivot = core.TR},
 			)
 			ui.Label(

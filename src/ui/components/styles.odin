@@ -9,7 +9,16 @@ InventorySlotCountStyle :: core.TextStyle {
 	font = .MAIN,
 	size = 11,
 	spacing = t.MAIN_FONT_SPACING,
-	line_height = 10,
+	line_height = 11,
+	color = rl.WHITE,
+	shadow = core.TextShadow{color = rl.BLACK, offset = {1, 1}},
+}
+
+InventoryTitleStyle :: core.TextStyle {
+	font = .BOLD,
+	size = 16,
+	spacing = t.BOLD_FONT_SPACING,
+	line_height = 16,
 	color = rl.WHITE,
 	shadow = core.TextShadow{color = rl.BLACK, offset = {1, 1}},
 }
