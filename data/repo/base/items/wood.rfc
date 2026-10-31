@@ -1,6 +1,7 @@
 item = {
   key = "wood"
 	name = "Wood"
+	description = "A sturdy log of wood, freshly cut. You can still smell the distinct scent of oil and sap on it."
 	texture = ITEM
 	rect = {x = 16, y = 0, width = 16, height = 16}
 }

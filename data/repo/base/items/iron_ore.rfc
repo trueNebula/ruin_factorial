@@ -1,6 +1,7 @@
 item = {
   key = "iron_ore"
 	name = "Iron Ore"
+	description = "A couple of raw chunks of magnetite. Can be smelted into plates."
 	texture = ITEM
 	rect = {x = 0, y = 16, width = 16, height = 16}
 }

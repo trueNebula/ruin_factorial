@@ -1,6 +1,7 @@
 item = {
   key = "copper_ore"
 	name = "Copper Ore"
+	description = "A couple chunks of chalcopyrite. Due to inexperience, you cannot make use of the iron compounds in them."
 	texture = ITEM
 	rect = {x = 0, y = 32, width = 16, height = 16}
 }

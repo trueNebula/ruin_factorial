@@ -1,6 +1,7 @@
 item = {
   key = "acorn"
 	name = "Acorn"
+	description = "The nut of an oak tree, squirrels love them."
 	texture = ITEM
 	rect = {x = 32, y = 0, width = 16, height = 16}
 }

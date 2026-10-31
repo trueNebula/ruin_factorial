@@ -1,6 +1,7 @@
 item = {
   key = "fiber"
 	name = "Fiber"
+	description = "Various plant fibers have been used throughout history for a plethora of applications.\nEven basic fiber from grass can be woven into a highly durable material."
 	texture = ITEM
 	rect = {x = 48, y = 0, width = 16, height = 16}
 }

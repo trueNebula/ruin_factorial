@@ -1,6 +1,7 @@
 item = {
   key = "gold_plate"
 	name = "Gold Plate"
+	description = "A solid chunk of gold that has been cast into a flat plate. Getting a good supply of these early on will be instrumental to your journey."
 	texture = ITEM
 	rect = {x = 32, y = 48, width = 16, height = 16}
 }

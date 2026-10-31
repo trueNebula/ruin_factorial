@@ -1,6 +1,7 @@
 item = {
   key = "iron_dust"
 	name = "Iron Dust"
+	description = "The pulverized form of magnetite."
 	texture = ITEM
 	rect = {x = 16, y = 16, width = 16, height = 16}
 }

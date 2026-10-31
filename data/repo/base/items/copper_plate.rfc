@@ -1,6 +1,7 @@
 item = {
   key = "copper_plate"
 	name = "Copper Plate"
+	description = "A solid chunk of copper that has been cast into a flat plate. Getting a good supply of these early on will be instrumental to your journey."
 	texture = ITEM
 	rect = {x = 32, y = 32, width = 16, height = 16}
 }

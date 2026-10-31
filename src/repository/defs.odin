@@ -4,10 +4,11 @@ import "src:core"
 import rl "vendor:raylib"
 
 ItemDef :: struct {
-	key:     string,
-	name:    string,
-	texture: core.Texture,
-	rect:    rl.Rectangle,
+	key:         string,
+	name:        string,
+	description: string,
+	texture:     core.Texture,
+	rect:        rl.Rectangle,
 }
 
 NoneItemDef :: ItemDef {

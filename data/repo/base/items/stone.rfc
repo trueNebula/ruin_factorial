@@ -1,6 +1,7 @@
 item = {
   key = "stone"
 	name = "Stone"
+  description = "Granite is the most common intrusive igneous rock, with a high concentration of quartz and feldspar."
 	texture = ITEM
   rect = {x = 16, y = 64, width = 16, height = 16}
 }
