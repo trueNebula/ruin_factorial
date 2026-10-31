@@ -8,8 +8,7 @@ import "src:render"
 import "src:texture"
 import rl "vendor:raylib"
 
-@(private)
-makeId :: proc(uiMan: ^UiManager, label: string) -> Id {
+MakeId :: proc(uiMan: ^UiManager, label: string) -> Id {
 	seed := u64(0xd6a6468d2a0dff09)
 	if n := len(uiMan.parents); n > 0 {
 		seed = u64(uiMan.nodes[uiMan.parents[n - 1]].id)

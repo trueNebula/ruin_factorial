@@ -1,6 +1,8 @@
 package core
 
+import "core:fmt"
 import "core:math"
+import "core:strings"
 import "src:log"
 import "src:neb_utils"
 import rl "vendor:raylib"
@@ -170,4 +172,31 @@ IsNoneItem :: proc(id: ItemId) -> bool {
 
 IsNoneBlock :: proc(id: BlockId) -> bool {
 	return id == 0
+}
+
+FitText :: proc(text: string, style: TextStyle, font: rl.Font, width: f32) -> string {
+	if rl.MeasureTextEx(font, fmt.ctprint(text), style.size, style.spacing).x <= width {
+		return text
+	}
+
+	tokens := strings.split(text, " ", context.temp_allocator)
+	newText := tokens[0]
+	idx := 1
+	wrapped := false
+
+	for idx < len(tokens) {
+		candidate :=
+			wrapped ? strings.concatenate({newText, tokens[idx]}, context.temp_allocator) : strings.concatenate({newText, " ", tokens[idx]}, context.temp_allocator)
+		if rl.MeasureTextEx(font, fmt.ctprint(candidate), style.size, style.spacing).x < width {
+			newText = candidate
+			idx += 1
+			wrapped = false
+			continue
+		}
+
+		newText = strings.concatenate({newText, "\n"}, context.temp_allocator)
+		wrapped = true
+	}
+
+	return newText
 }

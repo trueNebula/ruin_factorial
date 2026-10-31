@@ -3,6 +3,7 @@ package components
 import "core:fmt"
 import "src:core"
 import "src:repository"
+import "src:texture"
 import "src:ui"
 import rl "vendor:raylib"
 
@@ -11,7 +12,12 @@ InventoryProps :: struct {
 	rows:  int,
 }
 
-Inventory :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, props: InventoryProps) {
+Inventory :: proc(
+	uiMan: ^ui.UiManager,
+	repo: ^repository.Repository,
+	texMan: ^texture.TextureManager,
+	props: InventoryProps,
+) {
 	hoveredItem: ^repository.ItemDef
 
 	if ui.Root(
@@ -85,12 +91,28 @@ Inventory :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, props: Inv
 	}
 
 	if hoveredItem != nil {
-		Tooltip(uiMan, hoveredItem)
+		Tooltip(uiMan, texMan, hoveredItem)
 	}
 }
 
-Tooltip :: proc(uiMan: ^ui.UiManager, item: ^repository.ItemDef) {
-	// TODO: wrap title if needed, add description and wrap it too
+Tooltip :: proc(uiMan: ^ui.UiManager, texMan: ^texture.TextureManager, item: ^repository.ItemDef) {
+	id := ui.MakeId(uiMan, "tooltip")
+	desc := "this is a long string to test the text wrapping algorithm. this should handle well.\nnew lines should also be handled"
+	fontData, _ := texture.GetFont(texMan, .MAIN)
+	// cache, err := ui.GetState(uiMan, ui.TooltipState, id)
+	state, ok := &uiMan.state[id]
+	wrapped: string
+
+	if !ok {
+		uiMan.state[id] = ui.TooltipState{}
+		state = &uiMan.state[id]
+	}
+	cache := state.(ui.TooltipState)
+	if cache.descCacheKey != desc {
+		cache.descCache = core.FitText(desc, InventorySlotCountStyle, fontData.resource, 150)
+	}
+	wrapped = cache.descCache
+
 	if ui.Root(
 		uiMan,
 		"tooltip",
@@ -107,7 +129,7 @@ Tooltip :: proc(uiMan: ^ui.UiManager, item: ^repository.ItemDef) {
 			"tooltip_container",
 			{
 				layout = .COLUMN,
-				size = {{.FIXED, 75}, {.FIT, 0}},
+				size = {{.FIXED, 162}, {.FIT, 0}},
 				background = ContainerNS,
 				padding = pad(6),
 			},
@@ -116,6 +138,13 @@ Tooltip :: proc(uiMan: ^ui.UiManager, item: ^repository.ItemDef) {
 				uiMan,
 				"tooltip_title",
 				item.name,
+				InventorySlotCountStyle,
+				{target = core.TR, pivot = core.TR},
+			)
+			ui.Label(
+				uiMan,
+				"tooltip_description",
+				wrapped,
 				InventorySlotCountStyle,
 				{target = core.TR, pivot = core.TR},
 			)

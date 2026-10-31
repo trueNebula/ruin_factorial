@@ -12,7 +12,7 @@ Root :: proc(
 	attach: Attach,
 	opts: BoxOpts = {},
 ) -> bool {
-	id := makeId(uiMan, label)
+	id := MakeId(uiMan, label)
 	touch(uiMan, id)
 	idx := pushNode(uiMan, id, opts)
 	node := &uiMan.nodes[idx]
@@ -39,7 +39,7 @@ endRoot :: proc(
 
 @(require_results, deferred_in_out = endBox)
 Box :: proc(uiMan: ^UiManager, label: string, opts: BoxOpts) -> bool {
-	id := makeId(uiMan, label)
+	id := MakeId(uiMan, label)
 	touch(uiMan, id)
 	pushNode(uiMan, id, opts)
 
@@ -62,7 +62,7 @@ ClickableBox :: proc(
 	response: Response,
 	open: bool,
 ) {
-	id := makeId(uiMan, label)
+	id := MakeId(uiMan, label)
 	touch(uiMan, id)
 	opts := opts
 	opts.capture = true
@@ -90,7 +90,7 @@ Button :: proc(
 	style: core.TextStyle = {},
 	placement: core.WidgetPlacement = {},
 ) -> Response {
-	id := makeId(uiMan, label)
+	id := MakeId(uiMan, label)
 	touch(uiMan, id)
 	idx := addNode(uiMan, id, BoxOpts{placement = placement, capture = true})
 	text := TextContent {
@@ -115,7 +115,7 @@ Label :: proc(
 	style: core.TextStyle = {},
 	placement: core.WidgetPlacement,
 ) {
-	id := makeId(uiMan, label)
+	id := MakeId(uiMan, label)
 	touch(uiMan, id)
 	idx := addNode(uiMan, id, BoxOpts{placement = placement})
 	uiMan.nodes[idx].content = TextContent {
@@ -125,7 +125,7 @@ Label :: proc(
 }
 
 Scrim :: proc(uiMan: ^UiManager, label: string, color: rl.Color = SCRIM) {
-	id := makeId(uiMan, label)
+	id := MakeId(uiMan, label)
 	touch(uiMan, id)
 	addNode(
 		uiMan,

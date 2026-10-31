@@ -320,6 +320,7 @@ buildUi :: proc(engine: ^Engine) {
 			components.Inventory(
 				engine.uiManager,
 				engine.repo,
+				engine.textureManager,
 				{slots = inventory.slots[:], rows = 4},
 			)
 		} else {
