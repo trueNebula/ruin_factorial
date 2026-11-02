@@ -200,3 +200,17 @@ FitText :: proc(text: string, style: TextStyle, font: rl.Font, width: f32) -> st
 
 	return newText
 }
+
+AnchorPosition :: proc(pos: rl.Vector2, size: rl.Vector2, anchor: Anchor) -> rl.Vector2 {
+	pos := pos
+
+	#partial switch anchor {
+	case .BOTTOM_LEFT:
+		pos.y += TileSize - size.y
+	case .CENTER:
+		pos -= size / 2
+	case .TOP_LEFT:
+		return pos
+	}
+	return pos
+}

@@ -74,7 +74,6 @@ QueueShadow :: proc(
 	)
 }
 
-// TODO: handle anchor
 QueueTile :: proc(
 	renMan: ^RenderManager,
 	texture: core.Texture,
@@ -82,7 +81,11 @@ QueueTile :: proc(
 	dest: rl.Vector2,
 	zoom: f32 = 1.0,
 	tint: rl.Color = rl.WHITE,
+	anchor: core.Anchor = core.Anchor.BOTTOM_LEFT,
 ) {
+	size := core.GetSize(src)
+	dest := core.AnchorPosition(dest, size, anchor)
+
 	append(
 		&renMan.tile,
 		DrawCommand {
