@@ -254,7 +254,16 @@ drawChunk :: proc(
 				tint = core.DoTintTweenMath(tween^, tint)
 			}
 
-			drawTile(tileMan, tileData, idx, chunk, renMan, tint)
+			drawTile(
+				tileMan,
+				tileData,
+				idx,
+				chunk,
+				renMan,
+				tint,
+				/*asObject=*/
+				true,
+			)
 		}
 	}
 }
@@ -267,6 +276,7 @@ drawTile :: proc(
 	chunk: ^Chunk,
 	renMan: ^render.RenderManager,
 	tint: core.Tint = rl.WHITE,
+	asObject: bool = false,
 ) {
 	tex := tileData.texture
 	dest := rl.Vector2 {
@@ -287,13 +297,29 @@ drawTile :: proc(
 		rect = tileData.rect
 	}
 
-	render.QueueTile(
-		renMan,
-		tex,
-		rect,
-		dest,
-		/*zoom=*/
-		1.0,
-		tint,
-	)
+	if asObject {
+		render.QueueSprite(
+			renMan,
+			tex,
+			rect,
+			dest,
+			/*sortY=*/
+			true,
+			/*zoom=*/
+			1.0,
+			tint,
+			/*anchor=*/
+			.BOTTOM_LEFT,
+		)
+	} else {
+		render.QueueTile(
+			renMan,
+			tex,
+			rect,
+			dest,
+			/*zoom=*/
+			1.0,
+			tint,
+		)
+	}
 }

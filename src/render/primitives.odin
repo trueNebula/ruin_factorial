@@ -18,7 +18,11 @@ QueueSprite :: proc(
 	sortY: bool,
 	zoom: f32 = 1.0,
 	tint: rl.Color = rl.WHITE,
+	anchor: core.Anchor = core.Anchor.TOP_LEFT,
 ) {
+	size := core.GetSize(src)
+	dest := core.AnchorPosition(dest, size, anchor)
+
 	append(
 		&renMan.object,
 		DrawCommand {
@@ -83,8 +87,6 @@ QueueTile :: proc(
 	tint: rl.Color = rl.WHITE,
 	anchor: core.Anchor = core.Anchor.BOTTOM_LEFT,
 ) {
-	size := core.GetSize(src)
-	dest := core.AnchorPosition(dest, size, anchor)
 
 	append(
 		&renMan.tile,
