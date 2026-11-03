@@ -7,6 +7,7 @@ import "src:item"
 import "src:log"
 import "src:neb_utils"
 import "src:repository"
+import "src:tilemap"
 import rl "vendor:raylib"
 
 TilemapClickSystem :: proc(
@@ -66,6 +67,7 @@ breakTile :: proc(
 
 	for drop in dropTable {
 		qty := item.RollQuantity(drop.qty)
+		itemPos := core.Scatter(pos, core.TileSize)
 		if (qty < 0 || qty > 65535) {
 			log.Warn("Rolled quantity for range %+v, got %+v out of bounds!", drop.qty, qty)
 			qty = 1
@@ -76,8 +78,7 @@ breakTile :: proc(
 				return
 			}
 
-			id := item.DropItem(world, repo, itemId, u16(qty), pos)
-			log.Debug("tile id: %+v, item id: %+v", entityId, id)
+			id := item.DropItem(world, repo, itemId, u16(qty), itemPos)
 			continue
 		}
 	}

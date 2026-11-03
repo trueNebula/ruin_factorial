@@ -136,6 +136,8 @@ Run :: proc(engine: ^Engine) {
 			}
 		}
 
+		engineInput(engine)
+
 		// update
 		update(engine)
 		processEvents(engine)
@@ -160,8 +162,8 @@ Run :: proc(engine: ^Engine) {
 		scene.DrawTransition(engine.sceneManager)
 		rl.DrawText(rl.TextFormat("%d", rl.GetFPS()), 12, 12, 24, rl.BLACK)
 		rl.DrawText(rl.TextFormat("%d", rl.GetFPS()), 10, 10, 24, rl.WHITE)
-		if core.DEBUG_SHOW_WINDOW {
-			ui.FrameMu(&engine.frameInput)
+		if core.DEBUG.showWindow {
+			ui.FrameMu(&engine.frameInput, camera.camera.target)
 		}
 		rl.EndDrawing()
 
@@ -205,16 +207,6 @@ engineInput :: proc(engine: ^Engine) {
 	}
 
 	ui.InputMu(&engine.frameInput)
-	#partial switch engine.sceneManager.current {
-	case .MENU:
-	case .GAME:
-		if rl.IsKeyPressed(.ENTER) {
-			scene.LoadScene(engine.sceneManager, .MENU)
-		}
-	case .NONE:
-	case:
-		unreachable()
-	}
 }
 
 @(private)

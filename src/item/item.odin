@@ -39,6 +39,7 @@ DropItem :: proc(
 	float := core.Float {
 		amplitude = 2,
 		frequency = 2,
+		timer     = neb_utils.RandomRange(0, 2 * math.PI),
 	}
 
 	shadow := core.Shadow.SMALL

@@ -40,9 +40,9 @@ InitMu :: proc() {
 	state.windowPos = {0, f32(rl.GetScreenHeight()) - 450, 350, 450}
 }
 
-FrameMu :: proc(frameInput: ^input.State) {
+FrameMu :: proc(frameInput: ^input.State, pos: rl.Vector2) {
 	update(frameInput)
-	debug()
+	debug(pos)
 	end()
 }
 
@@ -94,7 +94,7 @@ end :: proc() {
 }
 
 @(private = "file")
-debug :: proc() {
+debug :: proc(pos: rl.Vector2) {
 	@(static) opts := mu.Options{.NO_CLOSE, .NO_RESIZE, .NO_TITLE}
 	ctx := &state.muCtx
 
@@ -117,6 +117,7 @@ debug :: proc() {
 		mu.slider(ctx, &core.DEBUG.uiZoom, -1, 1, 1)
 
 		mu.checkbox(ctx, "God Mode", &core.DEBUG.godMode)
+		mu.label(ctx, fmt.tprintf("Player pos: %2f %2f", pos.x, pos.y))
 	}
 }
 

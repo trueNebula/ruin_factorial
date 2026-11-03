@@ -214,3 +214,32 @@ AnchorPosition :: proc(pos: rl.Vector2, size: rl.Vector2, anchor: Anchor) -> rl.
 	}
 	return pos
 }
+
+GetRectCenter :: proc(rect: rl.Rectangle) -> rl.Vector2 {
+	return {rect.x + rect.width / 2, rect.y + rect.height / 2}
+}
+
+Scatter :: proc {
+	ScatterArea,
+	ScatterRect,
+	Scatter2D,
+}
+
+ScatterRect :: proc(rect: rl.Rectangle) -> rl.Vector2 {
+	center := GetRectCenter(rect)
+	return {
+		center.x + neb_utils.RandomRangeGaussian(-rect.width / 2, rect.width / 2),
+		center.y + neb_utils.RandomRangeGaussian(-rect.height / 2, rect.height / 2),
+	}
+}
+
+ScatterArea :: proc(pos: rl.Vector2, area: f32) -> rl.Vector2 {
+	return {
+		pos.x + neb_utils.RandomRangeGaussian(-area / 2, area / 2),
+		pos.y + neb_utils.RandomRangeGaussian(-area / 2, area / 2),
+	}
+}
+
+Scatter2D :: proc(pos: rl.Vector2, area: rl.Vector2) -> rl.Vector2 {
+	return ScatterRect(MakeRect(pos, area))
+}
