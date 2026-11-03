@@ -41,6 +41,7 @@ RenderSprites :: proc(world: ^ecs.World, renMan: ^RenderManager, texMan: ^textur
 			sprite.texture,
 			sprite.rect,
 			core.GetPos(dest),
+			/*ySort=*/
 			true,
 			/*zoom=*/
 			1.0,

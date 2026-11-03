@@ -15,7 +15,7 @@ QueueSprite :: proc(
 	texture: core.Texture,
 	src: rl.Rectangle,
 	dest: rl.Vector2,
-	sortY: bool,
+	sortY: bool, // TODO: is there an argument against ySorting every sprite by default?
 	zoom: f32 = 1.0,
 	tint: rl.Color = rl.WHITE,
 	anchor: core.Anchor = core.Anchor.TOP_LEFT,

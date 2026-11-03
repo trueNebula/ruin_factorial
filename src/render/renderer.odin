@@ -1,5 +1,6 @@
 package render
 
+import "core:sort"
 import "src:core"
 import "src:log"
 import "src:texture"
@@ -41,6 +42,8 @@ MakeRenderManager :: proc() -> RenderManager {
 }
 
 Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
+	ySortSprites(renMan)
+
 	for cmd in renMan.tile {
 		texData, err := texture.GetTexture(texMan, cmd.texture)
 
@@ -134,4 +137,13 @@ Shutdown :: proc(renMan: ^RenderManager) {
 	delete(renMan.object)
 	delete(renMan.debug)
 	delete(renMan.uiSprite)
+}
+
+@(private)
+ySortSprites :: proc(renMan: ^RenderManager) {
+	sort.quick_sort_proc(renMan.object[:], proc(a: DrawCommand, b: DrawCommand) -> int {
+		aSize := core.GetSize(a.src) * a.zoom
+		bSize := core.GetSize(b.src) * b.zoom
+		return int((a.dest.y + aSize.y - core.TileSize) - (b.dest.y + bSize.y - core.TileSize))
+	})
 }
