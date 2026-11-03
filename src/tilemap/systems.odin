@@ -67,7 +67,6 @@ breakTile :: proc(
 
 	for drop in dropTable {
 		qty := item.RollQuantity(drop.qty)
-		itemPos := core.Scatter(pos, core.TileSize)
 		if (qty < 0 || qty > 65535) {
 			log.Warn("Rolled quantity for range %+v, got %+v out of bounds!", drop.qty, qty)
 			qty = 1
@@ -78,7 +77,7 @@ breakTile :: proc(
 				return
 			}
 
-			id := item.DropItem(world, repo, itemId, u16(qty), itemPos)
+			id := item.DropItem(world, repo, itemId, u16(qty), pos)
 			continue
 		}
 	}

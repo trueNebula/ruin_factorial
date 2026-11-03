@@ -15,6 +15,7 @@ Component :: union {
 	core.Health,
 	core.Inventory,
 	core.Item,
+	core.ItemScatter,
 	core.PlayerRef,
 	core.Shadow,
 	core.Sprite,

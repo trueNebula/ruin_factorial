@@ -92,3 +92,10 @@ Collider :: struct {
 	layer:  CollisionLayers, // which layers this collider is part of
 	mask:   CollisionLayers, // which layers this collider interacts with
 }
+
+ItemScatter :: struct {
+	timer:    f32,
+	duration: f32, // seconds
+	velocity: rl.Vector2,
+	gravity:  f32,
+}
