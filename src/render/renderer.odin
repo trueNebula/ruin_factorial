@@ -102,7 +102,7 @@ Flush :: proc(renMan: ^RenderManager, texMan: ^texture.TextureManager) {
 			/*rotation=*/
 			0,
 			/*tint=*/
-			rl.WHITE,
+			cmd.tint,
 		)
 	}
 
