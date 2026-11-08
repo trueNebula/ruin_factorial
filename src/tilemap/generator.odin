@@ -59,6 +59,8 @@ BIOME_WARP_SETTINGS: NoiseMapSettings : {
 
 WARP_STRENGTH :: 0.1
 
+blockcounter := 0
+
 GenerateWorld :: proc(tileMan: ^TileManager, rng: runtime.Random_Generator) {
 	worldLength: int : 16
 
@@ -191,9 +193,14 @@ CreateSeeds :: proc() -> Seeds {
 }
 
 GenerateBlocks :: proc(tileMan: ^TileManager, world: ^ecs.World) {
+	// chk := &tileMan.chunks["0;0"]
+	// chk.blocks[4], _ = generateBlock(tileMan, world, 0, 0, 4)
+
 	for _, &chunk in tileMan.chunks {
 		generateBlocksInChunk(tileMan, world, &chunk)
 	}
+
+	log.Debug("Generated %v blocks.", blockcounter)
 }
 
 generateBlocksInChunk :: proc(tileMan: ^TileManager, world: ^ecs.World, chunk: ^Chunk) {
@@ -204,6 +211,7 @@ generateBlocksInChunk :: proc(tileMan: ^TileManager, world: ^ecs.World, chunk: ^
 		block, ok := generateBlock(tileMan, world, chunk.x, chunk.y, idx)
 		if ok {
 			chunk.blocks[idx] = block
+			blockcounter += 1
 		}
 	}
 }
@@ -226,14 +234,22 @@ generateBlock :: proc(
 			return
 		}
 
+		tilePos := Tile2World(idx, chunkX, chunkY)
+
 		blockDef := repository.Get(&tileMan.repo.blocks, block)
 		health := core.Health {
 			current = blockDef.health,
 			max     = blockDef.health,
 		}
 		dropTable := blockDef.drops[:]
+		transform := core.Transform {
+			x     = tilePos.x,
+			y     = tilePos.y,
+			sizeX = 1,
+			sizeY = 1,
+		}
 
-		entity := ecs.Add(world, block, health, dropTable)
+		entity := ecs.Add(world, block, health, dropTable, transform)
 		return Block{entity = entity, id = block}, true
 	}
 	return {}, false

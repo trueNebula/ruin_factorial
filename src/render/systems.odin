@@ -6,22 +6,24 @@ import "src:log"
 import "src:texture"
 import rl "vendor:raylib"
 
-RenderSprites :: proc(world: ^ecs.World, renMan: ^RenderManager, texMan: ^texture.TextureManager) {
+RenderSprites :: proc(
+	world: ^ecs.World,
+	renMan: ^RenderManager,
+	texMan: ^texture.TextureManager,
+	camera: rl.Camera2D,
+) {
 	view := ecs.View2(world, core.Transform, core.Sprite)
 	for entity in view {
 		transform := entity.c1
 		sprite := entity.c2
 		tex, err := texture.GetTexture(texMan, sprite.texture)
 		dest := core.GetDestRect(transform^, sprite^)
-		spriteSize := core.Rect2Size(dest)
 
-		switch sprite.anchor {
-		case .CENTER:
-			dest = core.MoveRect(dest, -spriteSize / 2)
-		case .BOTTOM_LEFT:
-			dest = core.MoveRect(dest, -spriteSize)
-		case .TOP_LEFT:
+		if !rl.CheckCollisionRecs(dest, core.GetScreenRect(camera)) {
+			continue
 		}
+
+		spriteSize := core.Rect2Size(dest)
 
 		tintDest := rl.WHITE
 		if tint, err := ecs.GetComponentForEntity(world, entity.id, core.Tint); !err {
@@ -46,6 +48,7 @@ RenderSprites :: proc(world: ^ecs.World, renMan: ^RenderManager, texMan: ^textur
 			/*zoom=*/
 			1.0,
 			tintDest,
+			sprite.anchor,
 		)
 	}
 }

@@ -125,6 +125,18 @@ Tile2Idx :: #force_inline proc(pos: rl.Vector2) -> int {
 	return int(pos.x) + int(pos.y) * core.ChunkLenght
 }
 
+Tile2World :: #force_inline proc(idx: int, chunkX, chunkY: int) -> rl.Vector2 {
+	chunkPos := rl.Vector2 {
+		f32(chunkX) * core.ChunkLenght * core.TileSize,
+		f32(chunkY) * core.ChunkLenght * core.TileSize,
+	}
+
+	tileX := f32(idx % core.ChunkLenght)
+	tileY := f32(idx / core.ChunkLenght)
+
+	return {chunkPos.x + tileX * core.TileSize, chunkPos.y + tileY * core.TileSize}
+}
+
 GetChunkAtScreenPos :: #force_inline proc(tileMan: ^TileManager, pos: rl.Vector2) -> ^Chunk {
 	worldPos := Screen2World(pos)
 	hash := Coords2Hash(int(worldPos.x), int(worldPos.y))
