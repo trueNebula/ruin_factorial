@@ -15,6 +15,9 @@ MAIN_PLAYER_REF :: core.PlayerRef {
 BASE_MOVEMENT_SPEED: f32 : 200.0
 GOD_MODE_MULTIPLIER: f32 : 10.0
 INVENTORY_SLOTS :: 41 // 40 + mouse
+PLAYER_BOXES := [?]core.CollisionBox {
+	{type = .CIRCLE, size = {4, 0}, layer = {.PLAYER}, mask = {.WORLD, .INTERACT, .ITEM}},
+}
 
 SetupPlayer :: proc(world: ^ecs.World) {
 	transform := core.Transform {
@@ -43,17 +46,9 @@ SetupPlayer :: proc(world: ^ecs.World) {
 		},
 	}
 
-	box := core.CollisionBox {
-		type   = .CIRCLE,
-		offset = {0, 0},
-		size   = {4, 0},
-		layer  = {.PLAYER},
-		mask   = {.WORLD, .INTERACT, .ITEM},
-	}
 	collider := core.Collider {
-		boxes = make([dynamic]core.CollisionBox),
+		boxes = PLAYER_BOXES[:],
 	}
-	append(&collider.boxes, box)
 
 	inventory := core.Inventory {
 		slots = make([]core.Item, INVENTORY_SLOTS),

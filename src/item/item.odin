@@ -74,6 +74,12 @@ FloatItem :: proc(world: ^ecs.World) {
 	}
 }
 
+// TODO: For now, items are always 16x16 so this makes sense. If I end up having larger items,
+// maybe move this to the ItemDef.
+ITEM_BOXES := [?]core.CollisionBox {
+	{type = .CIRCLE, offset = {0, 0}, size = {6, 0}, layer = {.ITEM}, mask = {}},
+}
+
 ScatterItem :: proc(world: ^ecs.World) {
 	view := ecs.View2(world, core.ItemScatter, core.Transform)
 
@@ -99,9 +105,8 @@ ScatterItem :: proc(world: ^ecs.World) {
 				mask   = {},
 			}
 			collider := core.Collider {
-				boxes = make([dynamic]core.CollisionBox),
+				boxes = ITEM_BOXES[:],
 			}
-			append(&collider.boxes, box)
 
 			ecs.AddComponent(world, entity.id, float)
 			ecs.AddComponent(world, entity.id, collider)

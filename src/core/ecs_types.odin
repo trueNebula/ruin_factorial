@@ -94,7 +94,7 @@ CollisionBox :: struct {
 }
 
 Collider :: struct {
-	boxes: [dynamic]CollisionBox,
+	boxes: []CollisionBox,
 }
 
 ItemScatter :: struct {
