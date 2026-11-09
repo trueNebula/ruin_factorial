@@ -216,6 +216,10 @@ generateBlocksInChunk :: proc(tileMan: ^TileManager, world: ^ecs.World, chunk: ^
 	}
 }
 
+BOXES := [?]core.CollisionBox {
+	{type = .CIRCLE, offset = {0, 0}, size = {6, 0}, layer = {.ITEM}, mask = {}},
+}
+
 @(private)
 generateBlock :: proc(
 	tileMan: ^TileManager,
@@ -248,8 +252,11 @@ generateBlock :: proc(
 			sizeX = 1,
 			sizeY = 1,
 		}
+		collider := core.Collider {
+			boxes = BOXES[:],
+		}
 
-		entity := ecs.Add(world, block, health, dropTable, transform)
+		entity := ecs.Add(world, block, health, dropTable, transform, collider)
 		return Block{entity = entity, id = block}, true
 	}
 	return {}, false

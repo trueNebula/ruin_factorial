@@ -1,7 +1,9 @@
 package ecs
 
 import "base:runtime"
-import "core:fmt"
+import "core:math/linalg"
+import "src:core"
+import rl "vendor:raylib"
 
 /**
  * Entity Views
@@ -61,6 +63,42 @@ View2 :: proc(world: ^World, $T1: typeid, $T2: typeid) -> [dynamic]EntityView2(T
 			view.id = entId
 			view.c1 = (^T1)(&col1[entIdx * size1])
 			view.c2 = (^T2)(&col2[entIdx * size2])
+
+			append(&views, view)
+		}
+	}
+
+	return views
+}
+
+ColliderView :: proc(
+	world: ^World,
+	playerPos: rl.Vector2,
+	shouldUseSimDistance: bool = true,
+) -> [dynamic]EntityView2(core.Collider, core.Transform) {
+	tids := []typeid{typeid_of(core.Collider), typeid_of(core.Transform)}
+	mask := computeMask(world, tids)
+	views := make([dynamic]EntityView2(core.Collider, core.Transform), context.temp_allocator)
+
+	for arch in world.archetypes {
+		if !maskIncludes(&arch.mask, &mask) do continue
+
+		col1 := arch.columns[core.Collider]
+		col2 := arch.columns[core.Transform]
+
+		size1 := world.meta[core.Collider].size
+		size2 := world.meta[core.Transform].size
+
+		for entId, entIdx in arch.entities {
+			view: EntityView2(core.Collider, core.Transform)
+			view.id = entId
+			view.c1 = (^core.Collider)(&col1[entIdx * size1])
+			view.c2 = (^core.Transform)(&col2[entIdx * size2])
+
+			if linalg.distance(rl.Vector2{view.c2.x, view.c2.y}, playerPos) >
+			   core.SimulationDistance {
+				continue
+			}
 
 			append(&views, view)
 		}

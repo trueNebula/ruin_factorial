@@ -27,3 +27,4 @@ DefaultKeybinds :: Keybinds {
 TileSize :: 16
 ChunkLenght :: 64
 ChunkSize :: ChunkLenght * ChunkLenght
+SimulationDistance :: 1 * ChunkLenght * TileSize

@@ -1,8 +1,10 @@
 package physics
 
+import "core:math/linalg"
 import "src:core"
 import "src:ecs"
 import "src:event"
+import "src:player"
 import rl "vendor:raylib"
 
 @(private)
@@ -108,7 +110,18 @@ RouteCollision :: proc(collision: event.Collision, queue: ^event.Queue) {
 collectBoxes :: proc(world: ^ecs.World) -> (layer: ColliderMap, mask: ColliderMap) {
 	layerMap := make(ColliderMap, context.temp_allocator)
 	maskMap := make(ColliderMap, context.temp_allocator)
-	view := ecs.View2(world, core.Collider, core.Transform)
+
+	playerPos := rl.Vector2{}
+	playerTransform, err := player.GetPlayerComponent(
+		world,
+		player.MAIN_PLAYER_REF,
+		core.Transform,
+	)
+
+	if !err {
+		playerPos = {playerTransform.x, playerTransform.y}
+	}
+	view := ecs.ColliderView(world, playerPos, !err)
 
 	for entity in view {
 		for &box in entity.c1.boxes {
