@@ -43,13 +43,17 @@ SetupPlayer :: proc(world: ^ecs.World) {
 		},
 	}
 
-	collider := core.Collider {
+	box := core.CollisionBox {
 		type   = .CIRCLE,
 		offset = {0, 0},
 		size   = {4, 0},
 		layer  = {.PLAYER},
 		mask   = {.WORLD, .INTERACT, .ITEM},
 	}
+	collider := core.Collider {
+		boxes = make([dynamic]core.CollisionBox),
+	}
+	append(&collider.boxes, box)
 
 	inventory := core.Inventory {
 		slots = make([]core.Item, INVENTORY_SLOTS),

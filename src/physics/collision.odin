@@ -5,10 +5,20 @@ import "src:ecs"
 import "src:event"
 import rl "vendor:raylib"
 
+@(private)
+BoxView :: struct {
+	id:        u32,
+	collider:  ^core.CollisionBox,
+	transform: ^core.Transform,
+}
+
+@(private)
+ColliderMap :: map[core.ColliderLayer][dynamic]BoxView
+
 CheckCollision :: proc(
-	a: ^core.Collider,
+	a: ^core.CollisionBox,
 	aTrans: ^core.Transform,
-	b: ^core.Collider,
+	b: ^core.CollisionBox,
 	bTrans: ^core.Transform,
 ) -> bool {
 	if a.type == .RECTANGLE {
@@ -50,37 +60,28 @@ CheckCollision :: proc(
 
 CheckCollisions :: proc(world: ^ecs.World, queue: ^event.Queue) {
 	// TODO: implement hash grid to make this faster
-	view := ecs.View2(world, core.Collider, core.Transform)
-	for i in 0 ..< len(view) {
-		a := view[i]
-		for j in i + 1 ..< len(view) {
-			b := view[j]
+	layerMap, maskMap := collectBoxes(world)
 
-			aWants := wantsCollision(a.c1.mask, b.c1.layer)
-			bWants := wantsCollision(b.c1.mask, a.c1.layer)
+	for layer in core.ColliderLayer {
+		if len(layerMap[layer]) == 0 || len(maskMap[layer]) == 0 {
+			continue
+		}
 
-			if !aWants && !bWants do continue
+		for a in maskMap[layer] {
+			for b in layerMap[layer] {
+				if CheckCollision(a.collider, a.transform, b.collider, b.transform) {
+					aIsPlayer, bIsPlayer := false, false
 
-			if CheckCollision(a.c1, a.c2, b.c1, b.c2) {
-				aIsPlayer, bIsPlayer := false, false
+					if _, aErr := ecs.GetComponentForEntity(world, a.id, core.PlayerRef); !aErr {
+						aIsPlayer = true
+					}
+					if _, bErr := ecs.GetComponentForEntity(world, b.id, core.PlayerRef); !bErr {
+						bIsPlayer = true
+					}
 
-				if _, aErr := ecs.GetComponentForEntity(world, a.id, core.PlayerRef); !aErr {
-					aIsPlayer = true
-				}
-				if _, bErr := ecs.GetComponentForEntity(world, b.id, core.PlayerRef); !bErr {
-					bIsPlayer = true
-				}
-
-				if aWants {
 					event.PushEvent(
 						queue,
-						event.Collision{a.id, b.id, aIsPlayer, bIsPlayer, a.c1.mask & b.c1.layer},
-					)
-				}
-				if bWants {
-					event.PushEvent(
-						queue,
-						event.Collision{b.id, a.id, aIsPlayer, bIsPlayer, b.c1.mask & a.c1.layer},
+						event.Collision{a.id, b.id, aIsPlayer, bIsPlayer, layer},
 					)
 				}
 			}
@@ -95,8 +96,43 @@ wantsCollision :: proc(a, b: core.CollisionLayers) -> bool {
 
 RouteCollision :: proc(collision: event.Collision, queue: ^event.Queue) {
 	switch {
-	case .ITEM in collision.onLayers && collision.selfIsPlayer:
+	case collision.onLayer == .ITEM && collision.selfIsPlayer:
 		event.PushEvent(queue, event.Pickup{collector = collision.self, item = collision.other})
 	case:
 	}
+}
+
+// Goes through a view of entities with valid colliders and flattens all CollisionBoxes into BoxViews
+// Returns them in two maps
+@(private)
+collectBoxes :: proc(world: ^ecs.World) -> (layer: ColliderMap, mask: ColliderMap) {
+	layerMap := make(ColliderMap, context.temp_allocator)
+	maskMap := make(ColliderMap, context.temp_allocator)
+	view := ecs.View2(world, core.Collider, core.Transform)
+
+	for entity in view {
+		for &box in entity.c1.boxes {
+			boxView := BoxView {
+				id        = entity.id,
+				collider  = &box,
+				transform = entity.c2,
+			}
+
+			for layer in box.layer {
+				if layer not_in layerMap {
+					layerMap[layer] = make([dynamic]BoxView, context.temp_allocator)
+				}
+				append(&layerMap[layer], boxView)
+			}
+
+			for layer in box.mask {
+				if layer not_in maskMap {
+					maskMap[layer] = make([dynamic]BoxView, context.temp_allocator)
+				}
+				append(&maskMap[layer], boxView)
+			}
+		}
+	}
+
+	return layerMap, maskMap
 }

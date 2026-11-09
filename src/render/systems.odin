@@ -3,6 +3,7 @@ package render
 import "src:core"
 import "src:ecs"
 import "src:log"
+import "src:physics"
 import "src:texture"
 import rl "vendor:raylib"
 
@@ -84,19 +85,21 @@ RenderColliders :: proc(world: ^ecs.World, renMan: ^RenderManager) {
 	for entity in view {
 		collider := entity.c1
 		transform := entity.c2
-		switch collider.type {
-		case .CIRCLE:
-			center := rl.Vector2{transform.x + collider.offset.x, transform.y + collider.offset.y}
-			QueueCircle(renMan, center, collider.size.x, rl.BLUE)
+		for box in collider.boxes {
+			switch box.type {
+			case .CIRCLE:
+				center := rl.Vector2{transform.x + box.offset.x, transform.y + box.offset.y}
+				QueueCircle(renMan, center, box.size.x, rl.BLUE)
 
-		case .RECTANGLE:
-			rect := rl.Rectangle {
-				x      = transform.x + collider.offset.x,
-				y      = transform.y + collider.offset.y,
-				width  = collider.size.x,
-				height = collider.size.y,
+			case .RECTANGLE:
+				rect := rl.Rectangle {
+					x      = transform.x + box.offset.x,
+					y      = transform.y + box.offset.y,
+					width  = box.size.x,
+					height = box.size.y,
+				}
+				QueueRect(renMan, rect, rl.BLUE)
 			}
-			QueueRect(renMan, rect, rl.BLUE)
 		}
 	}
 }

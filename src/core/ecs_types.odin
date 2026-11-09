@@ -85,12 +85,16 @@ Shadow :: enum {
 	LARGE,
 }
 
-Collider :: struct {
+CollisionBox :: struct {
 	type:   ColliderType,
 	size:   rl.Vector2, // "radius", centered on the position
 	offset: rl.Vector2, // from the center position
 	layer:  CollisionLayers, // which layers this collider is part of
 	mask:   CollisionLayers, // which layers this collider interacts with
+}
+
+Collider :: struct {
+	boxes: [dynamic]CollisionBox,
 }
 
 ItemScatter :: struct {

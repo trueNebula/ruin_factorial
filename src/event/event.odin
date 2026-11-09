@@ -18,7 +18,7 @@ Collision :: struct {
 	other:         u32,
 	selfIsPlayer:  bool,
 	otherIsPlayer: bool,
-	onLayers:      core.CollisionLayers,
+	onLayer:       core.ColliderLayer,
 }
 Pickup :: struct {
 	collector: u32,

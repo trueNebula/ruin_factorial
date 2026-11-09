@@ -91,13 +91,17 @@ ScatterItem :: proc(world: ^ecs.World) {
 				timer     = neb_utils.RandomRange(0, 2 * math.PI),
 			}
 
-			collider := core.Collider {
+			box := core.CollisionBox {
 				type   = .CIRCLE,
 				offset = {0, 0},
 				size   = {6, 0},
 				layer  = {.ITEM},
 				mask   = {},
 			}
+			collider := core.Collider {
+				boxes = make([dynamic]core.CollisionBox),
+			}
+			append(&collider.boxes, box)
 
 			ecs.AddComponent(world, entity.id, float)
 			ecs.AddComponent(world, entity.id, collider)
