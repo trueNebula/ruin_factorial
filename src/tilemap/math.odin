@@ -183,7 +183,10 @@ GetTileAtWorldPos :: #force_inline proc(
 ) {
 	chunk := GetChunkAtPos(
 		tileMan,
-		{math.floor(pos.x / core.ChunkLenght), math.floor(pos.y / core.ChunkLenght)},
+		{
+			math.floor(pos.x / (core.ChunkLenght * core.TileSize)),
+			math.floor(pos.y / (core.ChunkLenght * core.TileSize)),
+		},
 	)
 	idx := Tile2Idx(World2Tile(pos))
 
@@ -221,4 +224,28 @@ GetTileSeed :: proc(seed: u64, chunkX, chunkY: int, idx: int) -> u64 {
 	h = neb_utils.Mix64(h ~ u64(u32(chunkY)))
 	h = neb_utils.Mix64(h ~ u64(idx))
 	return h
+}
+
+GetTileOffsetFromWorldPos :: proc(
+	tileMan: ^TileManager,
+	pos: rl.Vector2,
+	x, y: int,
+) -> (
+	core.TileId,
+	^Block,
+) {
+	tileX := int(math.floor(pos.x / core.TileSize)) + x
+	tileY := int(math.floor(pos.y / core.TileSize)) + y
+
+	chunkX := int(math.floor(f32(tileX) / core.ChunkLenght))
+	chunkY := int(math.floor(f32(tileY) / core.ChunkLenght))
+
+	chunk := GetChunkAtPos(tileMan, {f32(chunkX), f32(chunkY)})
+	if chunk == nil do return .NONE, nil
+
+	idx :=
+		(tileX - chunkX * core.ChunkLenght) +
+		(tileY - chunkY * core.ChunkLenght) * core.ChunkLenght
+
+	return chunk.base[idx], &chunk.blocks[idx]
 }

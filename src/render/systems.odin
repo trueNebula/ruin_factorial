@@ -3,7 +3,6 @@ package render
 import "src:core"
 import "src:ecs"
 import "src:log"
-import "src:physics"
 import "src:texture"
 import rl "vendor:raylib"
 

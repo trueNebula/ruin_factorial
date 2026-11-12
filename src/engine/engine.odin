@@ -218,6 +218,7 @@ update :: proc(engine: ^Engine) {
 	case .GAME:
 		player.PlayerInputSystem(engine.world, &engine.frameInput)
 		ecs.ProcessTick(engine.world)
+		physics.MovementSystem(engine.world, engine.tileManager)
 		physics.CheckCollisions(engine.world, engine.queue)
 
 		playerView := ecs.View2(engine.world, core.PlayerRef, core.Camera)

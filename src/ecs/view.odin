@@ -74,7 +74,7 @@ View2 :: proc(world: ^World, $T1: typeid, $T2: typeid) -> [dynamic]EntityView2(T
 ColliderView :: proc(
 	world: ^World,
 	playerPos: rl.Vector2,
-	shouldUseSimDistance: bool = true,
+	distance: f32 = core.SimulationDistance,
 ) -> [dynamic]EntityView2(core.Collider, core.Transform) {
 	tids := []typeid{typeid_of(core.Collider), typeid_of(core.Transform)}
 	mask := computeMask(world, tids)
@@ -95,8 +95,7 @@ ColliderView :: proc(
 			view.c1 = (^core.Collider)(&col1[entIdx * size1])
 			view.c2 = (^core.Transform)(&col2[entIdx * size2])
 
-			if linalg.distance(rl.Vector2{view.c2.x, view.c2.y}, playerPos) >
-			   core.SimulationDistance {
+			if linalg.distance(rl.Vector2{view.c2.x, view.c2.y}, playerPos) > distance {
 				continue
 			}
 

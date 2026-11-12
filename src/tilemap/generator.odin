@@ -193,11 +193,11 @@ CreateSeeds :: proc() -> Seeds {
 }
 
 GenerateBlocks :: proc(tileMan: ^TileManager, world: ^ecs.World) {
-	// chk := &tileMan.chunks["0;0"]
-	// chk.blocks[4], _ = generateBlock(tileMan, world, 0, 0, 4)
+	chk := &tileMan.chunks["0;0"]
+	chk.blocks[4], _ = generateBlock(tileMan, world, 0, 0, 4)
 
 	for _, &chunk in tileMan.chunks {
-		generateBlocksInChunk(tileMan, world, &chunk)
+		// generateBlocksInChunk(tileMan, world, &chunk)
 	}
 
 	log.Debug("Generated %v blocks.", blockcounter)
@@ -217,7 +217,7 @@ generateBlocksInChunk :: proc(tileMan: ^TileManager, world: ^ecs.World, chunk: ^
 }
 
 BOXES := [?]core.CollisionBox {
-	{type = .CIRCLE, offset = {0, 0}, size = {6, 0}, layer = {.ITEM}, mask = {}},
+	{type = .CIRCLE, offset = {0, 0}, size = {6, 0}, layer = {.WORLD}, mask = {}},
 }
 
 @(private)
@@ -231,7 +231,7 @@ generateBlock :: proc(
 	ok: bool,
 ) {
 	tileSeed := GetTileSeed(u64(tileMan.seeds.height), chunkX, chunkY, idx)
-	if neb_utils.PercentChanceSeeded(5, tileSeed) {
+	if true {
 		block, err := repository.Find(&tileMan.repo.blocks, "base:tree_pine_block")
 
 		if err {

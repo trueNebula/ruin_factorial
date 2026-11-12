@@ -121,7 +121,7 @@ collectBoxes :: proc(world: ^ecs.World) -> (layer: ColliderMap, mask: ColliderMa
 	if !err {
 		playerPos = {playerTransform.x, playerTransform.y}
 	}
-	view := ecs.ColliderView(world, playerPos, !err)
+	view := ecs.ColliderView(world, playerPos)
 
 	for entity in view {
 		for &box in entity.c1.boxes {
