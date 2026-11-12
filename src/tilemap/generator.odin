@@ -217,7 +217,7 @@ generateBlocksInChunk :: proc(tileMan: ^TileManager, world: ^ecs.World, chunk: ^
 }
 
 BOXES := [?]core.CollisionBox {
-	{type = .CIRCLE, offset = {0, 0}, size = {6, 0}, layer = {.WORLD}, mask = {}},
+	{type = .CIRCLE, offset = {16, 3}, size = {6, 0}, layer = {.WORLD}, mask = {}},
 }
 
 @(private)

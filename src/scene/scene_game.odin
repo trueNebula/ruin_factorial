@@ -31,9 +31,6 @@ initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
 	event.PushEvent(queue, event.GenerateBlocks{})
 
 	ecs.RegisterSetupSystem(world, player.SetupPlayer)
-	ecs.RegisterTickSystem(world, player.PlayerMovementSystem)
-	// ecs.RegisterTickSystem(world, physics.MovementSystem)
-	ecs.RegisterTickSystem(world, player.CameraTransformSystem)
 	ecs.RegisterTickSystem(world, render.ApplyTintTween)
 	ecs.RegisterTickSystem(world, item.FloatItem)
 	ecs.RegisterTickSystem(world, item.ScatterItem)

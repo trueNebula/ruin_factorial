@@ -75,37 +75,24 @@ PlayerInputSystem :: proc(world: ^ecs.World, frameInput: ^input.State) {
 	})
 }
 
-PlayerMovementSystem :: proc(world: ^ecs.World) {
-	ecs.Query4(
+CameraTransformSystem :: proc(world: ^ecs.World) {
+	ecs.Query3(
 		world,
 		nil,
 		proc(
-			transform: ^core.Transform,
-			velocity: ^core.Velocity,
 			player: ^core.PlayerRef,
 			camera: ^core.Camera,
-			userData: rawptr,
+			transform: ^core.Transform,
+			userdata: rawptr,
 		) {
-			dt := core.FrameTime()
+			if rl.IsWindowResized() {
+				camera.camera.offset = core.GetScreenCenter()
+			}
 
-			transform.x += velocity.x * dt
-			transform.y += velocity.y * dt
-			camera.camera.target.x = transform.x
-			camera.camera.target.y = transform.y
-			velocity.x = 0
-			velocity.y = 0
+			camera.camera.target = {transform.x, transform.y}
+			camera.camera.zoom = core.GetWorldZoom()
 		},
 	)
-}
-
-CameraTransformSystem :: proc(world: ^ecs.World) {
-	ecs.Query2(world, nil, proc(player: ^core.PlayerRef, camera: ^core.Camera, userdata: rawptr) {
-		if rl.IsWindowResized() {
-			camera.camera.offset = core.GetScreenCenter()
-		}
-
-		camera.camera.zoom = core.GetWorldZoom()
-	})
 }
 
 GetPlayer :: proc(

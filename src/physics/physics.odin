@@ -1,5 +1,6 @@
 package physics
 
+import "core:math/linalg"
 import "src:core"
 import "src:ecs"
 import "src:tilemap"
@@ -61,13 +62,21 @@ MovementSystem :: proc(world: ^ecs.World, tileMan: ^tilemap.TileManager) {
 			}
 		}
 
-		for axis in 0 ..< 2 {
-			amount := velocity[axis] * dt
-
-			if noCollider {
-				pos[axis] += amount
-			} else {
-				moveAlongAxis(collider.boxes[:], &pos, axis, amount, obstacles[:])
+		pos += velocity^ * dt
+		if !noCollider {
+			for &box in collider.boxes {
+				if .WORLD not_in box.mask do continue
+				for obstacle in obstacles {
+					push, hit := pushOut(
+						&box,
+						pos,
+						obstacle.collider,
+						{obstacle.transform.x, obstacle.transform.y},
+					)
+					if hit {
+						pos += push
+					}
+				}
 			}
 		}
 
@@ -78,57 +87,83 @@ MovementSystem :: proc(world: ^ecs.World, tileMan: ^tilemap.TileManager) {
 }
 
 @(private)
-moveAlongAxis :: proc(
-	boxes: []core.CollisionBox,
-	pos: ^rl.Vector2,
-	axis: int,
-	amount: f32,
-	obstacles: []BoxView,
+pushOut :: proc(
+	mover: ^core.CollisionBox,
+	moverPos: rl.Vector2,
+	obstacle: ^core.CollisionBox,
+	obstaclePos: rl.Vector2,
+) -> (
+	push: rl.Vector2,
+	hit: bool,
 ) {
-	start := pos[axis]
-	target := start + amount
+	switch {
+	case mover.type == .CIRCLE && obstacle.type == .CIRCLE:
+		moverCenter := moverPos + mover.offset
+		obstacleCenter := obstaclePos + obstacle.offset
+		centerToCenter := moverCenter - obstacleCenter
+		centerToCenterDist := linalg.length(centerToCenter)
+		touchDistance := mover.size.x + obstacle.size.x
 
-	pos[axis] = target
-	if !touchesBox(boxes, pos^, obstacles) do return
+		if centerToCenterDist >= touchDistance do return {}, false
+		if centerToCenterDist == 0 do return {touchDistance, 0}, true
 
-	pos[axis] = start
-	if touchesBox(boxes, pos^, obstacles) {
-		pos[axis] = target
-		return
-	}
+		return centerToCenter / centerToCenterDist * (touchDistance - centerToCenterDist), true
 
-	clearCoord := start
-	blockedCoord := target
-	for _ in 0 ..< 5 {
-		middle := (clearCoord + blockedCoord) / 2
-		pos[axis] = middle
+	case mover.type == .CIRCLE && obstacle.type == .RECTANGLE:
+		moverCenter := moverPos + mover.offset
+		radius := mover.size.x
+		obstacleRect := core.MakeRect(obstaclePos + obstacle.offset, obstacle.size)
 
-		if touchesBox(boxes, pos^, obstacles) {
-			blockedCoord = middle
-		} else {
-			clearCoord = middle
+		closestPoint := rl.Vector2 {
+			clamp(moverCenter.x, obstacleRect.x, obstacleRect.x + obstacleRect.width),
+			clamp(moverCenter.y, obstacleRect.y, obstacleRect.y + obstacleRect.height),
 		}
-	}
+		pointToCenter := moverCenter - closestPoint
+		distance := linalg.length(pointToCenter)
 
-	pos[axis] = clearCoord
-}
+		if distance > radius do return {}, false
+		if distance > 0 do return pointToCenter / distance * (radius - distance), true
 
-@(private)
-touchesBox :: proc(boxes: []core.CollisionBox, pos: rl.Vector2, obstacles: []BoxView) -> bool {
-	transform := core.Transform {
-		x = pos.x,
-		y = pos.y,
-	}
+		// The center of the circle is inside the rectangle
+		toLeft := moverCenter.x - obstacleRect.x
+		toTop := moverCenter.y - obstacleRect.y
+		toRight := obstacleRect.x + obstacleRect.width - moverCenter.x
+		toBot := obstacleRect.y + obstacleRect.height - moverCenter.y
+		nearest := min(toLeft, toTop, toRight, toBot)
 
-	for &box in boxes {
-		if .WORLD not_in box.mask do continue
+		if nearest == toLeft do return {-(toLeft + radius), 0}, true
+		if nearest == toTop do return {0, -(toTop + radius)}, true
+		if nearest == toRight do return {toRight + radius, 0}, true
+		return {0, toBot + radius}, true
 
-		for obstacle in obstacles {
-			if CheckCollision(&box, &transform, obstacle.collider, obstacle.transform) {
-				return true
-			}
+	case mover.type == .RECTANGLE && obstacle.type == .CIRCLE:
+		push, hit := pushOut(obstacle, obstaclePos, mover, moverPos)
+		return -push, hit
+
+	case:
+		moverRect := core.MakeRect(moverPos + mover.offset, mover.size)
+		obstacleRect := core.MakeRect(obstaclePos + obstacle.offset, obstacle.size)
+		overlapX :=
+			min(moverRect.x + moverRect.width, obstacleRect.x + obstacleRect.width) -
+			min(moverRect.x, obstacleRect.x)
+		overlapY :=
+			min(moverRect.y + moverRect.height, obstacleRect.y + obstacleRect.height) -
+			min(moverRect.y, obstacleRect.y)
+
+		if overlapX <= 0 || overlapY <= 0 do return {}, false
+
+		moverCenter := rl.Vector2 {
+			moverRect.x + moverRect.width / 2,
+			moverRect.y + moverRect.height / 2,
 		}
-	}
+		obstacleCenter := rl.Vector2 {
+			obstacleRect.x + obstacleRect.width / 2,
+			obstacleRect.y + obstacleRect.height / 2,
+		}
 
-	return false
+		if overlapX < overlapY {
+			return {moverCenter.x < obstacleCenter.x ? -overlapX : overlapX, 0}, true
+		}
+		return {0, moverCenter.y < obstacleCenter.y ? -overlapY : overlapY}, true
+	}
 }
