@@ -24,6 +24,9 @@ TilemapClickSystem :: proc(
 		}
 
 		health, err := ecs.GetComponentForEntity(world, block.entity, core.Health)
+		transform, _ := ecs.GetComponentForEntity(world, block.entity, core.Transform)
+
+		log.Debug("Transform: %v", transform)
 
 		if err {
 			return

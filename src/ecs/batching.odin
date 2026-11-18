@@ -86,8 +86,8 @@ deleteEntity :: proc(world: ^World, batch: ^BatchManager, entityId: u32) {
 
 @(private)
 addComponentToEntity :: proc(batch: ^BatchManager, entityId: u32, component: Component) {
-	if compList, ok := &batch.additions[entityId]; ok {
-		append(compList, component)
+	if entityId in batch.additions {
+		append(&batch.additions[entityId], component)
 	} else {
 		batch.additions[entityId] = make([dynamic]Component, context.temp_allocator)
 		append(&batch.additions[entityId], component)

@@ -202,7 +202,7 @@ batchMoveData :: proc(world: ^World, cmd: ^BatchAddCommand) {
 		dstCol := dst.columns[tid]
 
 		for i in 0 ..< entityCount {
-			unionComponent := &compList[i]
+			unionComponent := &compList[entityCount - 1 - i]
 			dstRow := dstStartRow + i
 			dstStart := &dstCol[dstRow * size]
 			unionPtr := rawptr(unionComponent)
