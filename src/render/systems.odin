@@ -68,19 +68,29 @@ ApplyTintTween :: proc(world: ^ecs.World) {
 	}
 }
 
-RenderShadows :: proc(world: ^ecs.World, renMan: ^RenderManager, texMan: ^texture.TextureManager) {
+RenderShadows :: proc(
+	world: ^ecs.World,
+	renMan: ^RenderManager,
+	texMan: ^texture.TextureManager,
+	camera: rl.Camera2D,
+) {
 	view := ecs.View2(world, core.Transform, core.Shadow)
 	for entity in view {
 		transform := entity.c1
 		shadow := entity.c2
 		dest := rl.Vector2{transform.x - core.TileSize / 2, transform.y - core.TileSize / 2}
+		destRect := core.MakeRect(dest, core.GetSize(core.GetShadowRect(shadow^)))
+
+		if !rl.CheckCollisionRecs(destRect, core.GetScreenRect(camera)) {
+			continue
+		}
 
 		QueueShadow(renMan, shadow^, dest)
 	}
 }
 
-RenderColliders :: proc(world: ^ecs.World, renMan: ^RenderManager) {
-	view := ecs.View2(world, core.Collider, core.Transform)
+RenderColliders :: proc(world: ^ecs.World, renMan: ^RenderManager, camera: rl.Camera2D) {
+	view := ecs.ColliderView(world, camera.target, core.SimulationDistance)
 	for entity in view {
 		collider := entity.c1
 		transform := entity.c2
@@ -88,6 +98,9 @@ RenderColliders :: proc(world: ^ecs.World, renMan: ^RenderManager) {
 			switch box.type {
 			case .CIRCLE:
 				center := rl.Vector2{transform.x + box.offset.x, transform.y + box.offset.y}
+				if !rl.CheckCollisionCircleRec(center, box.size.x, core.GetScreenRect(camera)) {
+					continue
+				}
 				QueueCircle(renMan, center, box.size.x, rl.BLUE)
 
 			case .RECTANGLE:
@@ -96,6 +109,9 @@ RenderColliders :: proc(world: ^ecs.World, renMan: ^RenderManager) {
 					y      = transform.y + box.offset.y,
 					width  = box.size.x,
 					height = box.size.y,
+				}
+				if !rl.CheckCollisionRecs(rect, core.GetScreenRect(camera)) {
+					continue
 				}
 				QueueRect(renMan, rect, rl.BLUE)
 			}

@@ -247,7 +247,12 @@ update :: proc(engine: ^Engine) {
 		}
 
 		tilemap.DrawTilemap(engine.tileManager, camera.camera, engine.renderManager, engine.world)
-		render.RenderShadows(engine.world, engine.renderManager, engine.textureManager)
+		render.RenderShadows(
+			engine.world,
+			engine.renderManager,
+			engine.textureManager,
+			camera.camera,
+		)
 		render.RenderSprites(
 			engine.world,
 			engine.renderManager,
@@ -256,7 +261,7 @@ update :: proc(engine: ^Engine) {
 		)
 
 		if (core.DEBUG.drawColliders) {
-			render.RenderColliders(engine.world, engine.renderManager)
+			render.RenderColliders(engine.world, engine.renderManager, camera.camera)
 		}
 
 		if core.DEBUG.drawScreenBounds {

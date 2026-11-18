@@ -14,17 +14,11 @@ MovementSystem :: proc(world: ^ecs.World, tileMan: ^tilemap.TileManager) {
 	// Test collision against all those and move the player
 	view := ecs.View2(world, core.Transform, core.Velocity)
 
-	simpleApplyVelocity :: proc(transform: ^core.Transform, velocity: ^core.Velocity, dt: f32) {
-		transform.x += velocity.x * dt
-		transform.y += velocity.y * dt
-		velocity.x = 0
-		velocity.y = 0
-	}
-
 	for entity in view {
 		dt := core.FrameTime()
 		transform := entity.c1
 		velocity := entity.c2
+		if velocity == {} do continue
 		collider, noCollider := ecs.GetComponentForEntity(world, entity.id, core.Collider)
 		pos := rl.Vector2{transform.x, transform.y}
 		obstacles := make([dynamic]BoxView, context.temp_allocator)

@@ -43,25 +43,7 @@ QueueShadow :: proc(
 	zoom: f32 = 1.0,
 	tint: rl.Color = rl.WHITE,
 ) {
-	src: rl.Rectangle
-
-	switch shadow {
-	case .SMALL:
-		src = {
-			x      = 240,
-			y      = 0,
-			width  = 16,
-			height = 16,
-		}
-	case .LARGE:
-		src = {
-			x      = 224,
-			y      = 0,
-			width  = 16,
-			height = 16,
-		}
-	}
-
+	src := core.GetShadowRect(shadow)
 	dest := dest
 	dest.y += core.TileSize / 4
 

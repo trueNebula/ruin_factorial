@@ -243,3 +243,13 @@ ScatterArea :: proc(pos: rl.Vector2, area: f32) -> rl.Vector2 {
 Scatter2D :: proc(pos: rl.Vector2, area: rl.Vector2) -> rl.Vector2 {
 	return ScatterRect(MakeRect(pos, area))
 }
+
+GetShadowRect :: proc(shadow: Shadow) -> rl.Rectangle {
+	switch shadow {
+	case .SMALL:
+		return {x = 240, y = 0, width = 16, height = 16}
+	case .LARGE:
+		return {x = 224, y = 0, width = 16, height = 16}
+	}
+	return {}
+}
