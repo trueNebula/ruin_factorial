@@ -101,6 +101,31 @@ Get :: proc(world: ^World, entityId: u32, tids: ..typeid) -> ComponentSet {
 	return componentSet
 }
 
+GetAllForEntity :: proc(world: ^World, entityId: u32) -> ComponentSet {
+	componentSet := MakeComponentSet(allocator = context.temp_allocator)
+	record := world.entities[entityId]
+	components := getComponentsFromMask(&record.archetype.mask)
+
+	for tid in components {
+		data, err := getComponentRaw(world, entityId, tid)
+		if (err) {
+			log.Warn(
+				"Tried getting component %+v on entity %+v, but entity does not have said component!",
+				tid,
+				entityId,
+			)
+			continue
+		}
+
+		component := new(Component, context.temp_allocator)
+		reflect.set_union_variant_type_info(component^, type_info_of(tid))
+		mem.copy(component, data, reflect.size_of_typeid(tid))
+		ComponentSetAdd(&componentSet, component)
+	}
+
+	return componentSet
+}
+
 GetComponentForEntity :: proc(world: ^World, entityId: u32, $T: typeid) -> (ptr: ^T, err: bool) {
 	data, error := getComponentRaw(world, entityId, T)
 	if error {

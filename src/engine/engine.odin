@@ -28,6 +28,9 @@ Engine :: struct {
 	world:          ^ecs.World,
 	frameInput:     input.State,
 	rng:            runtime.Random_Generator,
+
+	/* DEBUG */
+	selectedEntity: u32,
 }
 
 MakeEngine :: proc() -> Engine {
@@ -138,6 +141,15 @@ Run :: proc(engine: ^Engine) {
 
 		engineInput(engine)
 
+		selectedEntityData: ecs.ComponentSet
+		defer ecs.Cleanup(&selectedEntityData)
+		if core.DEBUG_SHOW_ENTITY_DATA {
+			DebugHandleClickedEntity(engine, camera.camera)
+			if engine.selectedEntity != 0 {
+				selectedEntityData = ecs.GetAllForEntity(engine.world, engine.selectedEntity)
+			}
+		}
+
 		// update
 		update(engine)
 		processEvents(engine)
@@ -163,7 +175,12 @@ Run :: proc(engine: ^Engine) {
 		rl.DrawText(rl.TextFormat("%d", rl.GetFPS()), 12, 12, 24, rl.BLACK)
 		rl.DrawText(rl.TextFormat("%d", rl.GetFPS()), 10, 10, 24, rl.WHITE)
 		if core.DEBUG.showWindow {
-			ui.FrameMu(&engine.frameInput, camera.camera.target)
+			ui.FrameMu(
+				&engine.frameInput,
+				camera.camera.target,
+				engine.selectedEntity,
+				selectedEntityData,
+			)
 		}
 		rl.EndDrawing()
 

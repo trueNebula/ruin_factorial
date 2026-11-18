@@ -2,7 +2,9 @@ package ui
 
 import "core:fmt"
 import "src:core"
+import "src:ecs"
 import "src:input"
+import "src:neb_structures"
 import mu "vendor:microui"
 import rl "vendor:raylib"
 
@@ -40,9 +42,17 @@ InitMu :: proc() {
 	state.windowPos = {0, f32(rl.GetScreenHeight()) - 450, 350, 450}
 }
 
-FrameMu :: proc(frameInput: ^input.State, pos: rl.Vector2) {
+FrameMu :: proc(
+	frameInput: ^input.State,
+	pos: rl.Vector2,
+	entityId: u32,
+	entitySet: ecs.ComponentSet,
+) {
 	update(frameInput)
 	debug(pos)
+	if core.DEBUG_SHOW_ENTITY_DATA {
+		entity(entityId, entitySet)
+	}
 	end()
 }
 
@@ -118,6 +128,54 @@ debug :: proc(pos: rl.Vector2) {
 
 		mu.checkbox(ctx, "God Mode", &core.DEBUG.godMode)
 		mu.label(ctx, fmt.tprintf("Player pos: %2f %2f", pos.x, pos.y))
+	}
+}
+
+ENTITY_WIDTH :: 340
+ENTITY_HEIGHT :: 450
+
+@(private = "file")
+entity :: proc(id: u32, data: ecs.ComponentSet) {
+	if len(data.data) == 0 do return
+	ctx := &state.muCtx
+	screenWidth := f32(rl.GetScreenWidth())
+	screenHeight := f32(rl.GetScreenHeight())
+	rect := rectangleToRect(
+		rl.Rectangle {
+			x = screenWidth - ENTITY_WIDTH,
+			y = screenHeight - ENTITY_HEIGHT,
+			width = ENTITY_WIDTH,
+			height = ENTITY_HEIGHT,
+		},
+	)
+
+	@(static) opts := mu.Options{.NO_CLOSE, .NO_RESIZE}
+
+	if mu.window(ctx, "Entity Data", rect, opts) {
+		mu.layout_row(ctx, {ENTITY_WIDTH}, 0)
+		mu.label(ctx, fmt.tprintf("ID %d", id))
+		for component in data.data {
+			#partial switch v in component {
+			case core.Transform:
+				mu.label(ctx, "Transform")
+				mu.label(ctx, fmt.tprintf("Pos: %2f %2f", v.x, v.y))
+			case core.Velocity:
+				mu.label(ctx, fmt.tprintf("Velocity: %2f %2f", v.x, v.y))
+			case core.Sprite:
+				mu.label(ctx, "Sprite")
+				mu.label(ctx, fmt.tprintf("Texture: %v", v.texture))
+				mu.label(ctx, fmt.tprintf("Anchor: %v", v.anchor))
+				mu.label(ctx, fmt.tprintf("Offset: %0f %0f", v.offsetX, v.offsetY))
+			case core.Health:
+				mu.label(ctx, "Health")
+				mu.label(ctx, fmt.tprintf("Current: %d Max: %d", v.current, v.max))
+			case core.Item:
+				mu.label(ctx, "Item")
+				mu.label(ctx, fmt.tprintf("ID: %v Quantity: %d", v.id, v.count))
+			case core.BlockId:
+				mu.label(ctx, fmt.tprintf("Block: %v", v))
+			}
+		}
 	}
 }
 

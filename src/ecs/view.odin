@@ -38,6 +38,38 @@ View1 :: proc(world: ^World, $T1: typeid) -> [dynamic]EntityView1(T1) {
 	return views
 }
 
+TransformView :: proc(
+	world: ^World,
+	playerPos: rl.Vector2,
+	distance: f32 = core.SimulationDistance,
+) -> [dynamic]EntityView1(core.Transform) {
+	tids := []typeid{typeid_of(core.Collider), typeid_of(core.Transform)}
+	mask := computeMask(world, tids)
+	views := make([dynamic]EntityView1(core.Transform), context.temp_allocator)
+
+	for arch in world.archetypes {
+		if !maskIncludes(&arch.mask, &mask) do continue
+
+		col1 := arch.columns[core.Transform]
+
+		size1 := world.meta[core.Transform].size
+
+		for entId, entIdx in arch.entities {
+			view: EntityView1(core.Transform)
+			view.id = entId
+			view.c1 = (^core.Transform)(&col1[entIdx * size1])
+
+			if linalg.distance(rl.Vector2{view.c1.x, view.c1.y}, playerPos) > distance {
+				continue
+			}
+
+			append(&views, view)
+		}
+	}
+
+	return views
+}
+
 EntityView2 :: struct($T1: typeid, $T2: typeid) {
 	id: u32,
 	c1: ^T1,

@@ -54,6 +54,8 @@ componentSetGet :: proc(set: ^ComponentSet, tid: typeid) -> (data: ^Component, e
 
 @(private = "file")
 componentSetCleanup :: proc(set: ^ComponentSet) {
-	delete(set.data)
-	delete(set.lookup)
+	if len(set.data) != 0 {
+		delete(set.data)
+		delete(set.lookup)
+	}
 }
