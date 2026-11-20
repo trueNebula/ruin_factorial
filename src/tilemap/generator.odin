@@ -194,7 +194,7 @@ CreateSeeds :: proc() -> Seeds {
 
 GenerateBlocks :: proc(tileMan: ^TileManager, world: ^ecs.World) {
 	chk := &tileMan.chunks["0;0"]
-	chk.blocks[4], _ = generateBlock(tileMan, world, 0, 0, 4, true)
+	generateBlock(tileMan, world, chk, 4, true)
 
 	for _, &chunk in tileMan.chunks {
 		generateBlocksInChunk(tileMan, world, &chunk)
@@ -208,11 +208,7 @@ generateBlocksInChunk :: proc(tileMan: ^TileManager, world: ^ecs.World, chunk: ^
 		if chunk.base[idx] != .GRASS {
 			continue
 		}
-		block, ok := generateBlock(tileMan, world, chunk.x, chunk.y, idx)
-		if ok {
-			chunk.blocks[idx] = block
-			blockcounter += 1
-		}
+		generateBlock(tileMan, world, chunk, idx)
 	}
 }
 
@@ -224,41 +220,50 @@ BOXES := [?]core.CollisionBox {
 generateBlock :: proc(
 	tileMan: ^TileManager,
 	world: ^ecs.World,
-	chunkX, chunkY: int,
+	chunk: ^Chunk,
 	idx: int,
 	force: bool = false,
-) -> (
-	blk: Block,
-	ok: bool,
 ) {
-	tileSeed := GetTileSeed(u64(tileMan.seeds.height), chunkX, chunkY, idx)
-	if neb_utils.PercentChanceSeeded(5, tileSeed) || force {
-		block, err := repository.Find(&tileMan.repo.blocks, "base:tree_pine_block")
+	tileSeed := GetTileSeed(u64(tileMan.seeds.height), chunk.x, chunk.y, idx)
+	if chunk.blocks[idx].id != 0 do return
+	if !(neb_utils.PercentChanceSeeded(5, tileSeed) || force) do return
 
-		if err {
-			return
-		}
+	id, err := repository.Find(&tileMan.repo.blocks, "base:tree_pine_block")
 
-		tilePos := Tile2World(idx, chunkX, chunkY)
-
-		blockDef := repository.Get(&tileMan.repo.blocks, block)
-		health := core.Health {
-			current = blockDef.health,
-			max     = blockDef.health,
-		}
-		dropTable := blockDef.drops[:]
-		transform := core.Transform {
-			x     = tilePos.x,
-			y     = tilePos.y,
-			sizeX = 1,
-			sizeY = 1,
-		}
-		collider := core.Collider {
-			boxes = BOXES[:],
-		}
-
-		entity := ecs.Add(world, block, health, dropTable, transform, collider)
-		return Block{entity = entity, id = block}, true
+	if err {
+		return
 	}
-	return {}, false
+
+	tilePos := Tile2World(idx, chunk.x, chunk.y)
+
+	def := repository.Get(&tileMan.repo.blocks, id)
+	health := core.Health {
+		current = def.health,
+		max     = def.health,
+	}
+	dropTable := def.drops[:]
+	transform := core.Transform {
+		x     = tilePos.x,
+		y     = tilePos.y,
+		sizeX = 1,
+		sizeY = 1,
+	}
+	collider := core.Collider {
+		boxes = BOXES[:],
+	}
+
+	entity := ecs.Add(world, id, health, dropTable, transform, collider)
+	chunk.blocks[idx] = Block {
+		entity = entity,
+		id     = id,
+	}
+
+	for offset in def.tiles {
+		_, offsetBlock := GetTileOffsetFromWorldPos(tileMan, tilePos, offset.x, offset.y)
+		offsetBlock.entity = entity
+		offsetBlock.id = id
+		offsetBlock.offset = offset
+	}
+
+	blockcounter += 1
 }

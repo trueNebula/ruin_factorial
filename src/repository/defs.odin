@@ -22,6 +22,7 @@ BlockDef :: struct {
 	drops:   core.DropTable,
 	texture: core.Texture,
 	anchor:  core.Anchor,
+	tiles:   []core.TileOffset,
 	rect:    rl.Rectangle,
 }
 

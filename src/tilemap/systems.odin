@@ -15,12 +15,23 @@ TilemapClickSystem :: proc(
 	world: ^ecs.World,
 	frameInput: ^input.State,
 	camera: rl.Camera2D,
+	repo: ^repository.Repository,
 ) {
 	if input.MaybeConsumeMouse(frameInput, .LEFT) {
 		pos := rl.GetScreenToWorld2D(frameInput.mousePos, camera)
 		_, block := GetTileAtScreenPos(tileMan, pos)
-		if core.IsNone(block.id) {
-			return
+		if core.IsNone(block.id) do return
+		def := repository.Get(&repo.blocks, block.id)
+		blockPos := Screen2World(pos) * core.TileSize
+		if block.offset != {} {
+			_, ogBlock := GetTileOffsetFromWorldPos(
+				tileMan,
+				blockPos,
+				-block.offset.x,
+				-block.offset.y,
+			)
+			blockPos -= cast([2]f32)block.offset * core.TileSize
+			block = ogBlock
 		}
 
 		health, err := ecs.GetComponentForEntity(world, block.entity, core.Health)
@@ -35,10 +46,14 @@ TilemapClickSystem :: proc(
 		health.current -= 1
 		if health.current <= 0 {
 			ecs.Delete(world, block.entity)
-			worldPos := Screen2World(pos) * core.TileSize + core.TileSize / 2
+			worldPos := blockPos + core.TileSize / 2
 			breakTile(world, tileMan.repo, block.entity, worldPos)
-			block.entity = 0
-			block.id = 0
+			block^ = {}
+
+			for offset in def.tiles {
+				_, offsetBlock := GetTileOffsetFromWorldPos(tileMan, worldPos, offset.x, offset.y)
+				offsetBlock^ = {}
+			}
 			return
 		}
 

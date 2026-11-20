@@ -252,6 +252,7 @@ update :: proc(engine: ^Engine) {
 			engine.world,
 			&engine.frameInput,
 			camera.camera,
+			engine.repo,
 		)
 
 		if (engine.sceneManager.transition.state == .NONE) {

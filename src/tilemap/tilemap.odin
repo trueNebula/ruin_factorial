@@ -22,6 +22,7 @@ BlockLayer :: [core.ChunkSize]Block
 Block :: struct {
 	entity: u32,
 	id:     core.BlockId,
+	offset: core.TileOffset, // offset to the base block that this tile is a part of, used for multi-tile objs.
 }
 
 Chunk :: struct {
@@ -237,9 +238,8 @@ drawChunk :: proc(
 		for tileX in x0 ..= x1 {
 			idx := tileY * core.ChunkLenght + tileX
 			block := chunk.blocks[idx]
-			if core.IsNone(block.id) {
-				continue
-			}
+			if block.offset != {} do continue
+			if core.IsNone(block.id) do continue
 
 			blockDef := repository.Get(&tileMan.repo.blocks, block.id)
 			tileData := Tile {

@@ -28,6 +28,8 @@ Anchor :: enum {
 	TOP_LEFT,
 }
 
+TileOffset :: [2]int
+
 Keybinds :: struct {
 	Up, Down, Left, Right:  rl.KeyboardKey,
 	Inventory, Menu, Close: rl.KeyboardKey,
