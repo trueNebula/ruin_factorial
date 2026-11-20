@@ -6,6 +6,7 @@ import "core:strings"
 import "src:core"
 import "src:log"
 import "src:neb_utils"
+import "src:repository"
 import "src:tilemap"
 import rl "vendor:raylib"
 
@@ -248,4 +249,28 @@ GetTileOffsetFromWorldPos :: proc(
 		(tileY - chunkY * core.ChunkLenght) * core.ChunkLenght
 
 	return chunk.base[idx], &chunk.blocks[idx]
+}
+
+GetMultiTileCenter :: proc(pos: rl.Vector2, def: ^repository.BlockDef) -> rl.Vector2 {
+	switch def.anchor {
+	case .CENTER:
+		return pos + core.TileSize / 2
+	case .TOP_LEFT:
+		maxR: f32 = 0
+		maxB: f32 = 0
+		for offset in def.tiles {
+			maxR = max(maxR, f32(offset.x))
+			maxB = max(maxB, f32(offset.y))
+			return {pos.x + core.TileSize * (maxR + 1) / 2, pos.y + core.TileSize * maxB / 2}
+		}
+	case .BOTTOM_LEFT:
+		maxR: f32 = 0
+		maxT: f32 = 0
+		for offset in def.tiles {
+			maxR = max(maxR, f32(offset.x))
+			maxT = min(maxT, f32(offset.y))
+			return {pos.x + core.TileSize * (maxR + 1) / 2, pos.y + core.TileSize * (maxT + 1) / 2}
+		}
+	}
+	return pos + core.TileSize / 2
 }

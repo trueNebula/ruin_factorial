@@ -47,7 +47,7 @@ TilemapClickSystem :: proc(
 		if health.current <= 0 {
 			ecs.Delete(world, block.entity)
 			worldPos := blockPos + core.TileSize / 2
-			breakTile(world, tileMan.repo, block.entity, worldPos)
+			breakTile(world, tileMan.repo, block.entity, GetMultiTileCenter(blockPos, def))
 			block^ = {}
 
 			for offset in def.tiles {
