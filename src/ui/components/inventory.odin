@@ -17,8 +17,13 @@ Inventory :: proc(
 	repo: ^repository.Repository,
 	texMan: ^texture.TextureManager,
 	props: InventoryProps,
+) -> (
+	clickedIdx: Maybe(int),
+	mouseButton: Maybe(core.MouseButton),
 ) {
 	hoveredItem: ^repository.ItemDef
+	clickedIdx = nil
+	mouseButton = nil
 
 	if ui.Root(
 		uiMan,
@@ -80,7 +85,13 @@ Inventory :: proc(
 								}
 
 								if response.clicked {
-									fmt.println("Clicked", response.rect)
+									clickedIdx = row * 10 + idx
+									mouseButton = .LEFT
+								}
+
+								if response.clickedR {
+									clickedIdx = row * 10 + idx
+									mouseButton = .RIGHT
 								}
 							}
 						}
@@ -93,6 +104,8 @@ Inventory :: proc(
 	if hoveredItem != nil {
 		Tooltip(uiMan, texMan, hoveredItem)
 	}
+
+	return
 }
 
 Tooltip :: proc(uiMan: ^ui.UiManager, texMan: ^texture.TextureManager, item: ^repository.ItemDef) {

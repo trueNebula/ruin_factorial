@@ -216,6 +216,8 @@ respond :: proc(uiMan: ^UiManager, id: Id) -> Response {
 		active = uiMan.active == id,
 		clicked = uiMan.clicked == id,
 		rect = uiMan.widgets[id].rect,
+		activeR = uiMan.activeR == id,
+		clickedR = uiMan.clickedR == id,
 	}
 }
 

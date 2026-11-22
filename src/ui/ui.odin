@@ -24,6 +24,7 @@ UiManager :: struct {
 	parents:                  [dynamic]int,
 	widgets:                  map[Id]WidgetState,
 	hovered, active, clicked: Id,
+	activeR, clickedR:        Id,
 	mouse:                    [Space]rl.Vector2,
 	menuOpen:                 bool,
 	textFieldActive:          bool,
@@ -119,6 +120,7 @@ BeginFrame :: proc(uiMan: ^UiManager, worldCamera: Maybe(rl.Camera2D)) {
 	}
 
 	uiMan.clicked = 0
+	uiMan.clickedR = 0
 	if rl.IsMouseButtonPressed(.LEFT) {
 		uiMan.active = uiMan.hovered
 	}
@@ -127,6 +129,17 @@ BeginFrame :: proc(uiMan: ^UiManager, worldCamera: Maybe(rl.Camera2D)) {
 		if uiMan.active != 0 && uiMan.active == uiMan.hovered {
 			uiMan.clicked = uiMan.active
 			uiMan.active = 0
+		}
+	}
+
+	if rl.IsMouseButtonPressed(.RIGHT) {
+		uiMan.activeR = uiMan.hovered
+	}
+
+	if rl.IsMouseButtonReleased(.RIGHT) {
+		if uiMan.activeR != 0 && uiMan.activeR == uiMan.hovered {
+			uiMan.clickedR = uiMan.activeR
+			uiMan.activeR = 0
 		}
 	}
 }

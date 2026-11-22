@@ -118,10 +118,12 @@ InWorld :: struct {
 }
 
 Response :: struct {
-	hovered: bool, // Cursor over me, topmost, can be clicked on
-	active:  bool, // Active, mouse down, waiting for release
-	clicked: bool, // Mouse just released, true for one frame
-	rect:    rl.Rectangle, // Rect on the previous frame
+	hovered:  bool, // Cursor over me, topmost, can be clicked on
+	active:   bool, // Active, left mouse down, waiting for release
+	clicked:  bool, // Left mouse just released, true for one frame
+	rect:     rl.Rectangle, // Rect on the previous frame
+	activeR:  bool, // Active, right mouse down, waiting for release
+	clickedR: bool, // Right mouse just released, true for one frame
 }
 
 WidgetState :: struct {

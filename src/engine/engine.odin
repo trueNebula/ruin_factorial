@@ -316,6 +316,7 @@ processEvents :: proc(engine: ^Engine) {
 
 buildUi :: proc(engine: ^Engine) {
 	uiMan := engine.uiManager
+	// TODO: move these in their own functions
 	#partial switch engine.sceneManager.current {
 	case .MENU:
 		switch components.MainMenu(engine.uiManager) {
@@ -339,12 +340,19 @@ buildUi :: proc(engine: ^Engine) {
 			return
 		}
 		if engine.uiManager.menuOpen {
-			components.Inventory(
+			clickedSlotIdx, mouseButton := components.Inventory(
 				engine.uiManager,
 				engine.repo,
 				engine.textureManager,
 				{slots = inventory.slots[:], rows = 4},
 			)
+			if idx, ok := clickedSlotIdx.?; ok {
+				player.OnInventorySlotClicked(
+					inventory,
+					idx,
+					mouseButton.(core.MouseButton) == .RIGHT,
+				)
+			}
 		} else {
 			slots := inventory.slots[0:10]
 			components.Hotbar(engine.uiManager, engine.repo, {slots = slots})

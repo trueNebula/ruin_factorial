@@ -55,6 +55,16 @@ SetupPlayer :: proc(world: ^ecs.World) {
 		size  = INVENTORY_SLOTS,
 	}
 
+	inventory.slots[0] = {
+		id    = 1,
+		count = 5,
+	}
+
+	inventory.slots[1] = {
+		id    = 1,
+		count = 9998,
+	}
+
 	log.Debug("Added inventory component: %+v", inventory)
 
 	ecs.Add(world, transform, velocity, sprite, camera, player, inventory, collider)
