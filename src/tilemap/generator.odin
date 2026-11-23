@@ -235,6 +235,17 @@ generateBlock :: proc(
 		return
 	}
 
+	PlaceBlock(tileMan, world, chunk, idx, id)
+	blockcounter += 1
+}
+
+PlaceBlock :: proc(
+	tileMan: ^TileManager,
+	world: ^ecs.World,
+	chunk: ^Chunk,
+	idx: int,
+	id: core.BlockId,
+) {
 	tilePos := Tile2World(idx, chunk.x, chunk.y)
 
 	def := repository.Get(&tileMan.repo.blocks, id)
@@ -272,14 +283,10 @@ generateBlock :: proc(
 			hash := Coords2Hash(neighborChunkX, neighborChunkY)
 			chunk := generateChunk(tileMan, neighborChunkX, neighborChunkY)
 			tileMan.chunks[hash] = chunk
-			// generateChunk(tileMan, neighborChunkX, neighborChunkY)
-
 			_, offsetBlock = GetTileOffsetFromWorldPos(tileMan, tilePos, offset.x, offset.y)
 		}
 		offsetBlock.entity = entity
 		offsetBlock.id = id
 		offsetBlock.offset = offset
 	}
-
-	blockcounter += 1
 }
