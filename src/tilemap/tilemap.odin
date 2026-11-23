@@ -148,6 +148,7 @@ MaybeGenerateNewChunks :: proc(
 			}
 
 			chunk := generateChunk(tileMan, int(currChunkCoords.x), int(currChunkCoords.y))
+			tileMan.chunks[currChunkHash] = chunk
 			generateBlocksInChunk(tileMan, world, &chunk)
 			tileMan.chunks[currChunkHash] = chunk
 		}

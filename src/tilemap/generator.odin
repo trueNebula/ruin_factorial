@@ -203,6 +203,7 @@ GenerateBlocks :: proc(tileMan: ^TileManager, world: ^ecs.World) {
 	log.Debug("Generated %v blocks.", blockcounter)
 }
 
+@(private)
 generateBlocksInChunk :: proc(tileMan: ^TileManager, world: ^ecs.World, chunk: ^Chunk) {
 	for _, idx in chunk.blocks {
 		if chunk.base[idx] != .GRASS {
@@ -260,6 +261,21 @@ generateBlock :: proc(
 
 	for offset in def.tiles {
 		_, offsetBlock := GetTileOffsetFromWorldPos(tileMan, tilePos, offset.x, offset.y)
+		if offsetBlock == nil {
+			neighborChunkX := chunk.x
+			neighborChunkY := chunk.y
+			if offset.x > 0 do neighborChunkX += 1
+			if offset.x < 0 do neighborChunkX -= 1
+			if offset.y > 0 do neighborChunkX += 1
+			if offset.y < 0 do neighborChunkX -= 1
+
+			hash := Coords2Hash(neighborChunkX, neighborChunkY)
+			chunk := generateChunk(tileMan, neighborChunkX, neighborChunkY)
+			tileMan.chunks[hash] = chunk
+			// generateChunk(tileMan, neighborChunkX, neighborChunkY)
+
+			_, offsetBlock = GetTileOffsetFromWorldPos(tileMan, tilePos, offset.x, offset.y)
+		}
 		offsetBlock.entity = entity
 		offsetBlock.id = id
 		offsetBlock.offset = offset
