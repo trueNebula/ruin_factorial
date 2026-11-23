@@ -266,8 +266,8 @@ generateBlock :: proc(
 			neighborChunkY := chunk.y
 			if offset.x > 0 do neighborChunkX += 1
 			if offset.x < 0 do neighborChunkX -= 1
-			if offset.y > 0 do neighborChunkX += 1
-			if offset.y < 0 do neighborChunkX -= 1
+			if offset.y > 0 do neighborChunkY += 1
+			if offset.y < 0 do neighborChunkY -= 1
 
 			hash := Coords2Hash(neighborChunkX, neighborChunkY)
 			chunk := generateChunk(tileMan, neighborChunkX, neighborChunkY)
