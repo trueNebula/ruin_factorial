@@ -27,8 +27,9 @@ Component :: union {
 ComponentMask :: [4]u64
 
 ComponentMeta :: struct {
-	size: int,
-	bit:  int,
+	size:       int,
+	bit:        int,
+	destructor: proc(data: rawptr),
 }
 
 @(private)

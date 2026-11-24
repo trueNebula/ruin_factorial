@@ -51,6 +51,12 @@ Inventory :: struct {
 	size:  int,
 }
 
+InventoryDestructor :: proc(data: rawptr) {
+	inventoryPtr := cast(^Inventory)data
+	delete(inventoryPtr.slots)
+	inventoryPtr.slots = nil
+}
+
 Health :: struct {
 	current: int,
 	max:     int,

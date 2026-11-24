@@ -242,6 +242,8 @@ batchDeleteData :: proc(world: ^World, cmd: ^BatchDeleteCommand) {
 	src := cmd.src
 	dst := cmd.dst
 
+	runDestructors(world, src, dst, cmd.entities[:])
+
 	// Components are likely empty, so just remove the entire entity.
 	if src == dst {
 		if isMaskEmpty(&dst.mask) {

@@ -189,12 +189,6 @@ Run :: proc(engine: ^Engine) {
 }
 
 Shutdown :: proc(engine: ^Engine) {
-	inventoryView := ecs.View1(engine.world, core.Inventory)
-
-	for entity in inventoryView {
-		delete(entity.c1.slots)
-	}
-
 	ecs.EndWorld(engine.world)
 	texture.Shutdown(engine.textureManager)
 	tilemap.Shutdown(engine.tileManager)

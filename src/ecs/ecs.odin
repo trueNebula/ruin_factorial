@@ -1,5 +1,6 @@
 package ecs
 
+import "core:slice"
 import "src:core"
 import "src:log"
 // v1.0.0
@@ -47,10 +48,16 @@ CreateWorld :: proc() -> World {
 	#partial switch variant in info.variant.(runtime.Type_Info_Named).base.variant {
 	case runtime.Type_Info_Union:
 		for variantInfo, idx in variant.variants {
-			world.meta[variantInfo.id] = ComponentMeta {
+			meta := ComponentMeta {
 				bit  = idx,
 				size = variantInfo.size,
 			}
+
+			if variantInfo.id == core.Inventory {
+				meta.destructor = core.InventoryDestructor
+			}
+
+			world.meta[variantInfo.id] = meta
 		}
 	}
 
@@ -181,6 +188,7 @@ Initial :: proc(world: ^World) {
 }
 
 ClearWorld :: proc(world: ^World) {
+	runAllDestructors(world)
 	for arch in world.archetypes {
 		clear(&arch.entities)
 
@@ -200,6 +208,7 @@ ClearWorld :: proc(world: ^World) {
 }
 
 EndWorld :: proc(world: ^World) {
+	runAllDestructors(world)
 	for arch in world.archetypes {
 		delete(arch.entities)
 
@@ -319,4 +328,37 @@ getNextId :: proc(world: ^World) -> u32 {
 	id := world.idQueue[0]
 	ordered_remove(&world.idQueue, 0)
 	return id
+}
+
+@(private)
+runDestructors :: proc(world: ^World, src, dst: ^Archetype, entities: []u32) {
+	srcTids := getComponentsFromMask(&src.mask)
+	dstTids := getComponentsFromMask(&dst.mask)
+
+	for tid in srcTids {
+		meta := world.meta[tid]
+		if meta.destructor == nil do continue
+		if slice.contains(dstTids[:], tid) do continue
+
+		column := src.columns[tid]
+		for entityId in entities {
+			row := world.entities[entityId].row
+			meta.destructor(&column[row * meta.size])
+		}
+	}
+}
+
+@(private)
+runAllDestructors :: proc(world: ^World) {
+	for arch in world.archetypes {
+		for tid in arch.columns {
+			meta := world.meta[tid]
+			if meta.destructor == nil do continue
+
+			column := arch.columns[tid]
+			for row in 0 ..< len(arch.entities) {
+				meta.destructor(&column[row * meta.size])
+			}
+		}
+	}
 }
