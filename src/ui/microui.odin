@@ -5,6 +5,7 @@ import "src:core"
 import "src:ecs"
 import "src:input"
 import "src:neb_structures"
+import "src:repository"
 import mu "vendor:microui"
 import rl "vendor:raylib"
 
@@ -47,11 +48,12 @@ FrameMu :: proc(
 	pos: rl.Vector2,
 	entityId: u32,
 	entitySet: ecs.ComponentSet,
+	repo: ^repository.Repository,
 ) {
 	update(frameInput)
 	debug(pos)
 	if core.DEBUG_SHOW_ENTITY_DATA {
-		entity(entityId, entitySet)
+		entity(entityId, entitySet, repo)
 	}
 	end()
 }
@@ -135,7 +137,7 @@ ENTITY_WIDTH :: 340
 ENTITY_HEIGHT :: 450
 
 @(private = "file")
-entity :: proc(id: u32, data: ecs.ComponentSet) {
+entity :: proc(id: u32, data: ecs.ComponentSet, repo: ^repository.Repository) {
 	if len(data.data) == 0 do return
 	ctx := &state.muCtx
 	screenWidth := f32(rl.GetScreenWidth())
@@ -170,7 +172,9 @@ entity :: proc(id: u32, data: ecs.ComponentSet) {
 				mu.label(ctx, "Health")
 				mu.label(ctx, fmt.tprintf("Current: %d Max: %d", v.current, v.max))
 			case core.Item:
+				key := repository.Get(&repo.items, v.id).key
 				mu.label(ctx, "Item")
+				mu.label(ctx, fmt.tprintf("%v", key))
 				mu.label(ctx, fmt.tprintf("ID: %v Quantity: %d", v.id, v.count))
 			case core.BlockId:
 				mu.label(ctx, fmt.tprintf("Block: %v", v))

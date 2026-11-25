@@ -147,6 +147,7 @@ Run :: proc(engine: ^Engine) {
 			DebugHandleClickedEntity(engine, camera.camera)
 			if engine.selectedEntity != 0 {
 				selectedEntityData = ecs.GetAllForEntity(engine.world, engine.selectedEntity)
+				if len(selectedEntityData.data) == 0 do engine.selectedEntity = 0
 			}
 		}
 
@@ -180,6 +181,7 @@ Run :: proc(engine: ^Engine) {
 				camera.camera.target,
 				engine.selectedEntity,
 				selectedEntityData,
+				engine.repo,
 			)
 		}
 		rl.EndDrawing()

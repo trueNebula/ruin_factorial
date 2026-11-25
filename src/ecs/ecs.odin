@@ -111,6 +111,7 @@ Get :: proc(world: ^World, entityId: u32, tids: ..typeid) -> ComponentSet {
 GetAllForEntity :: proc(world: ^World, entityId: u32) -> ComponentSet {
 	componentSet := MakeComponentSet(allocator = context.temp_allocator)
 	record := world.entities[entityId]
+	if record == {} do return componentSet
 	components := getComponentsFromMask(&record.archetype.mask)
 
 	for tid in components {
