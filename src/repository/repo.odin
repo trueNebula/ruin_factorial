@@ -51,6 +51,7 @@ Register :: proc(reg: ^Registry($D, $I), key: string, def: D) -> (id: I, err: bo
 	}
 
 	append(&reg.defs, def)
+	reg.defs[len(reg.defs) - 1].key = key
 	id = I(len(reg.defs) - 1)
 	reg.byKey[key] = id
 

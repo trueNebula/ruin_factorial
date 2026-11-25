@@ -28,6 +28,7 @@ Entry :: struct {
 initReader :: proc() {
 	json.set_user_unmarshalers(&USER_UNMARSHALERS)
 	json.register_user_unmarshaler(core.CollisionLayers, bitsetUnmarshaler)
+	json.register_user_unmarshaler(core.BlockFlags, bitsetUnmarshaler)
 }
 
 @(private)

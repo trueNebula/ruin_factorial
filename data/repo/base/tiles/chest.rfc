@@ -3,6 +3,7 @@ block = {
   health = 5
   texture = BLOCK
   anchor = TOP_LEFT
+  flags = [DROP_SELF]
   rect = {x = 128, y = 16, width = 16, height = 32}
   collider = {
     boxes = [

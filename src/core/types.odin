@@ -161,3 +161,11 @@ NineSlice :: struct {
 		TILE,
 	},
 }
+
+BlockFlag :: enum {
+	UNBREAKABLE,
+	DROP_SELF,
+	DROP_CONTENTS,
+}
+
+BlockFlags :: bit_set[BlockFlag]

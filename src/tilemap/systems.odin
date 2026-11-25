@@ -47,7 +47,7 @@ TilemapClickSystem :: proc(
 		if health.current <= 0 {
 			ecs.Delete(world, block.entity)
 			worldPos := blockPos + core.TileSize / 2
-			breakTile(world, tileMan.repo, block.entity, GetMultiTileCenter(blockPos, def))
+			breakTile(world, tileMan.repo, def, block.entity, GetMultiTileCenter(blockPos, def))
 			block^ = {}
 
 			for offset in def.tiles {
@@ -72,6 +72,7 @@ TilemapClickSystem :: proc(
 breakTile :: proc(
 	world: ^ecs.World,
 	repo: ^repository.Repository,
+	def: ^repository.BlockDef,
 	entityId: u32,
 	pos: rl.Vector2,
 ) {
@@ -98,5 +99,13 @@ breakTile :: proc(
 			id := item.DropItem(world, repo, itemId, u16(qty), pos)
 			continue
 		}
+	}
+
+	if core.BlockFlag.DROP_SELF in def.flags {
+		selfId, selfRepoErr := repository.Find(&repo.items, def.key)
+		if selfRepoErr {
+			return
+		}
+		item.DropItem(world, repo, selfId, 1, pos)
 	}
 }
