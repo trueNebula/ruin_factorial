@@ -24,7 +24,7 @@ World :: struct {
 	idQueue:    [dynamic]u32,
 	arena:      mem.Arena,
 	batch:      BatchManager,
-	setup:      [dynamic]System,
+	setup:      [dynamic]SystemWithRepo,
 	tick:       [dynamic]System,
 }
 

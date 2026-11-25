@@ -34,7 +34,6 @@ initGameScene :: proc(sceneMan: ^SceneManager) -> GameScene {
 	ecs.RegisterTickSystem(world, render.ApplyTintTween)
 	ecs.RegisterTickSystem(world, item.FloatItem)
 	ecs.RegisterTickSystem(world, item.ScatterItem)
-	ecs.ProcessSetup(world)
 
 	return {}
 }

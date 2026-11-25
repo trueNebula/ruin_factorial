@@ -196,6 +196,9 @@ GenerateBlocks :: proc(tileMan: ^TileManager, world: ^ecs.World) {
 	chk := &tileMan.chunks["0;0"]
 	generateBlock(tileMan, world, chk, 4, true)
 
+	chest, _ := repository.Find(&tileMan.repo.blocks, "base:chest")
+	PlaceBlock(tileMan, world, chk, 64, chest)
+
 	for _, &chunk in tileMan.chunks {
 		generateBlocksInChunk(tileMan, world, &chunk)
 	}
@@ -211,10 +214,6 @@ generateBlocksInChunk :: proc(tileMan: ^TileManager, world: ^ecs.World, chunk: ^
 		}
 		generateBlock(tileMan, world, chunk, idx)
 	}
-}
-
-BOXES := [?]core.CollisionBox {
-	{type = .CIRCLE, offset = {16, 3}, size = {6, 0}, layer = {.WORLD}, mask = {}},
 }
 
 @(private)
@@ -260,9 +259,7 @@ PlaceBlock :: proc(
 		sizeX = 1,
 		sizeY = 1,
 	}
-	collider := core.Collider {
-		boxes = BOXES[:],
-	}
+	collider := def.collider
 
 	entity := ecs.Add(world, id, health, dropTable, transform, collider)
 	chunk.blocks[idx] = Block {

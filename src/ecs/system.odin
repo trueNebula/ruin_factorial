@@ -1,18 +1,26 @@
 package ecs
 
-System :: proc(world: ^World)
+import "src:repository"
 
-RegisterSetupSystem :: proc(world: ^World, system: proc(world: ^World)) {
+System :: proc(world: ^World)
+SystemWithRepo :: proc(world: ^World, repo: ^repository.Repository)
+
+RegisterSetupSystem :: proc(
+	world: ^World,
+	system: proc(world: ^World, repo: ^repository.Repository),
+) {
 	append(&world.setup, system)
 }
 
 RegisterTickSystem :: proc(world: ^World, system: proc(world: ^World)) {
 	append(&world.tick, system)
 }
-ProcessSetup :: proc(world: ^World) {
+
+ProcessSetup :: proc(world: ^World, repo: ^repository.Repository) {
 	for system in world.setup {
-		system(world)
+		system(world, repo)
 	}
+	clear(&world.setup)
 }
 
 ProcessTick :: proc(world: ^World) {

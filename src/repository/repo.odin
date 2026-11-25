@@ -1,5 +1,6 @@
 package repository
 
+import "core:encoding/json"
 import "core:mem"
 import "core:mem/virtual"
 import "src:core"
@@ -31,12 +32,14 @@ Shutdown :: proc(repo: ^Repository) {
 	delete(repo.items.byKey)
 	delete(repo.blocks.defs)
 	delete(repo.blocks.byKey)
+	delete(USER_UNMARSHALERS)
 }
 
 InitializeRepo :: proc(repo: ^Repository) {
 	Register(&repo.items, "base:none_item", NoneItemDef)
 	Register(&repo.blocks, "base:none_block", NoneBlockDef)
 
+	initReader()
 	readRepo(repo)
 }
 

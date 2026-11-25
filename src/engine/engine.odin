@@ -223,6 +223,7 @@ engineInput :: proc(engine: ^Engine) {
 @(private)
 update :: proc(engine: ^Engine) {
 	scene.Update(engine.sceneManager)
+	ecs.ProcessSetup(engine.world, engine.repo)
 
 	#partial switch engine.sceneManager.current {
 	case .MENU:

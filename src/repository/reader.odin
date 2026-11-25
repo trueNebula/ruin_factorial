@@ -4,10 +4,14 @@ import "core:encoding/json"
 import "core:fmt"
 import "core:mem"
 import "core:os"
+import "core:reflect"
 import "core:sort"
 import "core:strings"
+import "src:core"
 import "src:log"
 
+@(private)
+USER_UNMARSHALERS: map[typeid]json.User_Unmarshaler
 @(private)
 REPO_CONFIG_DIR :: "data/repo"
 @(private)
@@ -17,6 +21,12 @@ BASE_NAMESPACE :: "base"
 Entry :: struct {
 	item:  ItemDef,
 	block: BlockDef,
+}
+
+@(private)
+initReader :: proc() {
+	json.set_user_unmarshalers(&USER_UNMARSHALERS)
+	json.register_user_unmarshaler(core.CollisionLayers, layersUnmarshaler)
 }
 
 @(private)
@@ -117,8 +127,8 @@ readFile :: proc(path, namespace: string, repo: ^Repository) -> (ok: bool) {
 	}
 
 	entry: Entry
-	if json.unmarshal(jsonData, &entry, .MJSON, allocator(repo)) != nil {
-		log.Err("(Repo) Failed to parse config file %s!", path, panic = false)
+	if err := json.unmarshal(jsonData, &entry, .MJSON, allocator(repo)); err != nil {
+		log.Err("(Repo) Failed to parse config file %s! %v", path, err, panic = false)
 		return false
 	}
 
@@ -141,4 +151,25 @@ getFullKey :: proc(key: string, namespace: string, allocator: mem.Allocator) -> 
 		return key
 	}
 	return strings.concatenate({namespace, ":", key}, allocator)
+}
+
+@(private)
+layersUnmarshaler :: proc(parser: ^json.Parser, v: any) -> json.Unmarshal_Error {
+	out := (^core.CollisionLayers)(v.data)
+	out^ = {}
+
+	json.expect_token(parser, .Open_Bracket) or_return
+	for parser.curr_token.kind != .Close_Bracket && parser.curr_token.kind != .EOF {
+		tok := parser.curr_token
+		name := strings.trim(tok.text, "\"")
+		layer, ok := reflect.enum_from_name(core.ColliderLayer, name)
+		if !ok {
+			return json.Unsupported_Type_Error{id = v.id, token = tok}
+		}
+		out^ += {layer}
+		json.advance_token(parser)
+		_ = json.allow_token(parser, .Comma)
+	}
+	json.expect_token(parser, .Close_Bracket) or_return
+	return nil
 }

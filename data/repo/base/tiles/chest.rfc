@@ -1,0 +1,13 @@
+block = {
+  key = "chest"
+  health = 5
+  texture = BLOCK
+  anchor = CENTER
+  rect = {x = 128, y = 16, width = 16, height = 32}
+  collider = {
+    boxes = [
+      {type = RECTANGLE, offset = [0, -16], size = [16, 16], layer = [WORLD], mask = []}
+    ]
+  }
+  storage = 40
+}

@@ -24,4 +24,9 @@ block = {
     [1, 0]
   ]
   rect = {x = 0, y = 64, width = 32, height = 64}
+  collider = {
+    boxes = [
+      {type = CIRCLE, offset = [16, 3], size = [6, 0], layer = [WORLD], mask = []}
+    ]
+  }
 }

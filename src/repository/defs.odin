@@ -17,13 +17,15 @@ NoneItemDef :: ItemDef {
 }
 
 BlockDef :: struct {
-	key:     string,
-	health:  int,
-	drops:   core.DropTable,
-	texture: core.Texture,
-	anchor:  core.Anchor,
-	tiles:   []core.TileOffset,
-	rect:    rl.Rectangle,
+	key:      string,
+	health:   int,
+	drops:    core.DropTable,
+	texture:  core.Texture,
+	anchor:   core.Anchor,
+	tiles:    []core.TileOffset,
+	rect:     rl.Rectangle,
+	collider: core.Collider,
+	storage:  int,
 }
 
 NoneBlockDef :: BlockDef {

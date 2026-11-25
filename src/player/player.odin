@@ -7,6 +7,7 @@ import "src:core"
 import "src:ecs"
 import "src:input"
 import "src:log"
+import "src:repository"
 import rl "vendor:raylib"
 
 MAIN_PLAYER_REF :: core.PlayerRef {
@@ -19,7 +20,7 @@ PLAYER_BOXES := [?]core.CollisionBox {
 	{type = .CIRCLE, size = {4, 0}, layer = {.PLAYER}, mask = {.WORLD, .INTERACT, .ITEM}},
 }
 
-SetupPlayer :: proc(world: ^ecs.World) {
+SetupPlayer :: proc(world: ^ecs.World, repo: ^repository.Repository) {
 	transform := core.Transform {
 		x        = 0,
 		y        = 0,
@@ -55,14 +56,22 @@ SetupPlayer :: proc(world: ^ecs.World) {
 		size  = INVENTORY_SLOTS,
 	}
 
+	wood, _ := repository.Find(&repo.items, "base:wood")
+	chest, _ := repository.Find(&repo.items, "base:chest")
+
 	inventory.slots[0] = {
-		id    = 1,
+		id    = wood,
 		count = 5,
 	}
 
 	inventory.slots[1] = {
-		id    = 1,
+		id    = wood,
 		count = 9998,
+	}
+
+	inventory.slots[2] = {
+		id    = chest,
+		count = 1,
 	}
 
 	log.Debug("Added inventory component: %+v", inventory)
