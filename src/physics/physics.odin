@@ -24,8 +24,8 @@ MovementSystem :: proc(world: ^ecs.World, tileMan: ^tilemap.TileManager) {
 		obstacles := make([dynamic]BoxView, context.temp_allocator)
 
 		if !noCollider {
-			for y in -1 ..= 1 {
-				for x in -1 ..= 1 {
+			for y in -3 ..= 3 {
+				for x in -3 ..= 3 {
 					_, block := tilemap.GetTileOffsetFromWorldPos(tileMan, pos, x, y)
 					if block == nil || block.entity == 0 do continue
 
@@ -115,7 +115,7 @@ pushOut :: proc(
 		pointToCenter := moverCenter - closestPoint
 		distance := linalg.length(pointToCenter)
 
-		if distance > radius do return {}, false
+		if distance >= radius do return {}, false
 		if distance > 0 do return pointToCenter / distance * (radius - distance), true
 
 		// The center of the circle is inside the rectangle

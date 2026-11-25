@@ -310,7 +310,7 @@ drawTile :: proc(
 			1.0,
 			tint,
 			/*anchor=*/
-			.BOTTOM_LEFT,
+			tileData.anchor,
 		)
 	} else {
 		render.QueueTile(

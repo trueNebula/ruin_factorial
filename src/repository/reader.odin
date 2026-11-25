@@ -1,5 +1,6 @@
 package repository
 
+import "base:runtime"
 import "core:encoding/json"
 import "core:fmt"
 import "core:mem"
@@ -26,7 +27,7 @@ Entry :: struct {
 @(private)
 initReader :: proc() {
 	json.set_user_unmarshalers(&USER_UNMARSHALERS)
-	json.register_user_unmarshaler(core.CollisionLayers, layersUnmarshaler)
+	json.register_user_unmarshaler(core.CollisionLayers, bitsetUnmarshaler)
 }
 
 @(private)
@@ -153,23 +154,30 @@ getFullKey :: proc(key: string, namespace: string, allocator: mem.Allocator) -> 
 	return strings.concatenate({namespace, ":", key}, allocator)
 }
 
-@(private)
-layersUnmarshaler :: proc(parser: ^json.Parser, v: any) -> json.Unmarshal_Error {
-	out := (^core.CollisionLayers)(v.data)
-	out^ = {}
+bitsetUnmarshaler :: proc(p: ^json.Parser, v: any) -> json.Unmarshal_Error {
+	ti := runtime.type_info_base(type_info_of(v.id))
+	bs, is_bs := ti.variant.(runtime.Type_Info_Bit_Set)
+	if !is_bs || bs.elem == nil {
+		return json.Unsupported_Type_Error{id = v.id, token = p.curr_token}
+	}
 
-	json.expect_token(parser, .Open_Bracket) or_return
-	for parser.curr_token.kind != .Close_Bracket && parser.curr_token.kind != .EOF {
-		tok := parser.curr_token
+	bits: u64
+	json.expect_token(p, .Open_Bracket) or_return
+	for p.curr_token.kind != .Close_Bracket && p.curr_token.kind != .EOF {
+		tok := p.curr_token
 		name := strings.trim(tok.text, "\"")
-		layer, ok := reflect.enum_from_name(core.ColliderLayer, name)
+
+		value, ok := reflect.enum_from_name_any(bs.elem.id, name)
 		if !ok {
 			return json.Unsupported_Type_Error{id = v.id, token = tok}
 		}
-		out^ += {layer}
-		json.advance_token(parser)
-		_ = json.allow_token(parser, .Comma)
+		bits |= 1 << u64(i64(value) - i64(bs.lower))
+
+		if _, err := json.advance_token(p); err != nil {return err}
+		_ = json.allow_token(p, .Comma)
 	}
-	json.expect_token(parser, .Close_Bracket) or_return
+	json.expect_token(p, .Close_Bracket) or_return
+
+	mem.copy(v.data, &bits, ti.size) // little-endian, up to 64 bits
 	return nil
 }
