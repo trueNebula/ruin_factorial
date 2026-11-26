@@ -246,22 +246,17 @@ PlaceBlock :: proc(
 	id: core.BlockId,
 ) {
 	tilePos := Tile2World(idx, chunk.x, chunk.y)
-
 	def := repository.Get(&tileMan.repo.blocks, id)
-	health := core.Health {
-		current = def.health,
-		max     = def.health,
-	}
-	dropTable := def.drops[:]
-	transform := core.Transform {
-		x     = tilePos.x,
-		y     = tilePos.y,
-		sizeX = 1,
-		sizeY = 1,
-	}
-	collider := def.collider
+	components := make([dynamic]ecs.Component, context.temp_allocator)
+	defer delete(components)
 
-	entity := ecs.Add(world, id, health, dropTable, transform, collider)
+	append(&components, core.Health{current = def.health, max = def.health})
+	append(&components, def.drops[:])
+	append(&components, core.Transform{x = tilePos.x, y = tilePos.y, sizeX = 1, sizeY = 1})
+	append(&components, def.collider)
+	append(&components, id)
+
+	entity := ecs.Add(world, ..components[:])
 	chunk.blocks[idx] = Block {
 		entity = entity,
 		id     = id,
