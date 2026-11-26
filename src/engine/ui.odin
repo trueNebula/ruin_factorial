@@ -45,7 +45,7 @@ buildGameUi :: proc(engine: ^Engine) {
 			engine.uiManager,
 			engine.repo,
 			engine.textureManager,
-			{slots = inventory.slots[:], rows = 4},
+			{slots = inventory.slots[:]},
 		)
 		if idx, ok := clickedSlotIdx.?; ok {
 			player.OnInventorySlotClicked(
@@ -81,7 +81,7 @@ buildGameUi :: proc(engine: ^Engine) {
 			engine.uiManager,
 			engine.repo,
 			engine.textureManager,
-			{slots = inventory.slots[:], rows = 4},
+			{slots = inventory.slots[:]},
 		)
 		if idx, ok := clickedSlotIdx.?; ok {
 			player.OnInventorySlotClicked(

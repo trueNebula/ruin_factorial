@@ -9,7 +9,6 @@ import rl "vendor:raylib"
 
 InventoryProps :: struct {
 	slots: []core.Item,
-	rows:  int,
 }
 
 Inventory :: proc(
@@ -24,6 +23,7 @@ Inventory :: proc(
 	hoveredItem: ^repository.ItemDef
 	clickedIdx = nil
 	mouseButton = nil
+	rows := len(props.slots) / 10
 
 	if ui.Root(
 		uiMan,
@@ -42,7 +42,7 @@ Inventory :: proc(
 				gap = 2,
 			},
 		) {
-			for row in 0 ..< props.rows {
+			for row in 0 ..< rows {
 				if ui.Box(
 					uiMan,
 					fmt.tprintf("inventory_row_%u", row),

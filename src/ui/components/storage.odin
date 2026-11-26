@@ -21,6 +21,7 @@ Storage :: proc(
 	mouseButton = nil
 	rows := len(props.slots) / 10
 	if len(props.slots) % 10 != 0 do rows += 1
+	storageHeight := f32(17 * rows + 5) * 2
 
 	if ui.Root(
 		uiMan,
@@ -33,7 +34,7 @@ Storage :: proc(
 			"storage_container",
 			{
 				layout = .COLUMN,
-				size = {{.FIXED, 350}, {.FIXED, 146}},
+				size = {{.FIXED, 350}, {.FIXED, storageHeight}},
 				background = ContainerNS,
 				padding = pad(6),
 				gap = 2,
