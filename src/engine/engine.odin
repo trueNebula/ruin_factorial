@@ -137,8 +137,8 @@ Run :: proc(engine: ^Engine) {
 
 		if ui.AllowsClose(engine.uiManager) {
 			if .INVENTORY in engine.frameInput.actionPressed {
-				if engine.uiManager.menuOpen do engine.uiManager.menu = .NONE
-				else do engine.uiManager.menu = .INVENTORY
+				if engine.uiManager.menuOpen do engine.uiManager.menu.ui = .NONE
+				else do engine.uiManager.menu.ui = .INVENTORY
 				engine.uiManager.menuOpen = !engine.uiManager.menuOpen
 			}
 		}
@@ -311,7 +311,7 @@ processEvents :: proc(engine: ^Engine) {
 			ecs.Delete(engine.world, variant.item)
 		case event.Interact:
 			log.Debug("Interact event: %v", variant)
-			engine.uiManager.menu = variant.blockConfig.ui
+			engine.uiManager.menu = variant.config
 		}
 	}
 
@@ -320,62 +320,11 @@ processEvents :: proc(engine: ^Engine) {
 
 buildUi :: proc(engine: ^Engine) {
 	uiMan := engine.uiManager
-	// TODO: move these in their own functions
 	#partial switch engine.sceneManager.current {
 	case .MENU:
-		switch components.MainMenu(engine.uiManager) {
-		case .START:
-			resetRng(engine, nil)
-			scene.LoadScene(engine.sceneManager, .GAME)
-		case .START_SEEDED:
-			resetRng(engine, 6283573998654693917)
-			scene.LoadScene(engine.sceneManager, .GAME)
-		case .SETTINGS:
-		case .EXIT:
-		case .NONE:
-		}
+		buildMenuUi(engine)
 	case .GAME:
-		inventory, invErr := player.GetPlayerComponent(
-			engine.world,
-			player.MAIN_PLAYER_REF,
-			core.Inventory,
-		)
-		if invErr {
-			return
-		}
-		switch engine.uiManager.menu {
-		case .NONE:
-			slots := inventory.slots[0:10]
-			components.Hotbar(engine.uiManager, engine.repo, {slots = slots})
-		case .INVENTORY:
-			clickedSlotIdx, mouseButton := components.Inventory(
-				engine.uiManager,
-				engine.repo,
-				engine.textureManager,
-				{slots = inventory.slots[:], rows = 4},
-			)
-			if idx, ok := clickedSlotIdx.?; ok {
-				player.OnInventorySlotClicked(
-					inventory,
-					idx,
-					mouseButton.(core.MouseButton) == .RIGHT,
-				)
-			}
-		case .STORAGE:
-			clickedSlotIdx, mouseButton := components.Inventory(
-				engine.uiManager,
-				engine.repo,
-				engine.textureManager,
-				{slots = inventory.slots[:], rows = 4},
-			)
-			if idx, ok := clickedSlotIdx.?; ok {
-				player.OnInventorySlotClicked(
-					inventory,
-					idx,
-					mouseButton.(core.MouseButton) == .RIGHT,
-				)
-			}
-		}
+		buildGameUi(engine)
 	case .NONE:
 	case:
 		unreachable()

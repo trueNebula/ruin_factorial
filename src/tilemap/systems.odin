@@ -105,16 +105,12 @@ TilemapClickSystem :: proc(
 					}
 
 					config := core.BlockConfig{}
-					if def.storage != 0 do config.ui = .STORAGE
-
-					event.PushEvent(
-						queue,
-						event.Interact {
-							entity = block.entity,
-							input = inventory,
-							blockConfig = config,
-						},
-					)
+					if def.storage != 0 {
+						config.ui = .STORAGE
+						config.input = inventory
+						config.entity = block.entity
+					}
+					event.PushEvent(queue, event.Interact{config = config})
 				}
 			}
 		}

@@ -111,5 +111,8 @@ ItemScatter :: struct {
 }
 
 BlockConfig :: struct {
-	ui: UiMenu, // whether to use the storage or machine UI
+	ui:     UiMenu, // whether to use the storage or machine UI
+	input:  ^Inventory,
+	output: ^Inventory,
+	entity: u32,
 }

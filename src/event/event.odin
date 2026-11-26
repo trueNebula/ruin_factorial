@@ -26,10 +26,7 @@ Pickup :: struct {
 	item:      u32,
 }
 Interact :: struct {
-	input:       ^core.Inventory,
-	output:      ^core.Inventory,
-	blockConfig: core.BlockConfig,
-	entity:      u32,
+	config: core.BlockConfig,
 }
 
 Queue :: struct {
