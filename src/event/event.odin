@@ -7,6 +7,7 @@ Event :: union {
 	GenerateWorld,
 	ClearTilemap,
 	Collision,
+	Interact,
 	Pickup,
 }
 
@@ -23,6 +24,12 @@ Collision :: struct {
 Pickup :: struct {
 	collector: u32,
 	item:      u32,
+}
+Interact :: struct {
+	input:       ^core.Inventory,
+	output:      ^core.Inventory,
+	blockConfig: core.BlockConfig,
+	entity:      u32,
 }
 
 Queue :: struct {

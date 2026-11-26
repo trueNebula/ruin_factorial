@@ -1,7 +1,10 @@
 package tilemap
 
+import "core:math/linalg"
+import "src:collision"
 import "src:core"
 import "src:ecs"
+import "src:event"
 import "src:input"
 import "src:item"
 import "src:log"
@@ -10,17 +13,26 @@ import "src:repository"
 import "src:tilemap"
 import rl "vendor:raylib"
 
+@(private)
+BREAK_DISTANCE :: core.TileSize * 5
+@(private)
+INTERACT_DISTANCE :: core.TileSize * 3
+
 TilemapClickSystem :: proc(
 	tileMan: ^TileManager,
 	world: ^ecs.World,
 	frameInput: ^input.State,
 	camera: rl.Camera2D,
 	repo: ^repository.Repository,
+	queue: ^event.Queue,
 ) {
 	if input.MaybeConsumeMouse(frameInput, .LEFT) {
 		pos := rl.GetScreenToWorld2D(frameInput.mousePos, camera)
+		if linalg.distance(pos, camera.target) > BREAK_DISTANCE do return
+
 		_, block := GetTileAtScreenPos(tileMan, pos)
 		if core.IsNone(block.id) do return
+
 		def := repository.Get(&repo.blocks, block.id)
 		blockPos := Screen2World(pos) * core.TileSize
 		if block.offset != {} {
@@ -36,12 +48,7 @@ TilemapClickSystem :: proc(
 
 		health, err := ecs.GetComponentForEntity(world, block.entity, core.Health)
 		transform, _ := ecs.GetComponentForEntity(world, block.entity, core.Transform)
-
-		log.Debug("Transform: %v", transform)
-
-		if err {
-			return
-		}
+		if err do return
 
 		health.current -= 1
 		if health.current <= 0 {
@@ -65,6 +72,53 @@ TilemapClickSystem :: proc(
 		}
 
 		ecs.AddComponent(world, block.entity, tintTween)
+	}
+	if input.MaybeConsumeMouse(frameInput, .RIGHT) {
+		pos := rl.GetScreenToWorld2D(frameInput.mousePos, camera)
+		if linalg.distance(pos, camera.target) > INTERACT_DISTANCE do return
+
+		_, block := GetTileAtScreenPos(tileMan, pos)
+		if core.IsNone(block.id) do return
+
+		def := repository.Get(&repo.blocks, block.id)
+		if len(def.collider.boxes) == 0 do return
+
+		blockPos := Screen2World(pos) * core.TileSize
+		transform, tErr := ecs.GetComponentForEntity(world, block.entity, core.Transform)
+		if tErr do return
+
+		for &box in def.collider.boxes {
+			if .INTERACT in box.layer {
+				if collision.CheckPointInCollider(&box, transform, pos) {
+					inventory, invErr := ecs.GetComponentForEntity(
+						world,
+						block.entity,
+						core.Inventory,
+					)
+					if invErr {
+						log.Warn(
+							"Tried opening block at pos %v with id %v, got no inventory.",
+							pos,
+							block.entity,
+						)
+						return
+					}
+
+					config := core.BlockConfig{}
+					if def.storage != 0 do config.ui = .STORAGE
+
+					event.PushEvent(
+						queue,
+						event.Interact {
+							entity = block.entity,
+							input = inventory,
+							blockConfig = config,
+						},
+					)
+				}
+			}
+		}
+
 	}
 }
 

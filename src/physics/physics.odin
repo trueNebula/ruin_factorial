@@ -1,6 +1,7 @@
 package physics
 
 import "core:math/linalg"
+import "src:collision"
 import "src:core"
 import "src:ecs"
 import "src:tilemap"
@@ -21,7 +22,7 @@ MovementSystem :: proc(world: ^ecs.World, tileMan: ^tilemap.TileManager) {
 		if velocity == {} do continue
 		collider, noCollider := ecs.GetComponentForEntity(world, entity.id, core.Collider)
 		pos := rl.Vector2{transform.x, transform.y}
-		obstacles := make([dynamic]BoxView, context.temp_allocator)
+		obstacles := make([dynamic]collision.BoxView, context.temp_allocator)
 
 		if !noCollider {
 			for y in -3 ..= 3 {
@@ -45,7 +46,7 @@ MovementSystem :: proc(world: ^ecs.World, tileMan: ^tilemap.TileManager) {
 						if .WORLD not_in blockBox.layer do continue
 						append(
 							&obstacles,
-							BoxView {
+							collision.BoxView {
 								id = block.entity,
 								collider = &blockBox,
 								transform = blockTransform,

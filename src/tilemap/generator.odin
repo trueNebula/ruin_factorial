@@ -256,6 +256,14 @@ PlaceBlock :: proc(
 	append(&components, def.collider)
 	append(&components, id)
 
+	if def.storage != 0 {
+		inventory := core.Inventory {
+			slots = make([]core.Item, def.storage),
+			size  = def.storage,
+		}
+		append(&components, inventory)
+	}
+
 	entity := ecs.Add(world, ..components[:])
 	chunk.blocks[idx] = Block {
 		entity = entity,

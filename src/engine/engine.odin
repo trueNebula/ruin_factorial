@@ -1,10 +1,12 @@
 package engine
 
 import "base:runtime"
+import "src:collision"
 import "src:core"
 import "src:ecs"
 import "src:event"
 import "src:input"
+import "src:log"
 import "src:neb_utils"
 import "src:physics"
 import "src:player"
@@ -234,7 +236,7 @@ update :: proc(engine: ^Engine) {
 		ecs.ProcessTick(engine.world)
 		physics.MovementSystem(engine.world, engine.tileManager)
 		player.CameraTransformSystem(engine.world)
-		physics.CheckCollisions(engine.world, engine.queue)
+		collision.CheckCollisions(engine.world, engine.queue)
 
 		playerView := ecs.View2(engine.world, core.PlayerRef, core.Camera)
 
@@ -250,6 +252,7 @@ update :: proc(engine: ^Engine) {
 			&engine.frameInput,
 			camera.camera,
 			engine.repo,
+			engine.queue,
 		)
 
 		if (engine.sceneManager.transition.state == .NONE) {
@@ -300,11 +303,12 @@ processEvents :: proc(engine: ^Engine) {
 		case event.GenerateBlocks:
 			tilemap.GenerateBlocks(engine.tileManager, engine.world)
 		case event.Collision:
-			physics.RouteCollision(variant, engine.queue)
-
+			collision.RouteCollision(variant, engine.queue)
 		case event.Pickup:
 			player.TryAddToInventory(engine.world, variant.collector, variant.item)
 			ecs.Delete(engine.world, variant.item)
+		case event.Interact:
+			log.Debug("Interact event: %v", variant)
 		}
 	}
 

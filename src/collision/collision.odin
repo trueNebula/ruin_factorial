@@ -1,4 +1,4 @@
-package physics
+package collision
 
 import "core:math/linalg"
 import "src:core"
@@ -7,7 +7,6 @@ import "src:event"
 import "src:player"
 import rl "vendor:raylib"
 
-@(private)
 BoxView :: struct {
 	id:        u32,
 	collider:  ^core.CollisionBox,
@@ -89,6 +88,25 @@ CheckCollisions :: proc(world: ^ecs.World, queue: ^event.Queue) {
 			}
 		}
 	}
+}
+
+CheckPointInCollider :: proc(
+	collider: ^core.CollisionBox,
+	transform: ^core.Transform,
+	point: rl.Vector2,
+) -> bool {
+	if collider.type == .CIRCLE {
+		return rl.CheckCollisionPointCircle(point, {transform.x, transform.y}, collider.size.x)
+	}
+	return rl.CheckCollisionPointRec(
+		point,
+		{
+			transform.x + collider.offset.x,
+			transform.y + collider.offset.y,
+			collider.size.x,
+			collider.size.y,
+		},
+	)
 }
 
 @(private)
