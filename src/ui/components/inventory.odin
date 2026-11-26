@@ -1,6 +1,7 @@
 package components
 
 import "core:fmt"
+import "core:strings"
 import "src:core"
 import "src:repository"
 import "src:texture"
@@ -111,7 +112,6 @@ Inventory :: proc(
 Tooltip :: proc(uiMan: ^ui.UiManager, texMan: ^texture.TextureManager, item: ^repository.ItemDef) {
 	id := ui.MakeId(uiMan, "tooltip")
 	fontData, _ := texture.GetFont(texMan, .MAIN)
-	// cache, err := ui.GetState(uiMan, ui.TooltipState, id)
 	state, ok := &uiMan.state[id]
 	wrapped: string
 
@@ -119,14 +119,13 @@ Tooltip :: proc(uiMan: ^ui.UiManager, texMan: ^texture.TextureManager, item: ^re
 		uiMan.state[id] = ui.TooltipState{}
 		state = &uiMan.state[id]
 	}
-	cache := state.(ui.TooltipState)
+	cache := &state.(ui.TooltipState)
 	if cache.descCacheKey != item.description {
-		cache.descCache = core.FitText(
-			item.description,
-			InventorySlotCountStyle,
-			fontData.resource,
-			288,
+		delete(cache.descCache)
+		cache.descCache = strings.clone(
+			core.FitText(item.description, InventorySlotCountStyle, fontData.resource, 288),
 		)
+		cache.descCacheKey = item.description
 	}
 	wrapped = cache.descCache
 
