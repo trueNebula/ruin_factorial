@@ -27,6 +27,7 @@ UiManager :: struct {
 	activeR, clickedR:        Id,
 	mouse:                    [Space]rl.Vector2,
 	menuOpen:                 bool,
+	menu:                     core.UiMenu,
 	textFieldActive:          bool,
 	frame:                    int,
 	state:                    map[Id]State,

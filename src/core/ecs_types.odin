@@ -110,12 +110,6 @@ ItemScatter :: struct {
 	gravity:  f32,
 }
 
-BlockUi :: enum {
-	NONE,
-	STORAGE,
-	MACHINE,
-}
-
 BlockConfig :: struct {
-	ui: BlockUi, // whether to use the storage or machine UI
+	ui: UiMenu, // whether to use the storage or machine UI
 }

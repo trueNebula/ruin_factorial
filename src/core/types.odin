@@ -169,3 +169,9 @@ BlockFlag :: enum {
 }
 
 BlockFlags :: bit_set[BlockFlag]
+
+UiMenu :: enum {
+	NONE,
+	INVENTORY,
+	STORAGE,
+}

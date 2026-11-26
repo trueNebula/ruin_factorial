@@ -137,6 +137,8 @@ Run :: proc(engine: ^Engine) {
 
 		if ui.AllowsClose(engine.uiManager) {
 			if .INVENTORY in engine.frameInput.actionPressed {
+				if engine.uiManager.menuOpen do engine.uiManager.menu = .NONE
+				else do engine.uiManager.menu = .INVENTORY
 				engine.uiManager.menuOpen = !engine.uiManager.menuOpen
 			}
 		}
@@ -145,7 +147,7 @@ Run :: proc(engine: ^Engine) {
 
 		selectedEntityData: ecs.ComponentSet
 		defer ecs.Cleanup(&selectedEntityData)
-		if core.DEBUG_SHOW_ENTITY_DATA {
+		if core.DEBUG.showWindow && core.DEBUG_SHOW_ENTITY_DATA {
 			DebugHandleClickedEntity(engine, camera.camera)
 			if engine.selectedEntity != 0 {
 				selectedEntityData = ecs.GetAllForEntity(engine.world, engine.selectedEntity)
@@ -309,6 +311,7 @@ processEvents :: proc(engine: ^Engine) {
 			ecs.Delete(engine.world, variant.item)
 		case event.Interact:
 			log.Debug("Interact event: %v", variant)
+			engine.uiManager.menu = variant.blockConfig.ui
 		}
 	}
 
@@ -340,7 +343,11 @@ buildUi :: proc(engine: ^Engine) {
 		if invErr {
 			return
 		}
-		if engine.uiManager.menuOpen {
+		switch engine.uiManager.menu {
+		case .NONE:
+			slots := inventory.slots[0:10]
+			components.Hotbar(engine.uiManager, engine.repo, {slots = slots})
+		case .INVENTORY:
 			clickedSlotIdx, mouseButton := components.Inventory(
 				engine.uiManager,
 				engine.repo,
@@ -354,9 +361,20 @@ buildUi :: proc(engine: ^Engine) {
 					mouseButton.(core.MouseButton) == .RIGHT,
 				)
 			}
-		} else {
-			slots := inventory.slots[0:10]
-			components.Hotbar(engine.uiManager, engine.repo, {slots = slots})
+		case .STORAGE:
+			clickedSlotIdx, mouseButton := components.Inventory(
+				engine.uiManager,
+				engine.repo,
+				engine.textureManager,
+				{slots = inventory.slots[:], rows = 4},
+			)
+			if idx, ok := clickedSlotIdx.?; ok {
+				player.OnInventorySlotClicked(
+					inventory,
+					idx,
+					mouseButton.(core.MouseButton) == .RIGHT,
+				)
+			}
 		}
 	case .NONE:
 	case:
