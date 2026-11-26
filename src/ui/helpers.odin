@@ -3,6 +3,7 @@ package ui
 import "core:fmt"
 import "core:hash"
 import "core:math"
+import "core:strings"
 import "src:core"
 import "src:render"
 import "src:texture"
@@ -179,6 +180,7 @@ addNode :: proc(uiMan: ^UiManager, id: Id, opts: BoxOpts) -> int {
 		node.parent = parent
 		node.layer = uiMan.nodes[parent].layer
 		node.space = uiMan.nodes[parent].space
+		node.depth = uiMan.nodes[parent].depth + 1
 	}
 
 	append(&uiMan.nodes, node)
@@ -223,17 +225,20 @@ respond :: proc(uiMan: ^UiManager, id: Id) -> Response {
 
 @(private)
 drawNode :: proc(node: ^Node, texMan: ^texture.TextureManager) {
-	switch bg in node.opts.background {
+	switch &bg in node.opts.background {
 	case FlatBackground:
+		// t := rl.GetTime()
 		rect := core.MakeRect(node.position, node.size)
 		render.DrawRect(rect, bg.fill, bg.outline, bg.outlineW)
+	// stats.t[2] += rl.GetTime() - t; stats.n[2] += 1
 	case SpriteBackground:
-		dt := core.FrameTime()
+		// t := rl.GetTime()
 		sprite := bg.sprite
-		animation := bg.animation
 		frame := sprite.rect
 
-		if len(animation.frames) > 0 {
+		if len(bg.animation.frames) > 0 {
+			dt := core.FrameTime()
+			animation := &bg.animation
 			animation.timer += dt
 			if animation.timer >= animation.frames[animation.index].duration {
 				animation.timer -= animation.frames[animation.index].duration
@@ -248,18 +253,22 @@ drawNode :: proc(node: ^Node, texMan: ^texture.TextureManager) {
 		}
 
 		render.DrawSprite(texMan, sprite.texture, frame, node.position, rectSize)
+	// stats.t[1] += rl.GetTime() - t; stats.n[1] += 1
 	case core.NineSlice:
+		// t := rl.GetTime()
 		render.DrawNineSlice(texMan, bg, node.position, node.size)
+	// stats.t[0] += rl.GetTime() - t; stats.n[0] += 1
 	}
 
 	switch c in node.content {
 	case TextContent:
+		// t := rl.GetTime()
 		fontData, err := texture.GetFont(texMan, c.style.font)
 		if err {
 			return
 		}
 
-		text := fmt.ctprint(c.str)
+		text := strings.clone_to_cstring(c.str, context.temp_allocator)
 		if shadow, ok := c.style.shadow.?; ok {
 			render.DrawText(
 				text,
@@ -271,6 +280,7 @@ drawNode :: proc(node: ^Node, texMan: ^texture.TextureManager) {
 		}
 
 		render.DrawText(text, fontData, node.position, c.style.size, c.style.color)
+	// stats.t[2] += rl.GetTime() - t; stats.n[2] += 1
 	case ImageContent:
 		render.DrawSprite(texMan, c.sprite.texture, c.sprite.rect, node.position)
 	}

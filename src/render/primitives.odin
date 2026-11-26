@@ -139,14 +139,10 @@ DrawText :: proc(
 	size: f32,
 	tint: rl.Color = rl.WHITE,
 ) {
-	rl.DrawTextPro(
+	rl.DrawTextEx(
 		fontData.resource, // rl.GetFontDefault(),
 		text,
 		dest,
-		/*origin=*/
-		{0, 0},
-		/*rotation=*/
-		0,
 		size,
 		fontData.spacing,
 		tint,

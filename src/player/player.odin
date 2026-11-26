@@ -57,14 +57,9 @@ SetupPlayer :: proc(world: ^ecs.World, repo: ^repository.Repository) {
 	wood, _ := repository.Find(&repo.items, "base:wood")
 	chest, _ := repository.Find(&repo.items, "base:chest")
 
-	inventory.slots[0] = {
-		id    = wood,
-		count = 5,
-	}
-
-	inventory.slots[1] = {
-		id    = wood,
-		count = 9998,
+	for &slot in inventory.slots {
+		slot.id = wood
+		slot.count = 2
 	}
 
 	inventory.slots[2] = {

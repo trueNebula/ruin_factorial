@@ -132,7 +132,7 @@ Tooltip :: proc(uiMan: ^ui.UiManager, texMan: ^texture.TextureManager, item: ^re
 	if ui.Root(
 		uiMan,
 		"tooltip",
-		.MENU,
+		.TOOLTIP,
 		ui.Follow {
 			pos = uiMan.mouse[ui.Space.SCREEN],
 			pivot = core.BC,

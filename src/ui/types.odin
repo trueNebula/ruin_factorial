@@ -7,6 +7,7 @@ Id :: distinct u64
 Layer :: enum {
 	HUD,
 	MENU,
+	TOOLTIP,
 }
 Space :: enum {
 	WORLD,
@@ -56,6 +57,7 @@ Node :: struct {
 	opts:         BoxOpts,
 	attach:       Attach,
 	content:      Content,
+	depth:        int,
 }
 
 Background :: union {

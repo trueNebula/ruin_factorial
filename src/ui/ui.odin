@@ -1,5 +1,6 @@
 package ui
 
+import "core:fmt"
 import "core:math"
 import "src:core"
 import "src:log"
@@ -193,16 +194,44 @@ EndFrame :: proc(uiMan: ^UiManager, texMan: ^texture.TextureManager) {
 	}
 }
 
+DrawStats :: struct {
+	t: [4]f64,
+	n: [4]int,
+} // 0=nineslice 1=sprite 2=text 3=flat rect
+@(private)
+stats: DrawStats
+@(private)
+statFrames: int
+
 FlushScreen :: proc(uiMan: ^UiManager, texMan: ^texture.TextureManager) {
+	maxDepth := 0
+	for &node in uiMan.nodes do maxDepth = max(maxDepth, node.depth)
+
 	for layer in Layer {
 		if layer == .MENU && uiMan.menuOpen {
 			render.DrawRect(GetScreen(uiMan, 0), SCRIM, {}, 0)
 		}
-		for &node in uiMan.nodes {
-			if node.layer == layer && node.space == .SCREEN {
-				drawNode(&node, texMan)
+		for depth in 0 ..= maxDepth {
+			for &node in uiMan.nodes {
+				if node.layer == layer && node.space == .SCREEN {
+					drawNode(&node, texMan)
+				}
 			}
 		}
+	}
+	statFrames += 1
+	if statFrames == 300 {
+		names := [4]string{"nineslice", "sprite", "text", "flat"}
+		for i in 0 ..< 4 {
+			fmt.printf(
+				"%s: %.3f ms/frame, %d calls/frame\n",
+				names[i],
+				stats.t[i] / 300 * 1000,
+				stats.n[i] / 300,
+			)
+		}
+		stats = {}
+		statFrames = 0
 	}
 }
 

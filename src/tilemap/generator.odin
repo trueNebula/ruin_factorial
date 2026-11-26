@@ -261,6 +261,10 @@ PlaceBlock :: proc(
 			slots = make([]core.Item, def.storage),
 			size  = def.storage,
 		}
+		for &slot in inventory.slots {
+			slot.count = 2
+			slot.id = 2
+		}
 		append(&components, inventory)
 	}
 
