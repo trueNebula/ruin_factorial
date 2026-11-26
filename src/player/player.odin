@@ -1,7 +1,5 @@
 package player
 
-import "core:fmt"
-import "core:math"
 import "core:math/linalg"
 import "src:core"
 import "src:ecs"
@@ -15,7 +13,7 @@ MAIN_PLAYER_REF :: core.PlayerRef {
 }
 BASE_MOVEMENT_SPEED: f32 : 200.0
 GOD_MODE_MULTIPLIER: f32 : 10.0
-INVENTORY_SLOTS :: 41 // 40 + mouse
+INVENTORY_SLOTS :: 40
 PLAYER_BOXES := [?]core.CollisionBox {
 	{type = .CIRCLE, size = {4, 0}, layer = {.PLAYER}, mask = {.WORLD, .INTERACT, .ITEM}},
 }
@@ -74,9 +72,11 @@ SetupPlayer :: proc(world: ^ecs.World, repo: ^repository.Repository) {
 		count = 1,
 	}
 
+	mouseItem := core.MouseItem{}
+
 	log.Debug("Added inventory component: %+v", inventory)
 
-	ecs.Add(world, transform, velocity, sprite, camera, player, inventory, collider)
+	ecs.Add(world, transform, velocity, sprite, camera, player, inventory, mouseItem, collider)
 
 	log.Debug("Added player with transform %+v and sprite %+v", transform, sprite)
 }

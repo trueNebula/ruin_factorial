@@ -57,6 +57,8 @@ InventoryDestructor :: proc(data: rawptr) {
 	inventoryPtr.slots = nil
 }
 
+MouseItem :: distinct Item
+
 Health :: struct {
 	current: int,
 	max:     int,

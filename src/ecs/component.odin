@@ -16,6 +16,7 @@ Component :: union {
 	core.Inventory,
 	core.Item,
 	core.ItemScatter,
+	core.MouseItem,
 	core.PlayerRef,
 	core.Shadow,
 	core.Sprite,

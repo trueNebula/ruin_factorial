@@ -28,7 +28,12 @@ buildGameUi :: proc(engine: ^Engine) {
 		player.MAIN_PLAYER_REF,
 		core.Inventory,
 	)
-	if invErr {
+	mouseItem, mouseErr := player.GetPlayerComponent(
+		engine.world,
+		player.MAIN_PLAYER_REF,
+		core.MouseItem,
+	)
+	if invErr || mouseErr {
 		return
 	}
 	switch engine.uiManager.menu.ui {
@@ -43,7 +48,12 @@ buildGameUi :: proc(engine: ^Engine) {
 			{slots = inventory.slots[:], rows = 4},
 		)
 		if idx, ok := clickedSlotIdx.?; ok {
-			player.OnInventorySlotClicked(inventory, idx, mouseButton.(core.MouseButton) == .RIGHT)
+			player.OnInventorySlotClicked(
+				inventory,
+				idx,
+				mouseItem,
+				mouseButton.(core.MouseButton) == .RIGHT,
+			)
 		}
 	case .STORAGE:
 		storageInput, storageErr := ecs.GetComponentForEntity(
@@ -58,6 +68,14 @@ buildGameUi :: proc(engine: ^Engine) {
 			engine.textureManager,
 			{slots = storageInput.slots[:]},
 		)
+		if idx, ok := clickedSlotInStorageIdx.?; ok {
+			player.OnInventorySlotClicked(
+				storageInput,
+				idx,
+				mouseItem,
+				mouseButtonInStorage.(core.MouseButton) == .RIGHT,
+			)
+		}
 
 		clickedSlotIdx, mouseButton := components.Inventory(
 			engine.uiManager,
@@ -66,7 +84,12 @@ buildGameUi :: proc(engine: ^Engine) {
 			{slots = inventory.slots[:], rows = 4},
 		)
 		if idx, ok := clickedSlotIdx.?; ok {
-			player.OnInventorySlotClicked(inventory, idx, mouseButton.(core.MouseButton) == .RIGHT)
+			player.OnInventorySlotClicked(
+				inventory,
+				idx,
+				mouseItem,
+				mouseButton.(core.MouseButton) == .RIGHT,
+			)
 		}
 	}
 }
