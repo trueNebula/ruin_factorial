@@ -219,20 +219,21 @@ FlushScreen :: proc(uiMan: ^UiManager, texMan: ^texture.TextureManager) {
 			}
 		}
 	}
-	statFrames += 1
-	if statFrames == 300 {
-		names := [4]string{"nineslice", "sprite", "text", "flat"}
-		for i in 0 ..< 4 {
-			fmt.printf(
-				"%s: %.3f ms/frame, %d calls/frame\n",
-				names[i],
-				stats.t[i] / 300 * 1000,
-				stats.n[i] / 300,
-			)
-		}
-		stats = {}
-		statFrames = 0
-	}
+
+	// statFrames += 1
+	// if statFrames == 300 {
+	// 	names := [4]string{"nineslice", "sprite", "text", "flat"}
+	// 	for i in 0 ..< 4 {
+	// 		fmt.printf(
+	// 			"%s: %.3f ms/frame, %d calls/frame\n",
+	// 			names[i],
+	// 			stats.t[i] / 300 * 1000,
+	// 			stats.n[i] / 300,
+	// 		)
+	// 	}
+	// 	stats = {}
+	// 	statFrames = 0
+	// }
 }
 
 FlushWorld :: proc(uiMan: ^UiManager, texMan: ^texture.TextureManager) {
