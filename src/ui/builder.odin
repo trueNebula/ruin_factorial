@@ -1,6 +1,7 @@
 package ui
 
 import "core:math"
+import "core:prof/spall"
 import "src:core"
 import rl "vendor:raylib"
 
@@ -12,6 +13,8 @@ Root :: proc(
 	attach: Attach,
 	opts: BoxOpts = {},
 ) -> bool {
+	core.Scope("ui.builder.Root")
+
 	id := MakeId(uiMan, label)
 	touch(uiMan, id)
 	idx := pushNode(uiMan, id, opts)
@@ -39,6 +42,8 @@ endRoot :: proc(
 
 @(require_results, deferred_in_out = endBox)
 Box :: proc(uiMan: ^UiManager, label: string, opts: BoxOpts) -> bool {
+	core.Scope("ui.builder.Box")
+
 	id := MakeId(uiMan, label)
 	touch(uiMan, id)
 	pushNode(uiMan, id, opts)
@@ -62,6 +67,8 @@ ClickableBox :: proc(
 	response: Response,
 	open: bool,
 ) {
+	core.Scope("ui.builder.ClickableBox")
+
 	id := MakeId(uiMan, label)
 	touch(uiMan, id)
 	opts := opts
@@ -90,6 +97,8 @@ Button :: proc(
 	style: core.TextStyle = {},
 	placement: core.WidgetPlacement = {},
 ) -> Response {
+	core.Scope("ui.builder.Button")
+
 	id := MakeId(uiMan, label)
 	touch(uiMan, id)
 	idx := addNode(uiMan, id, BoxOpts{placement = placement, capture = true})
@@ -115,6 +124,8 @@ Label :: proc(
 	style: core.TextStyle = {},
 	placement: core.WidgetPlacement,
 ) {
+	core.Scope("ui.builder.Label")
+
 	id := MakeId(uiMan, label)
 	touch(uiMan, id)
 	idx := addNode(uiMan, id, BoxOpts{placement = placement})
@@ -125,6 +136,8 @@ Label :: proc(
 }
 
 Scrim :: proc(uiMan: ^UiManager, label: string, color: rl.Color = SCRIM) {
+	core.Scope("ui.builder.Scrim")
+
 	id := MakeId(uiMan, label)
 	touch(uiMan, id)
 	addNode(

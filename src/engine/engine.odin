@@ -2,6 +2,7 @@ package engine
 
 import "base:runtime"
 import "core:fmt"
+import "core:prof/spall"
 import "src:collision"
 import "src:core"
 import "src:ecs"
@@ -114,6 +115,8 @@ Init :: proc(engine: ^Engine) {
 Run :: proc(engine: ^Engine) {
 	shouldBlockInput: bool
 	for !rl.WindowShouldClose() {
+		core.Scope("engine.run")
+
 		@(static) acc: [6]f64
 		@(static) frames: int
 
@@ -203,19 +206,19 @@ Run :: proc(engine: ^Engine) {
 
 		acc += {t1 - t0, t2 - t1, t3 - t2, t4 - t3, t5 - t4, t6 - t5}
 		frames += 1
-		if frames == 300 {
-			fmt.printf(
-				"BeginFrame %.3f ms | update %.3f ms | build %.3f ms | layout %.3f ms | FlushScreen %.3f ms | EndDrawing %.3f ms\n",
-				acc[0] / 300 * 1000,
-				acc[1] / 300 * 1000,
-				acc[2] / 300 * 1000,
-				acc[3] / 300 * 1000,
-				acc[4] / 300 * 1000,
-				acc[5] / 300 * 1000,
-			)
-			acc = {}
-			frames = 0
-		}
+		// if frames == 300 {
+		// 	fmt.printf(
+		// 		"BeginFrame %.3f ms | update %.3f ms | build %.3f ms | layout %.3f ms | FlushScreen %.3f ms | EndDrawing %.3f ms\n",
+		// 		acc[0] / 300 * 1000,
+		// 		acc[1] / 300 * 1000,
+		// 		acc[2] / 300 * 1000,
+		// 		acc[3] / 300 * 1000,
+		// 		acc[4] / 300 * 1000,
+		// 		acc[5] / 300 * 1000,
+		// 	)
+		// 	acc = {}
+		// 	frames = 0
+		// }
 	}
 }
 
@@ -253,6 +256,8 @@ engineInput :: proc(engine: ^Engine) {
 
 @(private)
 update :: proc(engine: ^Engine) {
+	core.Scope("engine.update")
+
 	scene.Update(engine.sceneManager)
 	ecs.ProcessSetup(engine.world, engine.repo)
 
@@ -344,6 +349,8 @@ processEvents :: proc(engine: ^Engine) {
 }
 
 buildUi :: proc(engine: ^Engine) {
+	core.Scope("engine.buildUi")
+
 	uiMan := engine.uiManager
 	#partial switch engine.sceneManager.current {
 	case .MENU:

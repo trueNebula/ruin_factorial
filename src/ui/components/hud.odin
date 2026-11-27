@@ -1,6 +1,7 @@
 package components
 
 import "core:fmt"
+import "core:prof/spall"
 import "src:core"
 import "src:repository"
 import "src:ui"
@@ -11,6 +12,8 @@ HotbarProps :: struct {
 }
 
 Hotbar :: proc(uiMan: ^ui.UiManager, repo: ^repository.Repository, props: HotbarProps) {
+	core.Scope("ui.Hotbar")
+
 	if ui.Root(
 		uiMan,
 		"hotbar",

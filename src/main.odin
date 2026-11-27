@@ -13,6 +13,8 @@ main :: proc() {
 	context.allocator = mem.tracking_allocator(&track)
 	defer mem.tracking_allocator_destroy(&track)
 
+	core.InitProfiler()
+
 	rl.SetConfigFlags({.WINDOW_RESIZABLE})
 	rl.SetExitKey(.KEY_NULL)
 	rl.InitWindow(core.WindowDefaults.width, core.WindowDefaults.height, core.WindowDefaults.title)
@@ -24,6 +26,7 @@ main :: proc() {
 	engine.Init(&Engine)
 	engine.Run(&Engine)
 	engine.Shutdown(&Engine)
+	core.ShutdownProfiler()
 
 	total := 0
 	for _, entry in track.allocation_map {

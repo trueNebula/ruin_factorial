@@ -2,6 +2,7 @@ package ui
 
 import "core:fmt"
 import "core:math"
+import "core:prof/spall"
 import "src:core"
 import "src:log"
 import "src:render"
@@ -69,6 +70,8 @@ Shutdown :: proc(uiMan: ^UiManager) {
 }
 
 BeginFrame :: proc(uiMan: ^UiManager, worldCamera: Maybe(rl.Camera2D)) {
+	core.Scope("ui.BeginFrame")
+
 	uiMan.frame += 1
 	resetCtr := false
 	if uiMan.frame == MAX_FRAME_CNT {
@@ -147,6 +150,8 @@ BeginFrame :: proc(uiMan: ^UiManager, worldCamera: Maybe(rl.Camera2D)) {
 }
 
 EndFrame :: proc(uiMan: ^UiManager, texMan: ^texture.TextureManager) {
+	core.Scope("ui.EndFrame")
+
 	// Sizes
 	#reverse for &node in uiMan.nodes {
 		padding := node.opts.padding
@@ -204,6 +209,8 @@ stats: DrawStats
 statFrames: int
 
 FlushScreen :: proc(uiMan: ^UiManager, texMan: ^texture.TextureManager) {
+	core.Scope("ui.FlushScreen")
+
 	maxDepth := 0
 	for &node in uiMan.nodes do maxDepth = max(maxDepth, node.depth)
 
@@ -237,6 +244,8 @@ FlushScreen :: proc(uiMan: ^UiManager, texMan: ^texture.TextureManager) {
 }
 
 FlushWorld :: proc(uiMan: ^UiManager, texMan: ^texture.TextureManager) {
+	core.Scope("ui.FlushWorld")
+
 	for &node in uiMan.nodes {
 		if node.space == .WORLD {
 			drawNode(&node, texMan)

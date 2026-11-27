@@ -1,6 +1,7 @@
 package components
 
 import "core:fmt"
+import "core:prof/spall"
 import "core:strings"
 import "src:core"
 import "src:repository"
@@ -21,6 +22,8 @@ Inventory :: proc(
 	clickedIdx: Maybe(int),
 	mouseButton: Maybe(core.MouseButton),
 ) {
+	core.Scope("ui.Inventory")
+
 	hoveredItem: ^repository.ItemDef
 	clickedIdx = nil
 	mouseButton = nil
@@ -44,12 +47,15 @@ Inventory :: proc(
 			},
 		) {
 			for row in 0 ..< rows {
+				core.Scope("ui.Inventory.row")
 				if ui.Box(
 					uiMan,
 					fmt.tprintf("inventory_row_%u", row),
 					{layout = .ROW, gap = 2, size = {{.GROW, 1}, {.FIXED, 32}}},
 				) {
 					for slot, idx in props.slots[row * 10:(row + 1) * 10] {
+						core.Scope("ui.Inventory.slot")
+
 						if response, open := ui.ClickableBox(
 							uiMan,
 							fmt.tprintf("inventory_slot_%u", idx),
@@ -71,6 +77,8 @@ Inventory :: proc(
 							}
 
 							if ui.Box(uiMan, fmt.tprintf("inventory_slot_%u_itm", idx), opts) {
+								core.Scope("ui.Inventory.count")
+
 								if !core.IsNone(slot.id) || slot.count > 0 {
 									ui.Label(
 										uiMan,
@@ -110,6 +118,8 @@ Inventory :: proc(
 }
 
 Tooltip :: proc(uiMan: ^ui.UiManager, texMan: ^texture.TextureManager, item: ^repository.ItemDef) {
+	core.Scope("ui.Tooltip")
+
 	id := ui.MakeId(uiMan, "tooltip")
 	fontData, _ := texture.GetFont(texMan, .MAIN)
 	state, ok := &uiMan.state[id]

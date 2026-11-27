@@ -1,5 +1,6 @@
 package engine
 
+import "core:prof/spall"
 import "src:core"
 import "src:ecs"
 import "src:player"
@@ -23,6 +24,8 @@ buildMenuUi :: proc(engine: ^Engine) {
 
 @(private)
 buildGameUi :: proc(engine: ^Engine) {
+	core.Scope("engine.buildGameUi")
+
 	inventory, invErr := player.GetPlayerComponent(
 		engine.world,
 		player.MAIN_PLAYER_REF,

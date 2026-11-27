@@ -3,6 +3,7 @@ package ui
 import "core:fmt"
 import "core:hash"
 import "core:math"
+import "core:prof/spall"
 import "core:strings"
 import "src:core"
 import "src:render"
@@ -225,6 +226,8 @@ respond :: proc(uiMan: ^UiManager, id: Id) -> Response {
 
 @(private)
 drawNode :: proc(node: ^Node, texMan: ^texture.TextureManager) {
+	core.Scope("ui.drawNode")
+
 	switch &bg in node.opts.background {
 	case FlatBackground:
 		// t := rl.GetTime()

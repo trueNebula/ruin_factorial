@@ -1,6 +1,7 @@
 package components
 
 import "core:fmt"
+import "core:prof/spall"
 import "src:core"
 import "src:repository"
 import "src:texture"
@@ -16,6 +17,8 @@ Storage :: proc(
 	clickedIdx: Maybe(int),
 	mouseButton: Maybe(core.MouseButton),
 ) {
+	core.Scope("ui.Storage")
+
 	hoveredItem: ^repository.ItemDef
 	clickedIdx = nil
 	mouseButton = nil
