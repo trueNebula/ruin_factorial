@@ -23,7 +23,7 @@ when PROFILING {
 		spall._buffer_end(&ctx, &buf)
 	}
 
-	InitProfiler() :: proc() {
+	InitProfiler :: proc() {
 		ctx = spall.context_create("ruin_factorial.spall")
 		backing = make([]u8, spall.BUFFER_DEFAULT_SIZE)
 		buf = spall.buffer_create(backing, u32(sync.current_thread_id()))

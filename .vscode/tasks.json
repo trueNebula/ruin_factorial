@@ -4,7 +4,7 @@
     {
       "label": "build",
       "type": "shell",
-      "command": "odin build ./src/main.odin -file -collection:src=src -debug -out:build/debug.bin",
+      "command": "odin build ./src/main.odin -file -collection:src=src -debug -o:none -out:build/debug.bin -define:PROFILING=true",
       "group": "build"
     },
     {
@@ -46,7 +46,7 @@
         "${cwd}/src/main.odin",
         "-file",
         "-collection:src=src",
-        "-debug"
+        "-o:minimal"
       ],
       "group": {
         "kind": "test",
@@ -65,7 +65,7 @@
         "-file",
         "-collection:src=src",
         "-define:PROFILING=true",
-        "-debug"
+        "-o:minimal"
       ],
       "group": {
         "kind": "test",
