@@ -213,7 +213,7 @@ FlushScreen :: proc(uiMan: ^UiManager, texMan: ^texture.TextureManager) {
 		}
 		for depth in 0 ..= maxDepth {
 			for &node in uiMan.nodes {
-				if node.layer == layer && node.space == .SCREEN {
+				if node.layer == layer && node.space == .SCREEN && node.depth == depth {
 					drawNode(&node, texMan)
 				}
 			}

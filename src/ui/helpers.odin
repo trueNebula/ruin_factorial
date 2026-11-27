@@ -232,7 +232,7 @@ drawNode :: proc(node: ^Node, texMan: ^texture.TextureManager) {
 		render.DrawRect(rect, bg.fill, bg.outline, bg.outlineW)
 	// stats.t[2] += rl.GetTime() - t; stats.n[2] += 1
 	case SpriteBackground:
-		// t := rl.GetTime()
+		t := rl.GetTime()
 		sprite := bg.sprite
 		frame := sprite.rect
 
@@ -253,7 +253,7 @@ drawNode :: proc(node: ^Node, texMan: ^texture.TextureManager) {
 		}
 
 		render.DrawSprite(texMan, sprite.texture, frame, node.position, rectSize)
-	// stats.t[1] += rl.GetTime() - t; stats.n[1] += 1
+		stats.t[1] += rl.GetTime() - t; stats.n[1] += 1
 	case core.NineSlice:
 		// t := rl.GetTime()
 		render.DrawNineSlice(texMan, bg, node.position, node.size)
@@ -262,7 +262,7 @@ drawNode :: proc(node: ^Node, texMan: ^texture.TextureManager) {
 
 	switch c in node.content {
 	case TextContent:
-		// t := rl.GetTime()
+		t := rl.GetTime()
 		fontData, err := texture.GetFont(texMan, c.style.font)
 		if err {
 			return
@@ -277,10 +277,11 @@ drawNode :: proc(node: ^Node, texMan: ^texture.TextureManager) {
 				c.style.size,
 				shadow.color,
 			)
+			stats.n[2] += 1
 		}
 
 		render.DrawText(text, fontData, node.position, c.style.size, c.style.color)
-	// stats.t[2] += rl.GetTime() - t; stats.n[2] += 1
+		stats.t[2] += rl.GetTime() - t; stats.n[2] += 1
 	case ImageContent:
 		render.DrawSprite(texMan, c.sprite.texture, c.sprite.rect, node.position)
 	}

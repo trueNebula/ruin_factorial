@@ -1,6 +1,7 @@
 package engine
 
 import "base:runtime"
+import "core:fmt"
 import "src:collision"
 import "src:core"
 import "src:ecs"
@@ -113,6 +114,9 @@ Init :: proc(engine: ^Engine) {
 Run :: proc(engine: ^Engine) {
 	shouldBlockInput: bool
 	for !rl.WindowShouldClose() {
+		@(static) acc: [6]f64
+		@(static) frames: int
+
 		core.FullscreenManager()
 
 		camera, camErr := player.GetPlayerComponent(
@@ -120,8 +124,9 @@ Run :: proc(engine: ^Engine) {
 			player.MAIN_PLAYER_REF,
 			core.Camera,
 		)
-
+		t0 := rl.GetTime()
 		ui.BeginFrame(engine.uiManager, camErr ? nil : camera.camera)
+		t1 := rl.GetTime()
 		engine.frameInput = input.Poll(core.DefaultKeybinds)
 
 		if ui.WantsMouse(engine.uiManager) {
@@ -158,9 +163,11 @@ Run :: proc(engine: ^Engine) {
 		// update
 		update(engine)
 		processEvents(engine)
+		t2 := rl.GetTime()
 		buildUi(engine)
+		t3 := rl.GetTime()
 		ui.EndFrame(engine.uiManager, engine.textureManager)
-
+		t4 := rl.GetTime()
 		// render
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.BLACK)
@@ -174,6 +181,7 @@ Run :: proc(engine: ^Engine) {
 
 		rl.BeginMode2D(engine.uiManager.camera)
 		ui.FlushScreen(engine.uiManager, engine.textureManager)
+		t5 := rl.GetTime()
 		rl.EndMode2D()
 
 		scene.DrawTransition(engine.sceneManager)
@@ -189,8 +197,25 @@ Run :: proc(engine: ^Engine) {
 			)
 		}
 		rl.EndDrawing()
+		t6 := rl.GetTime()
 
 		ecs.FrameEnd(engine.world)
+
+		acc += {t1 - t0, t2 - t1, t3 - t2, t4 - t3, t5 - t4, t6 - t5}
+		frames += 1
+		if frames == 300 {
+			fmt.printf(
+				"BeginFrame %.3f ms | update %.3f ms | build %.3f ms | layout %.3f ms | FlushScreen %.3f ms | EndDrawing %.3f ms\n",
+				acc[0] / 300 * 1000,
+				acc[1] / 300 * 1000,
+				acc[2] / 300 * 1000,
+				acc[3] / 300 * 1000,
+				acc[4] / 300 * 1000,
+				acc[5] / 300 * 1000,
+			)
+			acc = {}
+			frames = 0
+		}
 	}
 }
 
