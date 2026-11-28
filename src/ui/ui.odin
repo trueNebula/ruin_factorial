@@ -66,6 +66,10 @@ Shutdown :: proc(uiMan: ^UiManager) {
 	delete(uiMan.nodes)
 	delete(uiMan.parents)
 	delete(uiMan.widgets)
+
+	for _, state in uiMan.state {
+		if state.(TooltipState).descCache != "" do delete(state.(TooltipState).descCache)
+	}
 	delete(uiMan.state)
 }
 

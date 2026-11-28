@@ -46,6 +46,11 @@ Item :: struct {
 	count: u16,
 }
 
+KeyedItem :: struct {
+	item:  string,
+	count: u16,
+}
+
 Inventory :: struct {
 	slots: []Item,
 	size:  int,

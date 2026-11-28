@@ -34,3 +34,17 @@ NoneBlockDef :: BlockDef {
 	texture = .BLOCK,
 	rect    = {0, 0, 16, 16},
 }
+
+RecipeDef :: struct {
+	key:    string,
+	input:  []core.KeyedItem,
+	output: []core.KeyedItem,
+	source: core.RecipeSource,
+}
+
+KeyedItem2Item :: proc(repo: ^Repository, keyedItem: ^core.KeyedItem) -> core.Item {
+	id, err := Find(&repo.items, keyedItem.item)
+	if err do return {}
+
+	return {id = id, count = keyedItem.count}
+}

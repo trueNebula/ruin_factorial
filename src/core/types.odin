@@ -90,6 +90,7 @@ BiomeId :: enum {
 
 BlockId :: distinct u32
 ItemId :: distinct u32
+RecipeId :: distinct u32
 
 TweenCurve :: enum {
 	NONE, // instant a->b
@@ -174,4 +175,16 @@ UiMenu :: enum {
 	NONE,
 	INVENTORY,
 	STORAGE,
+}
+
+RecipeSource :: enum {
+	INVENTORY,
+	SMELTER,
+}
+
+Recipe :: struct {
+	input:    []Item,
+	output:   []Item,
+	source:   RecipeSource,
+	duration: f32,
 }

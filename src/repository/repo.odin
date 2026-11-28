@@ -7,9 +7,10 @@ import "src:core"
 import "src:log"
 
 Repository :: struct {
-	arena:  virtual.Arena,
-	items:  Registry(ItemDef, core.ItemId),
-	blocks: Registry(BlockDef, core.BlockId),
+	arena:   virtual.Arena,
+	items:   Registry(ItemDef, core.ItemId),
+	blocks:  Registry(BlockDef, core.BlockId),
+	recipes: Registry(RecipeDef, core.RecipeId),
 }
 
 Registry :: struct($Def: typeid, $Id: typeid) {
@@ -32,6 +33,8 @@ Shutdown :: proc(repo: ^Repository) {
 	delete(repo.items.byKey)
 	delete(repo.blocks.defs)
 	delete(repo.blocks.byKey)
+	delete(repo.recipes.defs)
+	delete(repo.recipes.byKey)
 	delete(USER_UNMARSHALERS)
 }
 

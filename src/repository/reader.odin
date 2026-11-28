@@ -20,8 +20,9 @@ BASE_NAMESPACE :: "base"
 
 @(private)
 Entry :: struct {
-	item:  ItemDef,
-	block: BlockDef,
+	item:    ItemDef,
+	block:   BlockDef,
+	recipes: []RecipeDef,
 }
 
 @(private)
@@ -73,6 +74,10 @@ readRepo :: proc(repo: ^Repository) {
 			)
 			continue
 		}
+
+		sort.quick_sort_proc(subdirs, proc(a: os.File_Info, b: os.File_Info) -> int {
+			return sort.compare_strings(a.name, b.name)
+		})
 
 		for subdir in subdirs {
 			subdirHandle, subdirOpenErr := os.open(subdir.fullpath)
@@ -142,6 +147,15 @@ readFile :: proc(path, namespace: string, repo: ^Repository) -> (ok: bool) {
 	if entry.block.key != "" {
 		fullKey := getFullKey(entry.block.key, namespace, allocator(repo))
 		Register(&repo.blocks, fullKey, entry.block)
+	}
+
+	recipeCnt := 0
+	for recipe in entry.recipes {
+		if recipe.key != "" {
+			fullKey := getFullKey(recipe.key, namespace, allocator(repo))
+			Register(&repo.recipes, fullKey, recipe)
+			recipeCnt += 1
+		}
 	}
 
 	return true

@@ -5,3 +5,21 @@ item = {
 	texture = ITEM
 	rect = {x = 16, y = 0, width = 16, height = 16}
 }
+recipes = [
+	{
+		key = "test_wood"
+		input = [
+			{
+				item = "base:wood"
+				count = 1
+			}
+		]
+		output = [
+			{
+				item = "base:acorn"
+				count = 2
+			}
+		]
+		source = INVENTORY
+	}
+]
